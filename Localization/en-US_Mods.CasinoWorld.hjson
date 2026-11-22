@@ -118,6 +118,102 @@ Items: {
 		Tooltip: ""
 	}
 
+	AceOfSpades: {
+		DisplayName: Ace of Spades
+		Tooltip: Throws a spectral card that homes in and pierces
+	}
+
+	DoublingDice: {
+		DisplayName: Doubling Dice
+		Tooltip: The die splits in two on its first hit
+	}
+
+	RouletteRevolver: {
+		DisplayName: Roulette Revolver
+		Tooltip: Every sixth chamber holds a golden jackpot round for triple damage
+	}
+
+	StardustDeck: {
+		DisplayName: Stardust Deck
+		Tooltip: Galaxy cards burst into three homing cards on hit
+	}
+
+	MeteorDice: {
+		DisplayName: Meteor Dice
+		Tooltip: Calls a burning die down from the sky onto your cursor
+	}
+
+	InfinitySlot: {
+		DisplayName: Infinity Slot
+		Tooltip: Fires two reel symbols; rarer symbols hit much harder
+	}
+
+	SpectralFedora: {
+		DisplayName: Spectral Fedora
+		Tooltip:
+			'''
+			+2 Luck
+			6% increased gambler damage
+			'''
+		SetBonus:
+			'''
+			+3 Luck
+			Jackpots release two homing spectral cards
+			'''
+	}
+
+	SpectralCoat: {
+		DisplayName: Spectral Coat
+		Tooltip:
+			'''
+			+3 Luck
+			8% increased gambler damage
+			'''
+	}
+
+	SpectralLoafers: {
+		DisplayName: Spectral Loafers
+		Tooltip:
+			'''
+			+2 Luck
+			6% increased gambler damage
+			8% increased movement speed
+			'''
+	}
+
+	CelestialFedora: {
+		DisplayName: Celestial Fedora
+		Tooltip:
+			'''
+			+3 Luck
+			12% increased gambler damage
+			'''
+		SetBonus:
+			'''
+			+3 Luck
+			Jackpots call down a meteor die on the target
+			'''
+	}
+
+	CelestialCoat: {
+		DisplayName: Celestial Coat
+		Tooltip:
+			'''
+			+4 Luck
+			14% increased gambler damage
+			'''
+	}
+
+	CelestialLoafers: {
+		DisplayName: Celestial Loafers
+		Tooltip:
+			'''
+			+3 Luck
+			10% increased gambler damage
+			12% increased movement speed
+			'''
+	}
+
 	GoldenChip: {
 		DisplayName: Golden Chip
 		Tooltip:

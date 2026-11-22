@@ -45,6 +45,26 @@ namespace CasinoWorld.Content.Subworlds
 		/// <summary>Spawns the staff and guests. Runs on the server or in single player only.</summary>
 		protected abstract void SpawnPeople();
 
+		// The casino is a separate world: copy the main world's progress so shop conditions,
+		// jackpot tiers and the like see hardmode and the downed bosses.
+		public override void CopyMainWorldData()
+		{
+			SubworldSystem.CopyWorldData(nameof(Main.hardMode), Main.hardMode);
+			SubworldSystem.CopyWorldData(nameof(NPC.downedBoss3), NPC.downedBoss3);
+			SubworldSystem.CopyWorldData(nameof(NPC.downedMechBossAny), NPC.downedMechBossAny);
+			SubworldSystem.CopyWorldData(nameof(NPC.downedPlantBoss), NPC.downedPlantBoss);
+			SubworldSystem.CopyWorldData(nameof(NPC.downedMoonlord), NPC.downedMoonlord);
+		}
+
+		public override void ReadCopiedMainWorldData()
+		{
+			Main.hardMode = SubworldSystem.ReadCopiedWorldData<bool>(nameof(Main.hardMode));
+			NPC.downedBoss3 = SubworldSystem.ReadCopiedWorldData<bool>(nameof(NPC.downedBoss3));
+			NPC.downedMechBossAny = SubworldSystem.ReadCopiedWorldData<bool>(nameof(NPC.downedMechBossAny));
+			NPC.downedPlantBoss = SubworldSystem.ReadCopiedWorldData<bool>(nameof(NPC.downedPlantBoss));
+			NPC.downedMoonlord = SubworldSystem.ReadCopiedWorldData<bool>(nameof(NPC.downedMoonlord));
+		}
+
 		public override void OnLoad()
 		{
 			Main.dayTime = true;

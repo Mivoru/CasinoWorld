@@ -38,9 +38,12 @@ namespace CasinoWorld.Content.Subworlds
 		public override long MinJackpotStake => Coins.Gold;
 		public override long FullJackpotStake => 10 * Coins.Gold;
 
-		public override int[] JackpotItems => new[] {
-			ModContent.ItemType<SnakeEyes>(), ModContent.ItemType<RoyalFlush>(), ModContent.ItemType<JackpotCannon>(),
-		};
+		/// <summary>Jackpots drop the highest unlocked tier: hardmode, post-Plantera or post-Moon Lord.</summary>
+		public override int[] JackpotItems => NPC.downedMoonlord
+			? new[] { ModContent.ItemType<StardustDeck>(), ModContent.ItemType<MeteorDice>(), ModContent.ItemType<InfinitySlot>() }
+			: NPC.downedPlantBoss
+				? new[] { ModContent.ItemType<AceOfSpades>(), ModContent.ItemType<DoublingDice>(), ModContent.ItemType<RouletteRevolver>() }
+				: new[] { ModContent.ItemType<SnakeEyes>(), ModContent.ItemType<RoyalFlush>(), ModContent.ItemType<JackpotCannon>() };
 
 		public override int[] GuestSpots => Spots;
 
