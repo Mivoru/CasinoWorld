@@ -57,6 +57,44 @@ namespace CasinoWorld.Content.NPCs
 		protected override string HelpKey => "Mods.CasinoWorld.NPCs.BlackjackDealer.Help";
 	}
 
+	/// <summary>
+	/// Runs the prize counter: cosmetics and other customisable items for loyalty tokens.
+	/// Prices are a first pass; 1 token = 10 silver wagered.
+	/// </summary>
+	public class PrizeCashier : CasinoStaff
+	{
+		protected override int VanillaLook => NPCID.Steampunker;
+		protected override int ChatLines => 4;
+
+		public override void SetChatButtons(ref string button, ref string button2)
+		{
+			button = Language.GetTextValue("Mods.CasinoWorld.NPCs.PrizeCashier.Prizes");
+		}
+
+		public override void OnChatButtonClicked(bool firstButton, ref string shopName)
+		{
+			if (firstButton)
+				shopName = "Shop";
+		}
+
+		private static Item Prize(int itemType, int tokens) => new(itemType) {
+			shopSpecialCurrency = Items.LoyaltyToken.CurrencyId,
+			shopCustomPrice = tokens,
+		};
+
+		public override void AddShops()
+		{
+			new NPCShop(Type)
+				.Add(Prize(ItemID.TopHat, 25))
+				.Add(Prize(ItemID.TuxedoShirt, 40))
+				.Add(Prize(ItemID.TuxedoPants, 40))
+				.Add(Prize(ItemID.Sunglasses, 30))
+				.Add(Prize(ItemID.GoldChandelier, 20))
+				.Add(Prize(ItemID.DiscoBall, 30))
+				.Register();
+		}
+	}
+
 	/// <summary>Runs the bar and sells drinks.</summary>
 	public class Bartender : CasinoStaff
 	{

@@ -96,7 +96,7 @@ namespace CasinoWorld.Common.Games.Blackjack
 				SetMessage(Text("NoBet"), Color.OrangeRed);
 				return;
 			}
-			if (!Coins.TryTake(player, PendingBet)) {
+			if (!CasinoRewards.TryWager(player, PendingBet)) {
 				SetMessage(Text("NotEnough"), Color.OrangeRed);
 				return;
 			}
@@ -164,7 +164,7 @@ namespace CasinoWorld.Common.Games.Blackjack
 		{
 			if (!CanDouble)
 				return;
-			if (!Coins.TryTake(player, Current.Bet)) {
+			if (!CasinoRewards.TryWager(player, Current.Bet)) {
 				SetMessage(Text("NotEnough"), Color.OrangeRed);
 				return;
 			}
@@ -180,7 +180,7 @@ namespace CasinoWorld.Common.Games.Blackjack
 		{
 			if (!CanSplit)
 				return;
-			if (!Coins.TryTake(player, Current.Bet)) {
+			if (!CasinoRewards.TryWager(player, Current.Bet)) {
 				SetMessage(Text("NotEnough"), Color.OrangeRed);
 				return;
 			}
@@ -276,6 +276,10 @@ namespace CasinoWorld.Common.Games.Blackjack
 
 			Coins.Give(player, total);
 			Phase = BlackjackPhase.Result;
+
+			// A natural blackjack that beats the dealer can drop a jackpot item.
+			if (Hands.Count == 1 && Hands[0].IsBlackjack && !dealerBlackjack)
+				CasinoRewards.TryJackpot(player, Hands[0].Bet, CasinoRewards.BlackjackNaturalJackpot);
 
 			if (total > staked) {
 				bool natural = Hands.Count == 1 && Hands[0].IsBlackjack;

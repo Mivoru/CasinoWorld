@@ -2,16 +2,6 @@
 # Please read https://github.com/tModLoader/tModLoader/wiki/Localization to learn more about localization and these files.
 
 Items: {
-	GamblerStick: {
-		DisplayName: Gambler Stick
-		Tooltip:
-			'''
-			Template of an item
-			Replacing this tooltip is duty
-			It's snowing on Mt.Fuji
-			'''
-	}
-
 	CasinoDoorItem: {
 		DisplayName: Casino Door
 		Tooltip:
@@ -20,6 +10,40 @@ Items: {
 			[Development item]
 			'''
 	}
+
+	LoyaltyToken: {
+		DisplayName: Loyalty Token
+		Tooltip:
+			'''
+			Earned by betting at the casino tables
+			Spend it at the prize counter
+			'''
+		Currency: Loyalty Tokens
+	}
+
+	LoadedDice: {
+		DisplayName: Loaded Dice
+		Tooltip: Throws a die that bounces along the ground
+	}
+
+	CardDeck: {
+		DisplayName: Deck of Cards
+		Tooltip: Throws a fan of three cards
+	}
+
+	HighRoller: {
+		DisplayName: High Roller
+		Tooltip: Flicks a chip that ricochets to another enemy
+	}
+}
+
+DamageClasses.GamblerDamageClass.DisplayName: gambler damage
+
+Gambler: {
+	Jackpot: JACKPOT!
+	Bust: bust
+	JackpotItem: JACKPOT!
+	JackpotMessage: "Jackpot! You won {0}!"
 }
 
 Tiles: {
@@ -71,6 +95,17 @@ NPCs: {
 			Split: two cards of the same value become two hands.
 			Blackjack (an ace and a ten) pays 3 to 2. I stand on 17.
 			'''
+	}
+
+	PrizeCashier: {
+		DisplayName: Cashier
+		Prizes: Prizes
+		Chat: {
+			0: Every bet earns loyalty tokens, win or lose. The house is generous like that.
+			1: Ten silver wagered, one token earned. Spend them here on something shiny.
+			2: The real prizes? Those come from jackpots at the tables, friend.
+			3: No refunds. No exceptions. No eye contact with the bartender.
+		}
 	}
 
 	Bartender: {

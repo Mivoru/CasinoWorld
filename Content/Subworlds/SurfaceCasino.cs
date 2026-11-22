@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using CasinoWorld.Content.Items.Weapons;
 using CasinoWorld.Content.NPCs;
 using CasinoWorld.Content.Tiles;
 using Terraria;
@@ -29,16 +30,20 @@ namespace CasinoWorld.Content.Subworlds
 		public override long[] ChipValues => new long[] { 100, 1_000, 10_000, 50_000 };
 		public override long MaxBet => 200_000;
 
+		public override int[] JackpotItems => new[] {
+			ModContent.ItemType<LoadedDice>(), ModContent.ItemType<CardDeck>(), ModContent.ItemType<HighRoller>(),
+		};
+
 		// Furniture positions, as tile offsets from HallLeft.
 		public const int RouletteA = 16, RouletteB = 28, BlackjackA = 46, BlackjackB = 58;
-		public const int BarStart = 84, BarEnd = 100;
+		public const int BarStart = 84, BarEnd = 100, PrizeCounter = 74;
 		private const int GuestCount = 6;
 
 		/// <summary>Tile x positions guests walk to: beside the tables and at the bar.</summary>
 		public static readonly int[] GuestSpots = {
 			HallLeft + RouletteA + 2, HallLeft + RouletteA + 4, HallLeft + RouletteB + 2, HallLeft + RouletteB + 4,
 			HallLeft + BlackjackA + 2, HallLeft + BlackjackA + 4, HallLeft + BlackjackB + 2, HallLeft + BlackjackB + 4,
-			HallLeft + BarStart + 1, HallLeft + BarStart + 6, HallLeft + BarStart + 11, HallLeft + 75,
+			HallLeft + BarStart + 1, HallLeft + BarStart + 6, HallLeft + BarStart + 11, HallLeft + PrizeCounter - 4,
 		};
 
 		public override List<GenPass> Tasks => new() { new SurfaceCasinoPass() };
@@ -51,6 +56,7 @@ namespace CasinoWorld.Content.Subworlds
 			SpawnAt<BlackjackDealer>(HallLeft + BlackjackA + 7, HallFloor, -1);
 			SpawnAt<BlackjackDealer>(HallLeft + BlackjackB + 7, HallFloor, -1);
 			SpawnAt<Bartender>(HallLeft + BarEnd + 3, HallFloor, -1);
+			SpawnAt<PrizeCashier>(HallLeft + PrizeCounter + 1, HallFloor, -1);
 
 			for (int k = 0; k < GuestCount; k++)
 				SpawnAt<CasinoGuest>(GuestSpots[Main.rand.Next(GuestSpots.Length)], HallFloor);
@@ -122,6 +128,10 @@ namespace CasinoWorld.Content.Subworlds
 				WorldGen.PlaceObject(x, floor - 1, TileID.Tables, mute: true, style: 0);
 				WorldGen.PlaceTile(x, floor - 3, TileID.Bottles, mute: true, forced: true, style: 4);
 			}
+			// Prize counter: a display table with the cashier behind it.
+			WorldGen.PlaceObject(left + SurfaceCasino.PrizeCounter - 1, floor - 1, TileID.Tables, mute: true, style: 0);
+			WorldGen.PlaceTile(left + SurfaceCasino.PrizeCounter - 1, floor - 3, TileID.GoldCoinPile, mute: true, forced: true);
+
 			WorldGen.PlaceObject(left + SurfaceCasino.BarEnd + 6, floor - 1, TileID.Kegs, mute: true);
 			WorldGen.PlaceObject(left + SurfaceCasino.BarEnd + 10, floor - 1, TileID.Kegs, mute: true);
 

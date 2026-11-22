@@ -121,7 +121,7 @@ namespace CasinoWorld.Common.Games.Roulette
 				SetMessage(Language.GetTextValue("Mods.CasinoWorld.UI.Roulette.OverMax", Coins.Format(maxBet)), Color.OrangeRed);
 				return false;
 			}
-			if (!Coins.TryTake(player, total)) {
+			if (!CasinoRewards.TryWager(player, total)) {
 				SetMessage(Language.GetTextValue("Mods.CasinoWorld.UI.Roulette.NotEnough"), Color.OrangeRed);
 				return false;
 			}
@@ -219,6 +219,10 @@ namespace CasinoWorld.Common.Games.Roulette
 
 			LastPayout = RouletteRules.Resolve(lastBets, Result);
 			Coins.Give(player, LastPayout);
+
+			// A hit on a single number can drop a jackpot item.
+			if (lastBets.TryGetValue(new RouletteBet(RouletteBetType.Straight, Result), out long straightStake))
+				CasinoRewards.TryJackpot(player, straightStake, CasinoRewards.RouletteStraightJackpot);
 
 			History.Insert(0, Result);
 			if (History.Count > HistoryLength)

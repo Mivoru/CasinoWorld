@@ -30,6 +30,9 @@ namespace CasinoWorld.Content.Subworlds
 		/// <summary>Largest total bet allowed in one round, in copper coins.</summary>
 		public abstract long MaxBet { get; }
 
+		/// <summary>Items that big wins in this casino can drop (Gambler weapons and armour).</summary>
+		public abstract int[] JackpotItems { get; }
+
 		/// <summary>Spawns the staff and guests. Runs on the server or in single player only.</summary>
 		protected abstract void SpawnPeople();
 
