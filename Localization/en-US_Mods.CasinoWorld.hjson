@@ -139,26 +139,17 @@ Items: {
 
 	WhiteFedora: {
 		DisplayName: White Fedora
-		Tooltip:
-			'''
-			'Only for those who win'
-			'''
+		Tooltip: "'Only for those who win'"
 	}
 
 	WhiteTuxedo: {
 		DisplayName: White Tuxedo
-		Tooltip:
-			'''
-			'Spotless. Like your record at the tables.'
-			'''
+		Tooltip: "'Spotless. Like your record at the tables.'"
 	}
 
 	WhiteSpats: {
 		DisplayName: White Spats
-		Tooltip:
-			'''
-			'Click your heels on the marble'
-			'''
+		Tooltip: "'Click your heels on the marble'"
 	}
 
 	LuckyCrate: {
@@ -460,6 +451,7 @@ NPCs: {
 
 	Showgirl: {
 		DisplayName: Showgirl
+
 		Chat: {
 			0: Two shows a night, every night. The House never closes, and neither do these legs!
 			1: Feathers are imported. The smile is real. The tips are encouraged.
@@ -471,6 +463,7 @@ NPCs: {
 	Togi: {
 		DisplayName: Togi
 		Bonus: BONUS!!! CHAT, LOOK!
+
 		Chat: {
 			0: Shh, I'm live. Say hi to chat! ...Chat says your armour is mid.
 			1: One more spin. Then I stop. Probably. Definitely. One more.
@@ -479,6 +472,7 @@ NPCs: {
 			4: You want tips? Bet small, scream big. The machine respects energy.
 			5: If I hit the jackpot, everyone in chat gets... my respect. That's priceless.
 		}
+
 		Overhead: {
 			0: Chat, chat, CHAT!
 			1: Come on, come on...
@@ -493,6 +487,7 @@ NPCs: {
 
 	CasinoVisitor: {
 		DisplayName: Casino Guest
+
 		Chat: {
 			0: Just getting some air. Gotta clear my head before I double down.
 			1: The roulette table is hot tonight. Or I am. One of us is.
@@ -813,4 +808,5 @@ Projectiles: {
 	RevolverChip.DisplayName: Revolver Chip
 	SpectralCard.DisplayName: Spectral Card
 	SymbolShot.DisplayName: Symbol Shot
+	ChipChainHookProjectile.DisplayName: Chip Chain Hook Projectile
 }

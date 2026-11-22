@@ -12,7 +12,7 @@ using Terraria.WorldBuilding;
 namespace CasinoWorld.Common.Crates
 {
 	/// <summary>
-	/// Puts crates into the world: Lucky Crates lie on cave floors and sometimes sit in chests.
+	/// Puts crates into the world: Lucky Crates lie on cave floors and sit in every chest.
 	/// High Roller Crates are scattered through the caverns when the underground casino opens.
 	/// Counts scale with world width (small world 4200 tiles: 18 crates, large 8400: 36).
 	/// </summary>
@@ -34,49 +34,77 @@ namespace CasinoWorld.Common.Crates
 		}
 
 		/// <summary>
-		/// Chance (in percent) that a generated chest holds a Lucky Crate, by chest type:
-		/// plain wooden chests 15 %, gold chests 35 %, locked dungeon chests 30 %, other biome
-		/// chests (ivy, ice, water, sky, shadow and so on) 25 %. Gold chests may hold two.
+		/// How many Lucky Crates a generated chest holds: every vanilla chest gets one (wooden, gold,
+		/// dungeon, every biome chest). Gold and locked dungeon chests hold two one time in four.
+		/// Returns 0 for anything that is not a vanilla chest.
 		/// </summary>
-		private static int ChestCrateChance(Chest chest, out int count)
+		private static int ChestCrateCount(Chest chest)
 		{
-			count = 1;
 			Tile tile = Main.tile[chest.x, chest.y];
 			if (tile.TileType != TileID.Containers && tile.TileType != TileID.Containers2)
 				return 0;
 			int style = tile.TileFrameX / 36;
-			if (tile.TileType == TileID.Containers2)
-				return 25;
-			switch (style) {
-				case 0:   // wooden
-					return 15;
-				case 1:   // gold
-					count = WorldGen.genRand.NextBool(4) ? 2 : 1;
-					return 35;
-				case 2:   // locked gold (dungeon)
-					return 30;
-				default:
-					return 25;
-			}
+			bool rich = tile.TileType == TileID.Containers && (style == 1 || style == 2);
+			return rich && WorldGen.genRand.NextBool(4) ? 2 : 1;
 		}
 
-		public override void PostWorldGen()
+		private static bool HasCrate(Chest chest, int crate)
+		{
+			foreach (Item item in chest.item) {
+				if (item != null && item.type == crate)
+					return true;
+			}
+			return false;
+		}
+
+		/// <summary>Puts Lucky Crates into every chest (skips chests that already have one or are full).</summary>
+		private static int FillChests()
 		{
 			int crate = ModContent.ItemType<LuckyCrate>();
+			int filled = 0;
 			foreach (Chest chest in Main.chest) {
-				if (chest == null)
+				if (chest == null || HasCrate(chest, crate))
 					continue;
-				int chance = ChestCrateChance(chest, out int count);
-				if (chance <= 0 || WorldGen.genRand.Next(100) >= chance)
+				int count = ChestCrateCount(chest);
+				if (count <= 0)
 					continue;
 				for (int k = 0; k < Chest.maxItems; k++) {
 					if (chest.item[k].IsAir) {
 						chest.item[k].SetDefaults(crate);
 						chest.item[k].stack = count;
+						filled++;
 						break;
 					}
 				}
 			}
+			return filled;
+		}
+
+		public override void PostWorldGen()
+		{
+			FillChests();
+			chestsFilled = true;
+		}
+
+		// Worlds made before this rule get their chests filled once, on the first load.
+		private bool chestsFilled;
+
+		public override void ClearWorld() => chestsFilled = false;
+
+		public override void LoadWorldData(Terraria.ModLoader.IO.TagCompound tag) => chestsFilled = tag.ContainsKey("chestCrates");
+
+		public override void SaveWorldData(Terraria.ModLoader.IO.TagCompound tag)
+		{
+			if (chestsFilled)
+				tag["chestCrates"] = true;
+		}
+
+		public override void PostUpdateWorld()
+		{
+			if (chestsFilled || Main.netMode == NetmodeID.MultiplayerClient || Systems.CasinoTravel.InCasino)
+				return;
+			chestsFilled = true;
+			FillChests();
 		}
 
 		/// <summary>Scatters High Roller Crates; called once when the underground casino opens.</summary>
