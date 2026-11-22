@@ -21,6 +21,25 @@ namespace CasinoWorld.Content.NPCs.People
 
 		private ref float HomeX => ref NPC.localAI[1];
 
+		// Cabaret look: red curls, pink sequinned dress, bunny ears.
+		private static readonly PersonLook look = new() {
+			Hair = 25, SkinVariant = 6, Skin = new(250, 205, 175), HairColor = new(190, 50, 40),
+			Shirt = new(235, 90, 160), UnderShirt = new(255, 200, 230), Pants = new(235, 90, 160), Shoes = new(200, 30, 90),
+			HeadVanity = ItemID.BunnyEars,
+		};
+		protected override PersonLook Look => look;
+
+		// Dance routine, 8 beats of 10 ticks: arms up and down, high kicks (jump legs) and little hops.
+		private static readonly int[] DanceArms = { PersonDoll.ArmUp, PersonDoll.ArmUpForward, PersonDoll.ArmUp, PersonDoll.ArmForward,
+			PersonDoll.ArmUpForward, PersonDoll.ArmUp, PersonDoll.ArmDown, PersonDoll.ArmUp };
+		private static readonly int[] DanceLegs = { 0, PersonDoll.Jump, 0, 9, 0, PersonDoll.Jump, 13, 0 };
+
+		protected override int BodyPose(int tick) => DanceArms[tick / 10 % 8];
+
+		protected override int LegPose(int tick) => Math.Abs(NPC.velocity.X) > 0.3f ? -1 : DanceLegs[tick / 10 % 8];
+
+		protected override float DrawLift(int tick) => DanceLegs[tick / 10 % 8] == PersonDoll.Jump ? 4f * (float)Math.Sin(tick % 10 / 10f * Math.PI) : 0f;
+
 		public override void AI()
 		{
 			if (HomeX == 0f)

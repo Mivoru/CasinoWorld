@@ -45,6 +45,19 @@ namespace CasinoWorld.Content.NPCs
 
 	public class RouletteCroupier : CasinoStaff
 	{
+		// Croupier: slicked black hair, white shirt under a burgundy waistcoat. Spins the wheel every few seconds.
+		private static readonly PersonLook look = new() {
+			Hair = 15, SkinVariant = 1, Skin = new(240, 195, 160), HairColor = new(25, 22, 22),
+			Shirt = new(120, 25, 40), UnderShirt = new(235, 232, 225), Pants = new(25, 25, 30), Shoes = new(15, 15, 15),
+		};
+		protected override PersonLook Look => look;
+
+		protected override int BodyPose(int tick)
+		{
+			int cycle = tick % 300;
+			return cycle < 10 ? PersonDoll.ArmUpForward : cycle < 22 ? PersonDoll.ArmForward : -1;
+		}
+
 		protected override string CustomTexture => "CasinoWorld/Content/NPCs/People/RouletteCroupier";
 		protected override int VanillaLook => NPCID.Clothier;
 		protected override int ChatLines => 6;
@@ -53,6 +66,21 @@ namespace CasinoWorld.Content.NPCs
 
 	public class BlackjackDealer : CasinoStaff
 	{
+		// Dealer: dark bob, black waistcoat, white shirt. Deals in quick bursts of cards.
+		private static readonly PersonLook look = new() {
+			Hair = 7, SkinVariant = 4, Skin = new(225, 170, 130), HairColor = new(45, 30, 25),
+			Shirt = new(30, 30, 35), UnderShirt = new(240, 238, 230), Pants = new(25, 25, 30), Shoes = new(15, 15, 15),
+		};
+		protected override PersonLook Look => look;
+
+		protected override int BodyPose(int tick)
+		{
+			int cycle = tick % 360;
+			if (cycle < 48)
+				return (cycle / 6) % 2 == 0 ? PersonDoll.ArmForward : PersonDoll.ArmDown;
+			return -1;
+		}
+
 		protected override string CustomTexture => "CasinoWorld/Content/NPCs/People/BlackjackDealer";
 		protected override int VanillaLook => NPCID.TaxCollector;
 		protected override int ChatLines => 6;
@@ -65,6 +93,19 @@ namespace CasinoWorld.Content.NPCs
 	/// </summary>
 	public class PrizeCashier : CasinoStaff
 	{
+		// Cashier: blonde, red uniform jacket with gold trim. Waves at passing players now and then.
+		private static readonly PersonLook look = new() {
+			Hair = 9, SkinVariant = 5, Skin = new(250, 210, 180), HairColor = new(230, 195, 110),
+			Shirt = new(185, 35, 45), UnderShirt = new(230, 185, 60), Pants = new(40, 30, 35), Shoes = new(90, 20, 25),
+		};
+		protected override PersonLook Look => look;
+
+		protected override int BodyPose(int tick)
+		{
+			int cycle = tick % 540;
+			return cycle < 40 ? ((cycle / 8) % 2 == 0 ? PersonDoll.ArmUp : PersonDoll.ArmUpForward) : -1;
+		}
+
 		protected override string CustomTexture => "CasinoWorld/Content/NPCs/People/PrizeCashier";
 		protected override int VanillaLook => NPCID.Steampunker;
 		protected override int ChatLines => 4;
@@ -106,6 +147,19 @@ namespace CasinoWorld.Content.NPCs
 	/// <summary>Runs the bar and sells drinks.</summary>
 	public class Bartender : CasinoStaff
 	{
+		// Bartender: moustache-friendly short hair, white shirt, black waistcoat. Polishes a glass.
+		private static readonly PersonLook look = new() {
+			Hair = 24, SkinVariant = 3, Skin = new(200, 140, 100), HairColor = new(70, 45, 30),
+			Shirt = new(25, 25, 28), UnderShirt = new(240, 238, 230), Pants = new(30, 30, 35), Shoes = new(20, 15, 10),
+		};
+		protected override PersonLook Look => look;
+
+		protected override int BodyPose(int tick)
+		{
+			int cycle = tick % 480;
+			return cycle < 120 ? ((cycle / 15) % 2 == 0 ? PersonDoll.ArmForward : PersonDoll.ArmDown) : -1;
+		}
+
 		protected override string CustomTexture => "CasinoWorld/Content/NPCs/People/Bartender";
 		protected override int VanillaLook => NPCID.Demolitionist;
 		protected override int ChatLines => 6;

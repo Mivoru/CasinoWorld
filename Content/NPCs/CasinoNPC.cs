@@ -1,4 +1,6 @@
 using CasinoWorld.Common.Systems;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -26,6 +28,48 @@ namespace CasinoWorld.Content.NPCs
 		protected virtual int CustomFrames => 1;
 
 		public override string Texture => CustomTexture ?? "Terraria/Images/NPC_" + VanillaLook;
+
+		/// <summary>
+		/// Vanilla-style look drawn with the player renderer. When set, it replaces the sprite sheet
+		/// (which then only serves as the map/fallback texture).
+		/// </summary>
+		protected virtual PersonLook Look => null;
+
+		/// <summary>Body pose for this tick (see <see cref="PersonDoll"/>), or -1 for the pose from movement.</summary>
+		protected virtual int BodyPose(int tick) => -1;
+
+		/// <summary>Leg pose for this tick, or -1 for the pose from movement.</summary>
+		protected virtual int LegPose(int tick) => -1;
+
+		/// <summary>Extra vertical offset in pixels (for example a dance hop).</summary>
+		protected virtual float DrawLift(int tick) => 0f;
+
+		private PersonDoll doll;
+		private bool dollFailed;
+
+		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+		{
+			PersonLook look = Look;
+			if (look == null || dollFailed || NPC.IsABestiaryIconDummy)
+				return DrawSprite(spriteBatch, screenPos, drawColor);
+			try {
+				doll ??= new PersonDoll();
+				int tick = (int)Main.GameUpdateCount + NPC.whoAmI * 37;
+				bool talking = Main.LocalPlayer.talkNPC == NPC.whoAmI;
+				doll.BodyPose = talking ? -1 : BodyPose(tick);
+				doll.LegPose = talking ? -1 : LegPose(tick);
+				doll.Draw(NPC, look, NPC.Bottom + new Vector2(0f, NPC.gfxOffY - (talking ? 0f : DrawLift(tick))));
+			}
+			catch (System.Exception e) {
+				// Never crash the game over a cosmetic: fall back to the sprite sheet for good.
+				dollFailed = true;
+				Mod.Logger.Warn("Casino person renderer failed, using sprite: " + e.Message);
+			}
+			return false;
+		}
+
+		/// <summary>Draws the sprite sheet (fallback); returns whether vanilla should draw instead.</summary>
+		protected virtual bool DrawSprite(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) => true;
 
 		public override void SetStaticDefaults()
 		{

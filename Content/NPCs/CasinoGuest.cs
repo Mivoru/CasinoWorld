@@ -30,7 +30,7 @@ namespace CasinoWorld.Content.NPCs
 		protected override int VanillaLook => NPCID.Guide;
 		protected override int ChatLines => 12;
 
-		private string Look => Looks[Math.Clamp((int)NPC.ai[3], 0, Looks.Length - 1)];
+		private string SpriteLook => Looks[Math.Clamp((int)NPC.ai[3], 0, Looks.Length - 1)];
 
 		private ref float State => ref NPC.ai[0];
 		private ref float Timer => ref NPC.ai[1];
@@ -121,9 +121,27 @@ namespace CasinoWorld.Content.NPCs
 			}
 		}
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+		private PersonLook personLook;
+
+		/// <summary>Every guest is a unique vanilla-style person, the same on every client (seeded by world and slot).</summary>
+		protected override PersonLook Look => personLook ??= PersonLook.RandomGuest(Main.worldID * 977 + NPC.whoAmI * 131 + (int)NPC.ai[3]);
+
+		/// <summary>While lingering at a table the guest now and then places a bet, and rarely cheers.</summary>
+		protected override int BodyPose(int tick)
 		{
-			Texture2D texture = ModContent.Request<Texture2D>("CasinoWorld/Content/NPCs/People/" + Look).Value;
+			if (State != 1)
+				return -1;
+			int cycle = tick % 420;
+			if (cycle < 16)
+				return cycle < 8 ? PersonDoll.ArmForward : PersonDoll.ArmDown;
+			if ((tick / 420) % 7 == 3 && cycle > 200 && cycle < 260)
+				return (cycle / 10) % 2 == 0 ? PersonDoll.ArmUp : PersonDoll.ArmUpForward;
+			return -1;
+		}
+
+		protected override bool DrawSprite(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+		{
+			Texture2D texture = ModContent.Request<Texture2D>("CasinoWorld/Content/NPCs/People/" + SpriteLook).Value;
 			int frames = LookFrames;
 			int frameHeight = texture.Height / frames;
 			int frame = Math.Min((int)NPC.localAI[0], frames - 1);

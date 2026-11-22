@@ -4,6 +4,8 @@ using CasinoWorld.Content.Items;
 using CasinoWorld.Content.Items.Crates;
 using CasinoWorld.Content.Projectiles;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using CasinoWorld.Content.Items.Armor;
 using Terraria;
 using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.Personalities;
@@ -78,6 +80,40 @@ namespace CasinoWorld.Content.NPCs.People
 			foreach (Player player in Main.ActivePlayers) {
 				if (player.HasItem(ModContent.ItemType<LoyaltyToken>()))
 					return true;
+			}
+			return false;
+		}
+
+		// Drawn like a vanilla town NPC wearing the Gambler set (fedora, vest, shoes), which doubles as an
+		// in-game showcase of the armour. Sitting uses the sprite sheet, since the doll cannot sit.
+		private PersonDoll doll;
+		private bool dollFailed;
+		private static PersonLook look;
+
+		private static PersonLook GamblerLook => look ??= new PersonLook {
+			Hair = 16, SkinVariant = 0, Skin = new(235, 185, 145), HairColor = new(40, 30, 25),
+			Shirt = new(60, 20, 30), UnderShirt = new(230, 225, 215), Pants = new(30, 25, 30), Shoes = new(20, 15, 15),
+			HeadVanity = ModContent.ItemType<GamblerFedora>(), BodyVanity = ModContent.ItemType<GamblerVest>(),
+			LegsVanity = ModContent.ItemType<GamblerShoes>(), Accessory = ItemID.Sunglasses,
+		};
+
+		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+		{
+			bool sitting = NPC.ai[0] == 5f;
+			if (dollFailed || sitting || NPC.IsABestiaryIconDummy)
+				return true;
+			try {
+				doll ??= new PersonDoll();
+				bool attacking = NPC.ai[0] == 10f;
+				// Throw: arm up, then forward and down as the card leaves the hand.
+				doll.BodyPose = attacking ? (NPC.ai[1] > 30 ? PersonDoll.ArmUp : NPC.ai[1] > 15 ? PersonDoll.ArmForward : PersonDoll.ArmDown) : -1;
+				doll.LegPose = -1;
+				doll.Draw(NPC, GamblerLook, NPC.Bottom + new Vector2(0f, NPC.gfxOffY));
+			}
+			catch (System.Exception e) {
+				dollFailed = true;
+				Mod.Logger.Warn("Gambler renderer failed, using sprite: " + e.Message);
+				return true;
 			}
 			return false;
 		}
