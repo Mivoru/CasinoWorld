@@ -44,6 +44,7 @@ namespace CasinoWorld.Content.Tiles
 		public override void Unload()
 		{
 			glow = null;
+			symbols = null;
 		}
 
 		public static Point16 TopLeft(int i, int j)
@@ -75,6 +76,37 @@ namespace CasinoWorld.Content.Tiles
 				r = 0.6f;
 				g = 0.2f;
 				b = 0.5f;
+			}
+		}
+
+		private static Asset<Texture2D> symbols;
+
+		// Reel window centres inside the 48x64 sprite (from the Blender model: x 0.92/1.42/1.92, z 2.4 tiles).
+		private static readonly Vector2[] ReelCentres = { new(14.7f, 25.6f), new(22.7f, 25.6f), new(30.7f, 25.6f) };
+
+		public override void DrawEffects(int i, int j, SpriteBatch spriteBatch, ref Terraria.DataStructures.TileDrawInfo drawData)
+		{
+			if (drawData.tileFrameX % 54 == 0 && drawData.tileFrameY % 72 == 0)
+				Main.instance.TilesRenderer.AddSpecialLegacyPoint(i, j);
+		}
+
+		/// <summary>
+		/// Idle attract mode: the reels in the window flick through symbols every so often, each machine on
+		/// its own rhythm. Drawn after all tiles so the glow mask does not cover it.
+		/// </summary>
+		public override void SpecialDraw(int i, int j, SpriteBatch spriteBatch)
+		{
+			symbols ??= ModContent.Request<Texture2D>("CasinoWorld/Assets/UI/SlotSymbols");
+			Vector2 offScreen = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
+			Vector2 origin = new Vector2(i * 16, j * 16) - Main.screenPosition + offScreen;
+			float time = Main.GlobalTimeWrappedHourly;
+			int seed = i * 7 + j * 13;
+			bool spinning = (time * 0.6f + seed * 0.37f) % 4f < 0.8f;
+			for (int k = 0; k < 3; k++) {
+				int symbol = spinning
+					? (int)(time * 18f + k * 2 + seed) % 7
+					: (int)(time * 0.6f + seed * 0.37f + k * 1.3f) % 7;
+				spriteBatch.Draw(symbols.Value, origin + ReelCentres[k], new Rectangle(symbol * 64, 0, 64, 64), Color.White, 0f, new Vector2(32), 0.1f, SpriteEffects.None, 0f);
 			}
 		}
 

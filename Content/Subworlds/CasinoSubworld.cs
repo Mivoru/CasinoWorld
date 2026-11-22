@@ -39,8 +39,8 @@ namespace CasinoWorld.Content.Subworlds
 		/// <summary>Items that big wins in this casino can drop (Gambler weapons and armour).</summary>
 		public abstract int[] JackpotItems { get; }
 
-		/// <summary>Tile x positions guests walk between (tables, machines, bar).</summary>
-		public abstract int[] GuestSpots { get; }
+		/// <summary>Spots guests walk between: tile x and the floor row they stand on (guests stay on their floor).</summary>
+		public abstract Microsoft.Xna.Framework.Point[] GuestSpots { get; }
 
 		/// <summary>Spawns the staff and guests. Runs on the server or in single player only.</summary>
 		protected abstract void SpawnPeople();

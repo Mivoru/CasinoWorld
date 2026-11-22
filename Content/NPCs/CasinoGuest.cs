@@ -93,10 +93,15 @@ namespace CasinoWorld.Content.NPCs
 
 		private float PickDestination()
 		{
-			int[] spots = (SubworldLibrary.SubworldSystem.Current as CasinoSubworld)?.GuestSpots;
-			if (spots == null || spots.Length == 0)
+			Microsoft.Xna.Framework.Point[] all = (SubworldLibrary.SubworldSystem.Current as CasinoSubworld)?.GuestSpots;
+			if (all == null || all.Length == 0)
 				return NPC.Center.X;
-			int tileX = spots[Main.rand.Next(spots.Length)] + Main.rand.Next(-2, 3);
+			// Only spots on this guest's own floor (guests do not take the stairs).
+			int floorRow = (int)(NPC.Bottom.Y / 16f);
+			Microsoft.Xna.Framework.Point[] spots = System.Array.FindAll(all, p => System.Math.Abs(p.Y - floorRow) <= 3);
+			if (spots.Length == 0)
+				return NPC.Center.X;
+			int tileX = spots[Main.rand.Next(spots.Length)].X + Main.rand.Next(-2, 3);
 			return tileX * 16 + 8;
 		}
 

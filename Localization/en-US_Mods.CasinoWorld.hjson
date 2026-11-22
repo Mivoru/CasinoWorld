@@ -320,6 +320,8 @@ Tiles: {
 	CasinoFacade.MapEntry: Casino
 	RouletteTable.MapEntry: Roulette Table
 	SlotMachine.MapEntry: Slot Machine
+	CasinoElevator.MapEntry: Elevator
+	CasinoFountain.MapEntry: Fountain
 	CasinoSignTile.MapEntry: Casino Sign
 	UpgradeMachine.MapEntry: Upgrade Machine
 	LuckyCrateTile.MapEntry: Lucky Crate
@@ -382,6 +384,16 @@ Bestiary: {
 
 NPCs: {
 	HowToPlay: How to play
+
+	Showgirl: {
+		DisplayName: Showgirl
+		Chat: {
+			0: Two shows a night, every night. The House never closes, and neither do these legs!
+			1: Feathers are imported. The smile is real. The tips are encouraged.
+			2: The bartender says I kick higher than the slot machines pay out. He is right.
+			3: Enjoy the show, sugar. Then go lose some money, it keeps the lights on.
+		}
+	}
 
 	TownGambler: {
 		DisplayName: Gambler
@@ -552,6 +564,8 @@ Coins: {
 
 UI: {
 	EnterCasino: Enter
+	ElevatorUp: Elevator: up
+	ElevatorDown: Elevator: down
 	ExitCasino: Exit
 	EnterPrompt: "[{0}] or right-click: Enter"
 	ExitPrompt: "[{0}] or right-click: Exit"

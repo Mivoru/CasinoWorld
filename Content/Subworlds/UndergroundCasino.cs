@@ -45,12 +45,21 @@ namespace CasinoWorld.Content.Subworlds
 				? new[] { ModContent.ItemType<AceOfSpades>(), ModContent.ItemType<DoublingDice>(), ModContent.ItemType<RouletteRevolver>() }
 				: new[] { ModContent.ItemType<SnakeEyes>(), ModContent.ItemType<RoyalFlush>(), ModContent.ItemType<JackpotCannon>() };
 
-		public override int[] GuestSpots => Spots;
+		public override Microsoft.Xna.Framework.Point[] GuestSpots => Spots;
 
-		private static readonly int[] Spots = {
-			HallLeft + SlotsStart + 1, HallLeft + SlotsStart + 9, HallLeft + SlotsStart + 17, HallLeft + SlotsStart + 25,
-			HallLeft + Roulette + 2, HallLeft + Roulette + 4, HallLeft + BlackjackA + 2, HallLeft + BlackjackB + 3,
-			HallLeft + BarStart + 2, HallLeft + BarStart + 8, HallLeft + BarStart + 14, HallLeft + PrizeCounter - 4,
+		private static readonly Microsoft.Xna.Framework.Point[] Spots = {
+			new(HallLeft + SlotsStart + 1, HallFloor),
+			new(HallLeft + SlotsStart + 9, HallFloor),
+			new(HallLeft + SlotsStart + 17, HallFloor),
+			new(HallLeft + SlotsStart + 25, HallFloor),
+			new(HallLeft + Roulette + 2, HallFloor),
+			new(HallLeft + Roulette + 4, HallFloor),
+			new(HallLeft + BlackjackA + 2, HallFloor),
+			new(HallLeft + BlackjackB + 3, HallFloor),
+			new(HallLeft + BarStart + 2, HallFloor),
+			new(HallLeft + BarStart + 8, HallFloor),
+			new(HallLeft + BarStart + 14, HallFloor),
+			new(HallLeft + PrizeCounter - 4, HallFloor),
 		};
 
 		public override List<GenPass> Tasks => new() { new UndergroundCasinoPass() };
@@ -66,7 +75,7 @@ namespace CasinoWorld.Content.Subworlds
 			SpawnAt<Bartender>(HallLeft + BarEnd + 3, HallFloor, -1);
 
 			for (int k = 0; k < GuestCount; k++)
-				SpawnAt<CasinoGuest>(Spots[Main.rand.Next(Spots.Length)], HallFloor);
+				SpawnAt<CasinoGuest>(Spots[Main.rand.Next(Spots.Length)].X, HallFloor);
 		}
 	}
 
