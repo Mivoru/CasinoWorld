@@ -1,4 +1,5 @@
 using CasinoWorld.Common.Gambler;
+using CasinoWorld.Common.Upgrades;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -12,7 +13,7 @@ namespace CasinoWorld.Content.Items.Armor
 	/// plus 3 from the set bonus. Luck 7 raises average gambler damage by 21 % (see GamblerPlayer).
 	/// </summary>
 	[AutoloadEquip(EquipType.Head)]
-	public class GamblerFedora : ModItem
+	public class GamblerFedora : ModItem, IGamblerUpgradeable
 	{
 		public override void SetStaticDefaults()
 		{
@@ -47,7 +48,7 @@ namespace CasinoWorld.Content.Items.Armor
 	}
 
 	[AutoloadEquip(EquipType.Body)]
-	public class GamblerVest : ModItem
+	public class GamblerVest : ModItem, IGamblerUpgradeable
 	{
 		public override void SetDefaults()
 		{
@@ -65,7 +66,7 @@ namespace CasinoWorld.Content.Items.Armor
 	}
 
 	[AutoloadEquip(EquipType.Legs)]
-	public class GamblerShoes : ModItem
+	public class GamblerShoes : ModItem, IGamblerUpgradeable
 	{
 		public override void SetDefaults()
 		{

@@ -13,7 +13,7 @@ namespace CasinoWorld.Content.Items.Weapons
 	/// the Eye of Cthulhu and Skeletron (average damage per second similar to vanilla
 	/// weapons of that stage; the Jackpot/Bust roll averages to 1.0).
 	/// </summary>
-	public abstract class GamblerWeapon : ModItem
+	public abstract class GamblerWeapon : ModItem, Common.Upgrades.IGamblerUpgradeable
 	{
 		public override void SetDefaults()
 		{

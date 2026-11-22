@@ -47,6 +47,9 @@ namespace CasinoWorld.Common.Games
 
 		protected abstract UIState CreateState();
 
+		/// <summary>True for station-like windows that work with the inventory open (they close with it).</summary>
+		protected virtual bool KeepInventoryOpen => false;
+
 		/// <summary>Runs every frame on the client, also while the window is closed.</summary>
 		protected virtual void UpdateGame(Player player) { }
 
@@ -86,7 +89,7 @@ namespace CasinoWorld.Common.Games
 
 			active = this;
 			Table = table;
-			Main.playerInventory = false;
+			Main.playerInventory = KeepInventoryOpen;
 			ui.SetState(state);
 			SoundEngine.PlaySound(SoundID.MenuOpen);
 		}
@@ -109,8 +112,8 @@ namespace CasinoWorld.Common.Games
 			Tile tile = Main.tile[Table.X, Table.Y];
 			bool tableGone = !tile.HasTile || tile.TileType != TableTileType;
 			Vector2 tableCenter = new Point16(Table.X + TableSize.X / 2, Table.Y + TableSize.Y / 2).ToWorldCoordinates();
-			if (player.dead || tableGone || Casino == null || player.Distance(tableCenter) > MaxDistance
-				|| PlayerInput.Triggers.JustPressed.Inventory) {
+			bool inventoryClose = KeepInventoryOpen ? !Main.playerInventory : PlayerInput.Triggers.JustPressed.Inventory;
+			if (player.dead || tableGone || Casino == null || player.Distance(tableCenter) > MaxDistance || inventoryClose) {
 				Close();
 				return;
 			}

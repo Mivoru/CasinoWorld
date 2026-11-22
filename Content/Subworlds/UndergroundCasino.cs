@@ -26,7 +26,7 @@ namespace CasinoWorld.Content.Subworlds
 		// Furniture positions, as tile offsets from HallLeft.
 		public const int SlotsStart = 12, SlotCount = 8, SlotStep = 4;
 		public const int Roulette = 50, BlackjackA = 66, BlackjackB = 80;
-		public const int PrizeCounter = 96, BarStart = 106, BarEnd = 122;
+		public const int PrizeCounter = 96, BarStart = 106, BarEnd = 122, UpgradeStation = 88;
 		private const int GuestCount = 8;
 
 		public override int Width => 220;
@@ -173,6 +173,8 @@ namespace CasinoWorld.Content.Subworlds
 			WorldGen.PlaceObject(Left + UndergroundCasino.Roulette, Floor - 1, ModContent.TileType<RouletteTable>(), mute: true);
 			WorldGen.PlaceObject(Left + UndergroundCasino.BlackjackA, Floor - 1, ModContent.TileType<BlackjackTable>(), mute: true);
 			WorldGen.PlaceObject(Left + UndergroundCasino.BlackjackB, Floor - 1, ModContent.TileType<BlackjackTable>(), mute: true);
+
+			WorldGen.PlaceObject(Left + UndergroundCasino.UpgradeStation, Floor - 1, ModContent.TileType<UpgradeMachine>(), mute: true);
 
 			WorldGen.PlaceObject(Left + UndergroundCasino.PrizeCounter - 1, Floor - 1, TileID.Tables, mute: true, style: 0);
 			WorldGen.PlaceTile(Left + UndergroundCasino.PrizeCounter - 1, Floor - 3, TileID.PlatinumCoinPile, mute: true, forced: true);

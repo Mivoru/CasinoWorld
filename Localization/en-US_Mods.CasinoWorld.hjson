@@ -158,6 +158,7 @@ Tiles: {
 	CasinoFacade.MapEntry: Casino
 	RouletteTable.MapEntry: Roulette Table
 	SlotMachine.MapEntry: Slot Machine
+	UpgradeMachine.MapEntry: Upgrade Machine
 	LuckyCrateTile.MapEntry: Lucky Crate
 	HighRollerCrateTile.MapEntry: High Roller Crate
 	UndergroundCasinoFacade.MapEntry: High Rollers Casino
@@ -170,6 +171,34 @@ WorldGen: {
 	UndergroundOpened: "Deep underground, a casino for high rollers has opened its vault! (about {0} ft {1} of spawn, {2} ft deep)"
 	East: east
 	West: west
+}
+
+Upgrade: {
+	Hover: Upgrade Gambler gear
+	Title: Upgrade Machine
+	DropHere: Drop item
+	Hint:
+		'''
+		Put a Gambler weapon or armor
+		piece into the slot.
+		'''
+	NextWeapon: "Next: +{0} ({1}% damage)"
+	NextArmor: "Next: +{0} (+{1} defense, +{2} Luck)"
+	Cost: "Cost per try:"
+	Chance: "Success chance: {0}%"
+	Upgrade: Upgrade
+	BoostOff: "Boost: off"
+	BoostOn: "Boost: ON (x2, +15%)"
+	NoLoss: A failed upgrade only costs materials. Your item is safe.
+	Working: Upgrading...
+	Success: "Success! The item is now +{0}."
+	Fail: Failed. The materials are gone, the item is unharmed.
+	Maxed: This item is fully upgraded.
+	NoMaterials: Not enough materials.
+	NoMoney: Not enough coins for the fee.
+	NotUpgradeable: Only Gambler weapons and armor can be upgraded.
+	WeaponBonus: "Upgrade +{0}: {1}% increased damage"
+	ArmorBonus: "Upgrade +{0}: +{1} defense, +{2} Luck"
 }
 
 Bestiary: {
