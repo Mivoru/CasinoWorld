@@ -1,0 +1,3 @@
+displayName = Casino World
+author = Mivoru
+version = 0.1
