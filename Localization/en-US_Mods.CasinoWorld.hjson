@@ -260,6 +260,11 @@ Commands: {
 		Description: "[Dev] Builds the surface casino where you stand"
 		Done: Casino built.
 	}
+
+	CasinoVip: {
+		Description: "[Dev] Builds the underground casino entrance where you stand"
+		Done: High Rollers Casino built.
+	}
 }
 
 Subworlds: {
