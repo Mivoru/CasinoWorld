@@ -74,6 +74,9 @@ namespace CasinoWorld.Content.Subworlds
 			SpawnAt<BlackjackDealer>(HallLeft + BlackjackB + 7, HallFloor, -1);
 			SpawnAt<PrizeCashier>(HallLeft + PrizeCounter + 1, HallFloor, -1);
 			SpawnAt<Bartender>(HallLeft + BarEnd + 3, UpperFloor, -1);
+			// Easter egg: one visit in three, Togi is streaming from the upstairs slots.
+			if (Main.rand.NextBool(3))
+				SpawnAt<Togi>(HallLeft + UpperSlots + 10, UpperFloor, -1);
 			SpawnAt<Showgirl>(HallLeft + (StageLeft + StageRight) / 2, UpperFloor - 2, 1);
 
 			// Spread guests over both floors: even ones downstairs, odd ones upstairs.

@@ -467,6 +467,41 @@ NPCs: {
 		}
 	}
 
+	Togi: {
+		DisplayName: Togi
+		Bonus: BONUS!!! CHAT, LOOK!
+		Chat: {
+			0: Shh, I'm live. Say hi to chat! ...Chat says your armour is mid.
+			1: One more spin. Then I stop. Probably. Definitely. One more.
+			2: This machine owes me. I can feel it. The bonus is RIGHT there.
+			3: Rule number one: never bet what you can't lose. Rule number two: forget rule number one, the bonus is coming.
+			4: You want tips? Bet small, scream big. The machine respects energy.
+			5: If I hit the jackpot, everyone in chat gets... my respect. That's priceless.
+		}
+		Overhead: {
+			0: Chat, chat, CHAT!
+			1: Come on, come on...
+			2: Bonus buy? Bonus buy.
+			3: That was SO close!
+			4: Three sevens, I'm begging.
+			5: Who's tilting? Not me.
+			6: Last spin. Okay, last last spin.
+			7: Subscribe for luck!
+		}
+	}
+
+	CasinoVisitor: {
+		DisplayName: Casino Guest
+		Chat: {
+			0: Just getting some air. Gotta clear my head before I double down.
+			1: The roulette table is hot tonight. Or I am. One of us is.
+			2: Don't tell my spouse I'm here. I'm "at the blacksmith".
+			3: Fresh air! Ugh, too fresh. Back to the slots.
+			4: Lost my shirt in there. Well, not literally. Yet.
+			5: You going in? The bartender makes a mean Golden Chip Fizz.
+		}
+	}
+
 	TownGambler: {
 		DisplayName: Gambler
 
