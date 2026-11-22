@@ -31,6 +31,91 @@ Tiles: {
 
 WorldGen.SurfaceCasino: Building the casino
 
+NPCs: {
+	HowToPlay: How to play
+
+	RouletteCroupier: {
+		DisplayName: Croupier
+		Chat: {
+			0: Place your bets, place your bets! The wheel waits for no one.
+			1: Zero is green, and green is the house's favourite colour.
+			2: I've seen people bet their last silver on 17. I've also seen them walk home.
+			3: The ball has no memory. Red ten times in a row means nothing. Probably.
+			4: Lovely evening for losing money, isn't it? I mean, winning. Definitely winning.
+			5: Tips are appreciated. So are platinum coins.
+		}
+		Help:
+			'''
+			Click a field to put your chip there, right-click to take it back.
+			A single number pays 35 to 1. A dozen or a column pays 2 to 1.
+			Red, black, odd, even, 1-18 and 19-36 pay 1 to 1. Zero loses all of those.
+			Press Spin and pray.
+			'''
+	}
+
+	BlackjackDealer: {
+		DisplayName: Dealer
+		Chat: {
+			0: Get closer to 21 than me without going over. Simple. Painful, but simple.
+			1: Always split aces and eights. Never split tens. Trust me, I've watched.
+			2: The dealer stands on 17. I don't make the rules. Well, I do, but I don't make them.
+			3: Six decks in the shoe. Counting them won't help. Probably.
+			4: Hit me? Sir, this is a card game.
+			5: If you see me smile at 16, that's just my face.
+		}
+		Help:
+			'''
+			Pick chips for your bet and press Deal.
+			Hit draws a card, Stand keeps your hand. Go over 21 and you bust.
+			Double: double your bet, take exactly one more card.
+			Split: two cards of the same value become two hands.
+			Blackjack (an ace and a ten) pays 3 to 2. I stand on 17.
+			'''
+	}
+
+	Bartender: {
+		DisplayName: Bartender
+		Chat: {
+			0: Drinks are on the house! Kidding. Drinks are on you.
+			1: Nobody ever won a hand sober. Nobody ever won a hand drunk either.
+			2: That guest over there lost a house last week. Literally. He bet his house.
+			3: A little Ale helps the losses go down smooth.
+			4: Have you tried the Cream Soda? Tastes like a jackpot.
+			5: I keep a bucket behind the bar for tears. It's full.
+		}
+	}
+
+	CasinoGuest: {
+		DisplayName: Gambler
+		Chat: {
+			0: One more spin. Just one. Then I go home. Probably.
+			1: I'm not addicted, I'm invested.
+			2: My system is foolproof. I double my bet every time I lose. What could go wrong?
+			3: Red is due. Red has to be due.
+			4: I came here with a gold coin and a dream. Now I just have the dream.
+			5: Don't tell my wife I'm here. She thinks I'm fighting the Eye of Cthulhu.
+			6: Ninety-nine percent of gamblers quit right before they win big!
+			7: I had a feeling about 13. The feeling was wrong.
+			8: The house always wins? Then I'll buy the house!
+			9: Lend me ten silver? I'll pay you back twice. Three times! Maybe.
+			10: I sold my pickaxe for chips. Mining is for people without a plan.
+			11: Lucky charm? I've got seven of them. They're not working.
+		}
+		Overhead: {
+			0: Come on, red!
+			1: Just one more...
+			2: Daddy needs new boots!
+			3: I can feel it!
+			4: Not again!
+			5: All in!
+			6: Hit me!
+			7: Easy money!
+			8: Where did my coins go?
+			9: Lucky number 7!
+		}
+	}
+}
+
 Commands.CasinoHere: {
 	Description: "[Dev] Builds the surface casino where you stand"
 	Done: Casino built.

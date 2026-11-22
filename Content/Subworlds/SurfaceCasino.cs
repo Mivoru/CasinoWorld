@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using CasinoWorld.Content.NPCs;
 using CasinoWorld.Content.Tiles;
 using Terraria;
 using Terraria.ID;
@@ -28,12 +29,31 @@ namespace CasinoWorld.Content.Subworlds
 		public override long[] ChipValues => new long[] { 100, 1_000, 10_000, 50_000 };
 		public override long MaxBet => 200_000;
 
+		// Furniture positions, as tile offsets from HallLeft.
+		public const int RouletteA = 16, RouletteB = 28, BlackjackA = 46, BlackjackB = 58;
+		public const int BarStart = 84, BarEnd = 100;
+		private const int GuestCount = 6;
+
+		/// <summary>Tile x positions guests walk to: beside the tables and at the bar.</summary>
+		public static readonly int[] GuestSpots = {
+			HallLeft + RouletteA + 2, HallLeft + RouletteA + 4, HallLeft + RouletteB + 2, HallLeft + RouletteB + 4,
+			HallLeft + BlackjackA + 2, HallLeft + BlackjackA + 4, HallLeft + BlackjackB + 2, HallLeft + BlackjackB + 4,
+			HallLeft + BarStart + 1, HallLeft + BarStart + 6, HallLeft + BarStart + 11, HallLeft + 75,
+		};
+
 		public override List<GenPass> Tasks => new() { new SurfaceCasinoPass() };
 
-		public override void OnLoad()
+		protected override void SpawnPeople()
 		{
-			Main.dayTime = true;
-			Main.time = 27000;
+			// Staff stand at the right end of each table, facing it.
+			SpawnAt<RouletteCroupier>(HallLeft + RouletteA + 7, HallFloor, -1);
+			SpawnAt<RouletteCroupier>(HallLeft + RouletteB + 7, HallFloor, -1);
+			SpawnAt<BlackjackDealer>(HallLeft + BlackjackA + 7, HallFloor, -1);
+			SpawnAt<BlackjackDealer>(HallLeft + BlackjackB + 7, HallFloor, -1);
+			SpawnAt<Bartender>(HallLeft + BarEnd + 3, HallFloor, -1);
+
+			for (int k = 0; k < GuestCount; k++)
+				SpawnAt<CasinoGuest>(GuestSpots[Main.rand.Next(GuestSpots.Length)], HallFloor);
 		}
 	}
 
@@ -90,20 +110,20 @@ namespace CasinoWorld.Content.Subworlds
 			WorldGen.PlaceObject(left + 3, floor - 1, ModContent.TileType<CasinoDoor>(), mute: true);
 
 			// Roulette area.
-			WorldGen.PlaceObject(left + 16, floor - 1, ModContent.TileType<RouletteTable>(), mute: true);
-			WorldGen.PlaceObject(left + 28, floor - 1, ModContent.TileType<RouletteTable>(), mute: true);
+			WorldGen.PlaceObject(left + SurfaceCasino.RouletteA, floor - 1, ModContent.TileType<RouletteTable>(), mute: true);
+			WorldGen.PlaceObject(left + SurfaceCasino.RouletteB, floor - 1, ModContent.TileType<RouletteTable>(), mute: true);
 
 			// Blackjack area.
-			WorldGen.PlaceObject(left + 46, floor - 1, ModContent.TileType<BlackjackTable>(), mute: true);
-			WorldGen.PlaceObject(left + 58, floor - 1, ModContent.TileType<BlackjackTable>(), mute: true);
+			WorldGen.PlaceObject(left + SurfaceCasino.BlackjackA, floor - 1, ModContent.TileType<BlackjackTable>(), mute: true);
+			WorldGen.PlaceObject(left + SurfaceCasino.BlackjackB, floor - 1, ModContent.TileType<BlackjackTable>(), mute: true);
 
 			// Bar corner: counter of tables with drinks, kegs behind it.
-			for (int x = left + 84; x <= left + 100; x += 4) {
+			for (int x = left + SurfaceCasino.BarStart; x <= left + SurfaceCasino.BarEnd; x += 4) {
 				WorldGen.PlaceObject(x, floor - 1, TileID.Tables, mute: true, style: 0);
 				WorldGen.PlaceTile(x, floor - 3, TileID.Bottles, mute: true, forced: true, style: 4);
 			}
-			WorldGen.PlaceObject(left + 106, floor - 1, TileID.Kegs, mute: true);
-			WorldGen.PlaceObject(left + 110, floor - 1, TileID.Kegs, mute: true);
+			WorldGen.PlaceObject(left + SurfaceCasino.BarEnd + 6, floor - 1, TileID.Kegs, mute: true);
+			WorldGen.PlaceObject(left + SurfaceCasino.BarEnd + 10, floor - 1, TileID.Kegs, mute: true);
 
 			// Pots of plants at the ends of the hall.
 			WorldGen.PlaceObject(left + 12, floor - 1, TileID.PottedPlants1, mute: true, style: 0);
