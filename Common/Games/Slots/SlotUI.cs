@@ -34,7 +34,9 @@ namespace CasinoWorld.Common.Games.Slots
 		public const int PanelHeight = 430;
 
 		private const int ReelW = 100, ReelH = 112, ReelGap = 10, Cell = 92;
-		private const float SymbolScale = 2.4f;
+		// Symbols are 64 px pixel art rendered from 3D models (blender/CasinoWorld/render_slot_symbols.py).
+		private const int SymbolPx = 64;
+		private const float SymbolScale = 1.2f;
 
 		private static readonly Color Cabinet = new(70, 34, 104);
 		private static readonly Color CabinetDark = new(40, 18, 62);
@@ -203,17 +205,17 @@ namespace CasinoWorld.Common.Games.Slots
 		private static void DrawSymbolClipped(SpriteBatch sb, int symbol, float centerY, Rectangle box)
 		{
 			Texture2D tex = symbols.Value;
-			float size = 32 * SymbolScale;
+			float size = SymbolPx * SymbolScale;
 			float top = centerY - size / 2f;
 			float clipTop = Math.Max(top, box.Top), clipBottom = Math.Min(top + size, box.Bottom);
 			if (clipBottom <= clipTop)
 				return;
 
 			int srcY = (int)((clipTop - top) / SymbolScale);
-			int srcH = Math.Min(32 - srcY, (int)Math.Ceiling((clipBottom - clipTop) / SymbolScale));
+			int srcH = Math.Min(SymbolPx - srcY, (int)Math.Ceiling((clipBottom - clipTop) / SymbolScale));
 			if (srcH <= 0)
 				return;
-			var src = new Rectangle(symbol * 32, srcY, 32, srcH);
+			var src = new Rectangle(symbol * SymbolPx, srcY, SymbolPx, srcH);
 			sb.Draw(tex, new Vector2(box.Center.X - size / 2f, top + srcY * SymbolScale), src, Color.White, 0f, Vector2.Zero, SymbolScale, SpriteEffects.None, 0f);
 		}
 
@@ -236,15 +238,15 @@ namespace CasinoWorld.Common.Games.Slots
 			float y = pos.Y + 24;
 			for (int s = SlotRules.SymbolCount - 1; s >= 0; s--) {
 				for (int k = 0; k < 3; k++)
-					sb.Draw(tex, new Vector2(pos.X + k * 18, y), new Rectangle(s * 32, 0, 32, 32), Color.White, 0f, Vector2.Zero, 0.5f, SpriteEffects.None, 0f);
+					sb.Draw(tex, new Vector2(pos.X + k * 18, y), new Rectangle(s * SymbolPx, 0, SymbolPx, SymbolPx), Color.White, 0f, Vector2.Zero, 0.25f, SpriteEffects.None, 0f);
 				Utils.DrawBorderString(sb, "x" + SlotRules.TriplePays[s], new Vector2(pos.X + 62, y + 2), Color.White, 0.75f);
 				y += 20;
 			}
 			for (int k = 0; k < 2; k++)
-				sb.Draw(tex, new Vector2(pos.X + k * 18, y), new Rectangle(0, 0, 32, 32), Color.White, 0f, Vector2.Zero, 0.5f, SpriteEffects.None, 0f);
+				sb.Draw(tex, new Vector2(pos.X + k * 18, y), new Rectangle(0, 0, SymbolPx, SymbolPx), Color.White, 0f, Vector2.Zero, 0.25f, SpriteEffects.None, 0f);
 			Utils.DrawBorderString(sb, "x" + SlotRules.TwoCherriesPay, new Vector2(pos.X + 62, y + 2), Color.White, 0.75f);
 			y += 20;
-			sb.Draw(tex, new Vector2(pos.X, y), new Rectangle(0, 0, 32, 32), Color.White, 0f, Vector2.Zero, 0.5f, SpriteEffects.None, 0f);
+			sb.Draw(tex, new Vector2(pos.X, y), new Rectangle(0, 0, SymbolPx, SymbolPx), Color.White, 0f, Vector2.Zero, 0.25f, SpriteEffects.None, 0f);
 			Utils.DrawBorderString(sb, "x" + SlotRules.OneCherryPay, new Vector2(pos.X + 62, y + 2), Color.White, 0.75f);
 		}
 	}

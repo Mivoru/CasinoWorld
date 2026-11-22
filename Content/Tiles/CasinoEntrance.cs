@@ -21,8 +21,8 @@ namespace CasinoWorld.Content.Tiles
 	/// </summary>
 	public abstract class CasinoEntrance : ModTile
 	{
-		protected abstract int EntranceWidth { get; }
-		protected abstract int EntranceHeight { get; }
+		public abstract int EntranceWidth { get; }
+		public abstract int EntranceHeight { get; }
 
 		/// <summary>Door area in local tile coordinates.</summary>
 		public abstract Rectangle DoorArea { get; }
@@ -33,7 +33,10 @@ namespace CasinoWorld.Content.Tiles
 		protected abstract Color MapColor { get; }
 
 		/// <summary>Light colour multiplier (r, g, b) applied to the light table.</summary>
-		protected virtual Vector3 LightColor => new(1.05f, 0.78f, 0.42f);
+		public virtual Vector3 LightColor => new(1.05f, 0.78f, 0.42f);
+
+		/// <summary>Light strength of one tile of the entrance, 0..1.</summary>
+		public float LightAt(int x, int y) => Light[y, x] / 255f;
 
 		/// <summary>Sends the local player into this entrance's casino.</summary>
 		public abstract void Enter();
