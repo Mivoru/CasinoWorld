@@ -35,16 +35,24 @@ namespace CasinoWorld.Common.Gambler
 		/// <summary>Luck from equipment, reset every tick.</summary>
 		public int Luck;
 
+		/// <summary>Extra jackpot chance from equipment (for example Ace Up the Sleeve), reset every tick.</summary>
+		public float BonusJackpotChance;
+
+		/// <summary>Wearing the full Gambler set: jackpots grant Hot Streak.</summary>
+		public bool HotStreakSet;
+
 		/// <summary>Copper wagered since the last loyalty token was paid out.</summary>
 		public long TokenProgress;
 
-		public float JackpotChance => Math.Clamp(BaseJackpotChance + Luck * JackpotPerLuck, 0f, MaxJackpotChance);
+		public float JackpotChance => Math.Clamp(BaseJackpotChance + Luck * JackpotPerLuck + BonusJackpotChance, 0f, MaxJackpotChance);
 
 		public float BustChance => Math.Clamp(BaseBustChance - Luck * BustPerLuck, 0f, 1f);
 
 		public override void ResetEffects()
 		{
 			Luck = 0;
+			BonusJackpotChance = 0f;
+			HotStreakSet = false;
 		}
 
 		public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers)
@@ -66,6 +74,8 @@ namespace CasinoWorld.Common.Gambler
 			float roll = Main.rand.NextFloat();
 			if (roll < JackpotChance) {
 				modifiers.SourceDamage *= JackpotMultiplier;
+				if (HotStreakSet)
+					Player.AddBuff(ModContent.BuffType<Content.Buffs.HotStreak>(), Content.Buffs.HotStreak.Duration);
 				CombatText.NewText(target.Hitbox, new Color(255, 215, 60), Language.GetTextValue("Mods.CasinoWorld.Gambler.Jackpot"), dramatic: true);
 				SoundEngine.PlaySound(SoundID.CoinPickup with { Pitch = 0.3f }, target.Center);
 				for (int k = 0; k < 8; k++)

@@ -34,6 +34,62 @@ Items: {
 		Currency: Loyalty Tokens
 	}
 
+	GamblerFedora: {
+		DisplayName: Gambler's Fedora
+		Tooltip:
+			'''
+			+1 Luck
+			5% increased gambler damage
+			'''
+		SetBonus:
+			'''
+			+3 Luck
+			Jackpots put you on a Hot Streak: 10% increased gambler damage
+			'''
+	}
+
+	GamblerVest: {
+		DisplayName: Gambler's Vest
+		Tooltip: +2 Luck
+	}
+
+	GamblerShoes: {
+		DisplayName: Gambler's Shoes
+		Tooltip:
+			'''
+			+1 Luck
+			5% increased movement speed
+			'''
+	}
+
+	FourLeafClover: {
+		DisplayName: Four-Leaf Clover
+		Tooltip: +2 Luck
+	}
+
+	AceUpTheSleeve: {
+		DisplayName: Ace Up the Sleeve
+		Tooltip: 3% increased jackpot chance
+	}
+
+	GolexWatch: {
+		DisplayName: Golex Watch
+		Tooltip:
+			'''
+			Displays your movement speed
+			Lets everyone know you are doing just fine
+			'''
+	}
+
+	Gamblorghini: {
+		DisplayName: Gamblorghini
+		Tooltip:
+			'''
+			Rides on minecart tracks
+			Zero to broke in 3.2 seconds
+			'''
+	}
+
 	LoadedDice: {
 		DisplayName: Loaded Dice
 		Tooltip: Throws a die that bounces along the ground
@@ -51,6 +107,11 @@ Items: {
 }
 
 DamageClasses.GamblerDamageClass.DisplayName: gambler damage
+
+Buffs.HotStreak: {
+	DisplayName: Hot Streak
+	Description: 10% increased gambler damage
+}
 
 Gambler: {
 	Jackpot: JACKPOT!

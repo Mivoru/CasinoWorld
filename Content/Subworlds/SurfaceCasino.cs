@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using CasinoWorld.Content.Items.Accessories;
+using CasinoWorld.Content.Items.Armor;
 using CasinoWorld.Content.Items.Weapons;
 using CasinoWorld.Content.NPCs;
 using CasinoWorld.Content.Tiles;
@@ -32,6 +34,8 @@ namespace CasinoWorld.Content.Subworlds
 
 		public override int[] JackpotItems => new[] {
 			ModContent.ItemType<LoadedDice>(), ModContent.ItemType<CardDeck>(), ModContent.ItemType<HighRoller>(),
+			ModContent.ItemType<GamblerFedora>(), ModContent.ItemType<GamblerVest>(), ModContent.ItemType<GamblerShoes>(),
+			ModContent.ItemType<FourLeafClover>(), ModContent.ItemType<AceUpTheSleeve>(),
 		};
 
 		// Furniture positions, as tile offsets from HallLeft.
