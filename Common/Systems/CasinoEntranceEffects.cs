@@ -4,6 +4,7 @@ using CasinoWorld.Content.Tiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace CasinoWorld.Common.Systems
@@ -22,7 +23,9 @@ namespace CasinoWorld.Common.Systems
 		private const int GlintLife = 36;
 		private const int MaxGlints = 24;
 
-		private static Texture2D halo, glint;
+		private const float ForegroundParallax = 0.08f;
+
+		private static Texture2D halo, glint, foreground;
 
 		private readonly List<(Vector2 pos, int age, Color color)> glints = new();
 
@@ -32,6 +35,7 @@ namespace CasinoWorld.Common.Systems
 				halo?.Dispose();
 				glint?.Dispose();
 				halo = glint = null;
+				foreground = null;
 			});
 		}
 
@@ -60,6 +64,93 @@ namespace CasinoWorld.Common.Systems
 			UpdateAndDrawGlints(begun);
 			if (begun)
 				Main.spriteBatch.End();
+
+			if (CasinoTravel.InCasino)
+				DrawInteriorBloom();
+
+			DrawForegroundLayers(screen);
+		}
+
+		/// <summary>
+		/// 2.5D depth for the underground entrance: a dark layer of stalactites and crystals drawn in front
+		/// of everything and shifted with the camera a little more than the world (parallax), so it reads
+		/// as closer to the viewer.
+		/// </summary>
+		private static void DrawForegroundLayers(Rectangle screen)
+		{
+			if (!CasinoWorldSystem.HasUndergroundCasino)
+				return;
+
+			Point topLeft = CasinoWorldSystem.UndergroundCasinoPosition;
+			var entrance = ModContent.GetInstance<UndergroundCasinoFacade>();
+			var area = new Rectangle(topLeft.X * 16, topLeft.Y * 16, entrance.EntranceWidth * 16, entrance.EntranceHeight * 16);
+			if (!area.Intersects(screen))
+				return;
+
+			foreground ??= ModContent.Request<Texture2D>("CasinoWorld/Assets/Effects/UndergroundForeground", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+			Vector2 screenCenter = Main.screenPosition + new Vector2(Main.screenWidth, Main.screenHeight) / 2f;
+			Vector2 parallax = (area.Center.ToVector2() - screenCenter) * ForegroundParallax;
+			Vector2 pos = area.TopLeft() - Main.screenPosition + parallax;
+			Color light = Lighting.GetColor(area.Center.X / 16, area.Center.Y / 16);
+			Color tint = Color.Lerp(new Color(70, 60, 90), light, 0.35f);
+
+			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None,
+				Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+			Main.spriteBatch.Draw(foreground, pos, tint);
+			Main.spriteBatch.End();
+		}
+
+		public override void PostUpdateEverything()
+		{
+			if (Main.dedServ || Main.gameMenu || !CasinoWorldSystem.HasUndergroundCasino)
+				return;
+
+			// Glowing motes drifting up around the underground entrance.
+			Point topLeft = CasinoWorldSystem.UndergroundCasinoPosition;
+			var entrance = ModContent.GetInstance<UndergroundCasinoFacade>();
+			var area = new Rectangle(topLeft.X * 16, topLeft.Y * 16, entrance.EntranceWidth * 16, entrance.EntranceHeight * 16);
+			if (Main.LocalPlayer.Distance(area.Center.ToVector2()) > 1400 || !Main.rand.NextBool(3))
+				return;
+
+			var spot = new Vector2(area.X + Main.rand.Next(area.Width), area.Bottom - Main.rand.Next(area.Height / 2));
+			Dust dust = Dust.NewDustPerfect(spot, Main.rand.NextBool() ? DustID.GemAmethyst : DustID.PinkTorch, new Vector2(Main.rand.NextFloat(-0.2f, 0.2f), Main.rand.NextFloat(-0.9f, -0.3f)), 120, default, Main.rand.NextFloat(0.6f, 1.1f));
+			dust.noGravity = true;
+			dust.fadeIn = 1.1f;
+		}
+
+		/// <summary>Soft halos over the light sources of a casino hall (chandeliers, candles, torches).</summary>
+		private static void DrawInteriorBloom()
+		{
+			int x0 = (int)(Main.screenPosition.X / 16) - 2, y0 = (int)(Main.screenPosition.Y / 16) - 2;
+			int x1 = x0 + Main.screenWidth / 16 + 4, y1 = y0 + Main.screenHeight / 16 + 4;
+			float time = Main.GlobalTimeWrappedHourly;
+			Vector2 origin = new(HaloSize / 2f);
+			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None,
+				Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+			for (int x = Math.Max(0, x0); x < Math.Min(Main.maxTilesX, x1); x++) {
+				for (int y = Math.Max(0, y0); y < Math.Min(Main.maxTilesY, y1); y++) {
+					Tile tile = Main.tile[x, y];
+					if (!tile.HasTile)
+						continue;
+					float size, alpha;
+					Color color;
+					switch (tile.TileType) {
+						case TileID.Chandeliers when tile.TileFrameX % 54 == 18 && tile.TileFrameY % 54 == 18:
+							(size, alpha, color) = (2.6f, 0.22f, new Color(255, 200, 120));
+							break;
+						case TileID.Torches:
+						case TileID.Candles:
+							(size, alpha, color) = (1.1f, 0.16f, new Color(255, 170, 90));
+							break;
+						default:
+							continue;
+					}
+					float flicker = 0.9f + 0.1f * (float)Math.Sin(time * 4f + x * 1.3f + y);
+					Vector2 pos = new Vector2(x + 0.5f, y + 0.5f) * 16f - Main.screenPosition;
+					Main.spriteBatch.Draw(halo, pos, null, color * (alpha * flicker), 0f, origin, size, SpriteEffects.None, 0f);
+				}
+			}
+			Main.spriteBatch.End();
 		}
 
 		/// <summary>1 at night or underground, about 0.3 in full daylight.</summary>
@@ -100,6 +191,16 @@ namespace CasinoWorld.Common.Systems
 						Vector2 world = new Vector2(topLeft.X + x, topLeft.Y + y) * 16f + new Vector2(Main.rand.Next(16), Main.rand.Next(16));
 						glints.Add((world, 0, Color.Lerp(Color.White, tint, 0.4f)));
 					}
+				}
+			}
+
+			if (entrance is UndergroundCasinoFacade) {
+				// Soft light shafts falling from the neon sign onto the landing.
+				for (int k = 0; k < 3; k++) {
+					float sway = (float)Math.Sin(time * 0.7f + k * 2.1f) * 6f;
+					Vector2 top = new Vector2(area.Center.X + (k - 1) * 70 + sway, area.Y + area.Height * 0.4f) - Main.screenPosition;
+					float a = (0.08f + 0.03f * (float)Math.Sin(time * 1.3f + k)) * dark;
+					Main.spriteBatch.Draw(halo, top, null, tint * a, 0f, new Vector2(HaloSize / 2f, 0f), new Vector2(0.9f, 2.6f), SpriteEffects.None, 0f);
 				}
 			}
 

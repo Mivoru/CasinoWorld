@@ -3,7 +3,9 @@ using CasinoWorld.Common.Systems;
 using CasinoWorld.Content.Tiles;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.GameInput;
 using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
 
 namespace CasinoWorld.Common.Players
 {
@@ -19,9 +21,29 @@ namespace CasinoWorld.Common.Players
 
 		private Action nearbyDoorAction;
 
+		/// <summary>Characters made before the Casino Blueprint existed get one, once.</summary>
+		private bool receivedBlueprint;
+
 		public override void OnEnterWorld()
 		{
 			restoreTimer = RestoreDelay;
+
+			if (!receivedBlueprint && !CasinoTravel.InCasino) {
+				receivedBlueprint = true;
+				int type = ModContent.ItemType<Content.Items.CasinoBlueprint>();
+				if (!Player.HasItemInAnyInventory(type))
+					Player.QuickSpawnItem(Player.GetSource_Misc("CasinoWorld"), type);
+			}
+		}
+
+		public override void SaveData(TagCompound tag)
+		{
+			tag["receivedBlueprint"] = receivedBlueprint;
+		}
+
+		public override void LoadData(TagCompound tag)
+		{
+			receivedBlueprint = tag.ContainsKey("receivedBlueprint") && tag.GetBool("receivedBlueprint");
 		}
 
 		public override void PostUpdate()
@@ -33,9 +55,12 @@ namespace CasinoWorld.Common.Players
 				CasinoTravel.TryRestorePosition(Player);
 
 			FindDoor();
+		}
 
-			// Up (W by default) uses the door, like entering a minecart or climbing a rope.
-			if (NearbyDoor != null && Player.controlUp && Player.releaseUp && !Player.mouseInterface)
+		/// <summary>Up (W by default) uses the door, read from the input triggers like vanilla does.</summary>
+		public override void ProcessTriggers(TriggersSet triggersSet)
+		{
+			if (NearbyDoor != null && PlayerInput.Triggers.JustPressed.Up && !Player.mouseInterface)
 				nearbyDoorAction?.Invoke();
 		}
 

@@ -199,13 +199,13 @@ namespace CasinoWorld.Common.Upgrades
 		public override void Update(GameTime gameTime)
 		{
 			base.Update(gameTime);
-			if (!IsMouseHovering)
-				return;
-			Main.LocalPlayer.mouseInterface = true;
-			if (!(Main.mouseLeft && Main.mouseLeftRelease))
-				return;
+			if (IsMouseHovering)
+				Main.LocalPlayer.mouseInterface = true;
+		}
 
-			Point mouse = CasinoTableGameSystem.UIMouse;
+		public override void LeftClick(UIMouseEvent evt)
+		{
+			Point mouse = evt.MousePosition.ToPoint();
 			if (CloseButton.Contains(mouse))
 				System.Close();
 			else if (SlotRect.Contains(mouse))

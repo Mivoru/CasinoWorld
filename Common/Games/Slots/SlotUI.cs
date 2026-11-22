@@ -83,14 +83,13 @@ namespace CasinoWorld.Common.Games.Slots
 		public override void Update(GameTime gameTime)
 		{
 			base.Update(gameTime);
-			if (!IsMouseHovering)
-				return;
+			if (IsMouseHovering)
+				Main.LocalPlayer.mouseInterface = true;
+		}
 
-			Main.LocalPlayer.mouseInterface = true;
-			if (!(Main.mouseLeft && Main.mouseLeftRelease))
-				return;
-
-			Point mouse = CasinoTableGameSystem.UIMouse;
+		public override void LeftClick(UIMouseEvent evt)
+		{
+			Point mouse = evt.MousePosition.ToPoint();
 			foreach (Button button in Buttons()) {
 				if (button.Enabled && button.Rect.Contains(mouse)) {
 					Click(button);

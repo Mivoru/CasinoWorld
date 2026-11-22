@@ -150,13 +150,13 @@ namespace CasinoWorld.Common.Crates
 		public override void Update(GameTime gameTime)
 		{
 			base.Update(gameTime);
-			if (!IsMouseHovering)
-				return;
-			Main.LocalPlayer.mouseInterface = true;
-			if (!(Main.mouseLeft && Main.mouseLeftRelease))
-				return;
+			if (IsMouseHovering)
+				Main.LocalPlayer.mouseInterface = true;
+		}
 
-			Point mouse = CrateSystem.UIMouse;
+		public override void LeftClick(UIMouseEvent evt)
+		{
+			Point mouse = evt.MousePosition.ToPoint();
 			CrateOpening opening = System.Opening;
 			if (CloseButton.Contains(mouse) || (opening.Done && DoneButton.Contains(mouse))) {
 				System.Close();

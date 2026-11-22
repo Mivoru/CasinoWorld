@@ -30,5 +30,15 @@ namespace CasinoWorld.Common.Systems
 		}
 
 		public override bool CanExplode(int i, int j, int type) => !CasinoTravel.InCasino;
+
+		public override void ModifyLight(int i, int j, int type, ref float r, ref float g, ref float b)
+		{
+			if (type == 0 || SubworldLibrary.SubworldSystem.Current is not Content.Subworlds.CasinoSubworld casino)
+				return;
+			Microsoft.Xna.Framework.Vector3 ambient = casino.Ambient;
+			r = System.Math.Max(r, ambient.X);
+			g = System.Math.Max(g, ambient.Y);
+			b = System.Math.Max(b, ambient.Z);
+		}
 	}
 }

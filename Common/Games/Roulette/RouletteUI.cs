@@ -131,17 +131,17 @@ namespace CasinoWorld.Common.Games.Roulette
 		public override void Update(GameTime gameTime)
 		{
 			base.Update(gameTime);
-			if (!IsMouseHovering)
-				return;
+			if (IsMouseHovering)
+				Main.LocalPlayer.mouseInterface = true;
+		}
 
-			Main.LocalPlayer.mouseInterface = true;
+		// Clicks come from UI events (in UI coordinates), not from polling the mouse.
+		public override void LeftClick(UIMouseEvent evt) => HandleClick(evt.MousePosition.ToPoint(), false);
 
-			bool left = Main.mouseLeft && Main.mouseLeftRelease;
-			bool right = Main.mouseRight && Main.mouseRightRelease;
-			if (!left && !right)
-				return;
+		public override void RightClick(UIMouseEvent evt) => HandleClick(evt.MousePosition.ToPoint(), true);
 
-			Point mouse = CasinoTableGameSystem.UIMouse;
+		private void HandleClick(Point mouse, bool right)
+		{
 			foreach (Region region in Layout()) {
 				if (region.Rect.Contains(mouse)) {
 					Click(region, right);

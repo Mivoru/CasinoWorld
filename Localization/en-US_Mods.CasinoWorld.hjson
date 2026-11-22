@@ -20,7 +20,7 @@ Items: {
 			Use it again to move the casino
 			'''
 		Valid: Build the casino here
-		Invalid: "Can't build here: needs solid ground, no chests or water"
+		Invalid: Can't build here: needs solid ground, no chests or water
 		Built: The casino is open for business!
 	}
 
@@ -141,9 +141,11 @@ Items: {
 
 DamageClasses.GamblerDamageClass.DisplayName: gambler damage
 
-Buffs.HotStreak: {
-	DisplayName: Hot Streak
-	Description: 10% increased gambler damage
+Buffs: {
+	HotStreak: {
+		DisplayName: Hot Streak
+		Description: 10% increased gambler damage
+	}
 }
 
 Gambler: {
@@ -158,6 +160,7 @@ Tiles: {
 	CasinoFacade.MapEntry: Casino
 	RouletteTable.MapEntry: Roulette Table
 	SlotMachine.MapEntry: Slot Machine
+	CasinoSignTile.MapEntry: Casino Sign
 	UpgradeMachine.MapEntry: Upgrade Machine
 	LuckyCrateTile.MapEntry: Lucky Crate
 	HighRollerCrateTile.MapEntry: High Roller Crate
@@ -168,7 +171,7 @@ Tiles: {
 WorldGen: {
 	SurfaceCasino: Building the casino
 	Crates: Hiding lucky crates
-	UndergroundOpened: "Deep underground, a casino for high rollers has opened its vault! (about {0} ft {1} of spawn, {2} ft deep)"
+	UndergroundOpened: Deep underground, a casino for high rollers has opened its vault! (about {0} ft {1} of spawn, {2} ft deep)
 	East: east
 	West: west
 }
@@ -182,23 +185,23 @@ Upgrade: {
 		Put a Gambler weapon or armor
 		piece into the slot.
 		'''
-	NextWeapon: "Next: +{0} ({1}% damage)"
-	NextArmor: "Next: +{0} (+{1} defense, +{2} Luck)"
-	Cost: "Cost per try:"
-	Chance: "Success chance: {0}%"
+	NextWeapon: Next: +{0} ({1}% damage)
+	NextArmor: Next: +{0} (+{1} defense, +{2} Luck)
+	Cost: Cost per try:
+	Chance: Success chance: {0}%
 	Upgrade: Upgrade
-	BoostOff: "Boost: off"
-	BoostOn: "Boost: ON (x2, +15%)"
+	BoostOff: Boost: off
+	BoostOn: Boost: ON (x2, +15%)
 	NoLoss: A failed upgrade only costs materials. Your item is safe.
 	Working: Upgrading...
-	Success: "Success! The item is now +{0}."
+	Success: Success! The item is now +{0}.
 	Fail: Failed. The materials are gone, the item is unharmed.
 	Maxed: This item is fully upgraded.
 	NoMaterials: Not enough materials.
 	NoMoney: Not enough coins for the fee.
 	NotUpgradeable: Only Gambler weapons and armor can be upgraded.
-	WeaponBonus: "Upgrade +{0}: {1}% increased damage"
-	ArmorBonus: "Upgrade +{0}: +{1} defense, +{2} Luck"
+	WeaponBonus: Upgrade +{0}: {1}% increased damage
+	ArmorBonus: Upgrade +{0}: +{1} defense, +{2} Luck
 }
 
 Bestiary: {
@@ -209,7 +212,6 @@ Bestiary: {
 
 NPCs: {
 	HowToPlay: How to play
-
 	ChipSlime.DisplayName: Chip Slime
 	CardSoldier.DisplayName: Card Soldier
 	SlotMimic.DisplayName: Slot Mimic
@@ -385,7 +387,7 @@ UI: {
 		Opening: Rolling...
 		OpenAnother: Open another
 		Done: Collect
-		GoldMessage: "GOLD! You unboxed {0}!"
+		GoldMessage: GOLD! You unboxed {0}!
 		RarityBlue: Common
 		RarityPurple: Uncommon
 		RarityPink: Rare
@@ -398,11 +400,11 @@ UI: {
 		Title: LUCKY SLOTS
 		Spin: SPIN
 		Pays: Pays
-		Money: "Money: {0}"
-		Bet: "Bet per spin: {0}"
+		Money: Money: {0}
+		Bet: Bet per spin: {0}
 		Hint: Pick a bet and pull the lever!
 		NotEnough: You can't cover that bet.
-		Win: "Winner! x{0}: {1}"
+		Win: Winner! x{0}: {1}
 		BetBack: Cherry! Your bet is back.
 		Lose: No luck this time.
 	}
@@ -414,8 +416,8 @@ UI: {
 		Shoe: SHOE
 		BlackjackShort: BLACKJACK!
 		BustShort: BUST
-		NextBet: "Bet: {0}"
-		Limit: "Table limit: {0}"
+		NextBet: Bet: {0}
+		Limit: Table limit: {0}
 		HintBet: Pick chips, then press Deal.
 		HintPlay: Hit or Stand?
 		Dealer: Dealer
@@ -446,4 +448,7 @@ Projectiles: {
 	HighRollerChip.DisplayName: High Roller Chip
 	LoadedDie.DisplayName: Loaded Die
 	ThrownCard.DisplayName: Thrown Card
+	ExplodingDie.DisplayName: Exploding Die
+	JackpotChip.DisplayName: Jackpot Chip
+	RoyalCard.DisplayName: Royal Card
 }

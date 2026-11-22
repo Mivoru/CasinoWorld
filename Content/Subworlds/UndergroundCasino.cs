@@ -52,6 +52,8 @@ namespace CasinoWorld.Content.Subworlds
 
 		public override List<GenPass> Tasks => new() { new UndergroundCasinoPass() };
 
+		public override Microsoft.Xna.Framework.Vector3 Ambient => new(0.24f, 0.14f, 0.30f);
+
 		protected override void SpawnPeople()
 		{
 			SpawnAt<RouletteCroupier>(HallLeft + Roulette + 7, HallFloor, -1);

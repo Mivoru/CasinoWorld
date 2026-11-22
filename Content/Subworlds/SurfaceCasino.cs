@@ -4,6 +4,7 @@ using CasinoWorld.Content.Items.Armor;
 using CasinoWorld.Content.Items.Weapons;
 using CasinoWorld.Content.NPCs;
 using CasinoWorld.Content.Tiles;
+using CasinoWorld.Content.Walls;
 using Terraria;
 using Terraria.ID;
 using Terraria.IO;
@@ -40,7 +41,7 @@ namespace CasinoWorld.Content.Subworlds
 
 		// Furniture positions, as tile offsets from HallLeft.
 		public const int RouletteA = 16, RouletteB = 28, BlackjackA = 46, BlackjackB = 58;
-		public const int BarStart = 84, BarEnd = 100, PrizeCounter = 74;
+		public const int BarStart = 84, BarEnd = 100, PrizeCounter = 74, SlotA = 66;
 		private const int GuestCount = 6;
 
 		/// <summary>Tile x positions guests walk to: beside the tables and at the bar.</summary>
@@ -72,7 +73,7 @@ namespace CasinoWorld.Content.Subworlds
 	/// <summary>
 	/// Builds the hall from vanilla blocks and furniture, so it matches the look of the rest of
 	/// Terraria: marble floor, glowing amber ceiling, wood panelling, marble columns, red banners,
-	/// paintings, a neon CASINO sign made of gemspark walls, and the game tables.
+	/// paintings, a big lit CASINO marquee sign, and the game tables.
 	/// </summary>
 	public class SurfaceCasinoPass : GenPass
 	{
@@ -83,15 +84,6 @@ namespace CasinoWorld.Content.Subworlds
 
 		// Columns (2 tiles wide, background walls) split the hall into areas.
 		private static readonly int[] Columns = { Left + 11, Left + 38, Left + 70, Left + 81, Left + 104 };
-
-		private static readonly (char ch, string[] rows)[] Letters = {
-			('C', new[] { "0111", "1000", "1000", "1000", "0111" }),
-			('A', new[] { "0110", "1001", "1111", "1001", "1001" }),
-			('S', new[] { "0111", "1000", "0110", "0001", "1110" }),
-			('I', new[] { "111", "010", "010", "010", "111" }),
-			('N', new[] { "1001", "1101", "1011", "1001", "1001" }),
-			('O', new[] { "0110", "1001", "1001", "1001", "0110" }),
-		};
 
 		public SurfaceCasinoPass() : base("CasinoHall", 1) { }
 
@@ -106,8 +98,8 @@ namespace CasinoWorld.Content.Subworlds
 
 			BuildShell();
 			PaintWalls();
-			NeonSign();
 			WorldGen.RangeFrame(0, 0, Main.maxTilesX - 1, Main.maxTilesY - 1);
+			CasinoSignTile.Place((Left + Right) / 2 - CasinoSignTile.Width / 2, Top + 3);
 			Furnish();
 		}
 
@@ -122,7 +114,7 @@ namespace CasinoWorld.Content.Subworlds
 
 					tile.HasTile = true;
 					if (y == Floor)
-						tile.TileType = TileID.MarbleBlock;
+						tile.TileType = (ushort)ModContent.TileType<CasinoCarpet>();
 					else if (y == Floor + 1)
 						tile.TileType = TileID.GoldBrick;
 					else if (y == Top && x > Left && x < Right)
@@ -141,11 +133,11 @@ namespace CasinoWorld.Content.Subworlds
 				for (int y = Top; y <= Floor; y++) {
 					Tile tile = Main.tile[x, y];
 					if (y >= Floor - 4)
-						tile.WallType = WallID.RichMaogany;      // wood panelling
+						tile.WallType = (ushort)ModContent.WallType<CasinoPanelWall>();
 					else if (y == Floor - 5 || y == Top + 1)
 						tile.WallType = WallID.GoldBrick;        // trim
 					else
-						tile.WallType = WallID.RedBrick;
+						tile.WallType = (ushort)ModContent.WallType<CasinoWallpaper>();
 				}
 			}
 
@@ -159,39 +151,10 @@ namespace CasinoWorld.Content.Subworlds
 			}
 		}
 
-		/// <summary>Writes CASINO in glowing gemspark walls high on the back wall, centred in the hall.</summary>
-		private static void NeonSign()
-		{
-			int width = -1;
-			foreach ((char _, string[] rows) in Letters)
-				width += rows[0].Length + 1;
-
-			int x = (Left + Right) / 2 - width / 2;
-			int y = Top + 5;
-
-			// Dark backing board with a gold frame.
-			for (int bx = x - 2; bx < x + width + 2; bx++) {
-				for (int by = y - 2; by < y + 7; by++) {
-					bool frame = bx == x - 2 || bx == x + width + 1 || by == y - 2 || by == y + 6;
-					Main.tile[bx, by].WallType = frame ? WallID.GoldBrick : WallID.ObsidianBrickUnsafe;
-				}
-			}
-
-			foreach ((char _, string[] rows) in Letters) {
-				for (int r = 0; r < rows.Length; r++) {
-					for (int c = 0; c < rows[r].Length; c++) {
-						if (rows[r][c] == '1')
-							Main.tile[x + c, y + r].WallType = WallID.AmberGemspark;
-					}
-				}
-				x += rows[0].Length + 1;
-			}
-		}
-
 		private static void Furnish()
 		{
 			// Gold chandeliers along the ceiling, skipping the sign.
-			int signLeft = (Left + Right) / 2 - 16, signRight = (Left + Right) / 2 + 16;
+			int signLeft = (Left + Right) / 2 - CasinoSignTile.Width / 2 - 2, signRight = (Left + Right) / 2 + CasinoSignTile.Width / 2 + 2;
 			for (int x = Left + 6; x < Right - 4; x += 12) {
 				if (x + 2 < signLeft || x > signRight)
 					WorldGen.PlaceTile(x, Top + 1, TileID.Chandeliers, mute: true, forced: true, style: 2);
@@ -237,6 +200,10 @@ namespace CasinoWorld.Content.Subworlds
 			}
 			WorldGen.PlaceObject(Left + SurfaceCasino.BarEnd + 5, Floor - 1, TileID.Kegs, mute: true);
 			WorldGen.PlaceObject(Left + SurfaceCasino.BarEnd + 7, Floor - 1, TileID.Kegs, mute: true);
+
+			// Two slot machines next to the prize counter.
+			WorldGen.PlaceObject(Left + SurfaceCasino.SlotA, Floor - 1, ModContent.TileType<SlotMachine>(), mute: true);
+			WorldGen.PlaceObject(Left + SurfaceCasino.SlotA + 3, Floor - 1, ModContent.TileType<SlotMachine>(), mute: true);
 
 			// Prize counter with a pile of gold on display.
 			WorldGen.PlaceObject(Left + SurfaceCasino.PrizeCounter - 1, Floor - 1, TileID.Tables, mute: true, style: 0);
