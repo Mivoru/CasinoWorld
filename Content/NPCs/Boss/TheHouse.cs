@@ -528,6 +528,8 @@ namespace CasinoWorld.Content.NPCs.Boss
 		{
 			npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<TheHouseBag>()));
 			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Vanity.TheHouseTrophy>(), 10));
+			npcLoot.Add(ItemDropRule.MasterModeCommonDrop(ModContent.ItemType<Items.Vanity.TheHouseRelicItem>()));
+			npcLoot.Add(ItemDropRule.MasterModeDropOnAllPlayers(ModContent.ItemType<Items.Vanity.MiniSlotItem>(), 4));
 			var normal = new LeadingConditionRule(new Conditions.NotExpert());
 			normal.OnSuccess(ItemDropRule.OneFromOptions(1, ModContent.ItemType<JackpotLever>(), ModContent.ItemType<DealersHand>(), ModContent.ItemType<WheelOfFortune>()));
 			normal.OnSuccess(ItemDropRule.Common(ModContent.ItemType<LoyaltyToken>(), 1, 80, 120));

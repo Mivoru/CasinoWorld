@@ -108,6 +108,16 @@ Items: {
 			'''
 	}
 
+	TheHouseRelicItem: {
+		DisplayName: The House Relic
+		Tooltip: ""
+	}
+
+	MiniSlotItem: {
+		DisplayName: Lucky Coin Slot
+		Tooltip: Summons a Mini Slot that follows you around
+	}
+
 	TheHouseMask: {
 		DisplayName: The House Mask
 		Tooltip: ""
@@ -286,6 +296,11 @@ Items: {
 DamageClasses.GamblerDamageClass.DisplayName: gambler damage
 
 Buffs: {
+	MiniSlotBuff: {
+		DisplayName: Mini Slot
+		Description: A tiny slot machine is following you. It never pays out.
+	}
+
 	HotStreak: {
 		DisplayName: Hot Streak
 		Description: 10% increased gambler damage
