@@ -17,11 +17,11 @@ using Terraria.ObjectData;
 namespace CasinoWorld.Content.Items.Vanity
 {
 	/// <summary>Master mode relic of The House.</summary>
-	public class TheHouseRelicItem : ModItem
+	public class WildCardRelicItem : ModItem
 	{
 		public override void SetDefaults()
 		{
-			Item.DefaultToPlaceableTile(ModContent.TileType<TheHouseRelic>());
+			Item.DefaultToPlaceableTile(ModContent.TileType<WildCardRelic>());
 			Item.width = 28;
 			Item.height = 34;
 			Item.rare = ItemRarityID.Master;
@@ -112,19 +112,19 @@ namespace CasinoWorld.Content.Tiles
 	/// Master mode relic: a gold figure of The House floating above a pedestal, with a soft
 	/// pulsing glow (same idea as vanilla relics, drawn in SpecialDraw).
 	/// </summary>
-	public class TheHouseRelic : ModTile
+	public class WildCardRelic : ModTile
 	{
 		private const int FrameWidth = 18 * 3;
 		private const int FrameHeight = 18 * 4;
 
 		private Asset<Texture2D> relicTexture;
 
-		public override string Texture => "CasinoWorld/Content/Tiles/TheHouseRelicPedestal";
+		public override string Texture => "CasinoWorld/Content/Tiles/WildCardRelicPedestal";
 
 		public override void Load()
 		{
 			if (!Main.dedServ)
-				relicTexture = ModContent.Request<Texture2D>("CasinoWorld/Content/Tiles/TheHouseRelic");
+				relicTexture = ModContent.Request<Texture2D>("CasinoWorld/Content/Tiles/WildCardRelic");
 		}
 
 		public override void Unload()

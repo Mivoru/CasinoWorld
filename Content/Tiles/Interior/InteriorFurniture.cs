@@ -254,7 +254,7 @@ namespace CasinoWorld.Content.Tiles.Interior
 
 	public class PaintingWheel : CasinoPainting { public override int Width => 6; public override int Height => 6; }
 
-	public class PaintingTheHouse : CasinoPainting { public override int Width => 6; public override int Height => 8; }
+	public class PaintingWildCard : CasinoPainting { public override int Width => 6; public override int Height => 8; }
 
 	public class PaintingVegasNight : CasinoPainting { public override int Width => 10; public override int Height => 6; }
 

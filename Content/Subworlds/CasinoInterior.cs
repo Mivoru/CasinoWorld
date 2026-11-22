@@ -199,7 +199,7 @@ namespace CasinoWorld.Content.Subworlds
 			OnWall<PaintingWheel>(50, s, 9);
 			OnWall<PaintingVegasNight>(80, s, 7);
 			OnWall<PaintingGoldenDice>(100, s, 7);
-			OnWall<PaintingTheHouse>(123, s, 6);
+			OnWall<PaintingWildCard>(123, s, 6);
 			Pilaster(141, s);
 			Floor<MarblePlanter>(145, s);
 		}
@@ -237,7 +237,7 @@ namespace CasinoWorld.Content.Subworlds
 			OnWall<PaintingRoyalFlush>(13, s, 9);
 			OnWall<PaintingLuckySevens>(40, s, 7);
 			OnWall<PaintingJackpot>(52, s, 7);
-			OnWall<PaintingTheHouse>(82, s, 7);
+			OnWall<PaintingWildCard>(82, s, 7);
 			OnWall<PaintingGoldenDice>(105, s, 7);
 			OnWall<PaintingWheel>(122, s, 7);
 		}
@@ -291,7 +291,7 @@ namespace CasinoWorld.Content.Subworlds
 			OnWall<PaintingRoyalFlush>(59, s, 8);
 			OnWall<PaintingJackpot>(73, s, 7);
 			OnWall<PaintingVegasNight>(92, s, 7);
-			OnWall<PaintingTheHouse>(119, s, 6);
+			OnWall<PaintingWildCard>(119, s, 6);
 		}
 
 		// ------------------------------------------------------------------ people

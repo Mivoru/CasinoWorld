@@ -11,7 +11,7 @@ namespace CasinoWorld.Content.Items.Vanity
 {
 	/// <summary>Vanity mask dropped by The House (1/7, in the treasure bag in expert).</summary>
 	[AutoloadEquip(EquipType.Head)]
-	public class TheHouseMask : ModItem
+	public class WildCardMask : ModItem
 	{
 		public override void SetDefaults()
 		{
@@ -23,11 +23,11 @@ namespace CasinoWorld.Content.Items.Vanity
 	}
 
 	/// <summary>Wall trophy of The House (1/10).</summary>
-	public class TheHouseTrophy : ModItem
+	public class WildCardTrophy : ModItem
 	{
 		public override void SetDefaults()
 		{
-			Item.DefaultToPlaceableTile(ModContent.TileType<TheHouseTrophyTile>());
+			Item.DefaultToPlaceableTile(ModContent.TileType<WildCardTrophyTile>());
 			Item.width = Item.height = 32;
 			Item.rare = ItemRarityID.Blue;
 			Item.value = Item.buyPrice(gold: 1);
@@ -37,7 +37,7 @@ namespace CasinoWorld.Content.Items.Vanity
 
 namespace CasinoWorld.Content.Tiles
 {
-	public class TheHouseTrophyTile : ModTile
+	public class WildCardTrophyTile : ModTile
 	{
 		public override void SetStaticDefaults()
 		{

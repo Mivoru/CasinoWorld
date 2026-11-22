@@ -172,7 +172,7 @@ Items: {
 			'''
 	}
 
-	TheHouseRelicItem: {
+	WildCardRelicItem: {
 		DisplayName: The House Relic
 		Tooltip: ""
 	}
@@ -182,12 +182,12 @@ Items: {
 		Tooltip: Summons a Mini Slot that follows you around
 	}
 
-	TheHouseMask: {
+	WildCardMask: {
 		DisplayName: The House Mask
 		Tooltip: ""
 	}
 
-	TheHouseTrophy: {
+	WildCardTrophy: {
 		DisplayName: The House Trophy
 		Tooltip: ""
 	}
@@ -297,7 +297,7 @@ Items: {
 			'''
 	}
 
-	TheHouseBag: {
+	WildCardBag: {
 		DisplayName: Treasure Bag (The House)
 		Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 	}
@@ -433,6 +433,13 @@ Upgrade: {
 }
 
 Boss: {
+	WildCard: {
+		Intro: The Wild Card shuffles into the night... Pick a card, any card!
+		Leave: The show is over. The Wild Card vanishes in a puff of cards.
+		AllIn: ALL IN! The Wild Card bets everything!
+		Roll: "{0} + {1} = {2}!"
+	}
+
 	Intro: The House is open for business!
 	PhaseTwo: Double or nothing! The Wheel of Fate spins...
 	Defeat: The house... always... wins...?
@@ -442,7 +449,7 @@ Boss: {
 
 Bestiary: {
 	TownGambler: A smooth talker in a purple suit who moved to town the day the casino opened. He has a system.
-	TheHouse: A slot machine that won so much it woke up. It never pays out, but it does deal.
+	TheWildCard: Every deck has one card that plays by its own rules. This one learned magic, and it never loses.
 	ChipSlime: A poker chip that rolled away from the tables and learned to bite. It still remembers its value.
 	CardSoldier: The house guard of a deck nobody plays with anymore. It marches in suits.
 	SlotMimic: It pays out, eventually. Mostly it pays out teeth.
@@ -545,7 +552,7 @@ NPCs: {
 		}
 	}
 
-	TheHouse.DisplayName: The House
+	TheWildCard.DisplayName: The Wild Card
 	HouseHand.DisplayName: Croupier Hand
 	ChipSlime.DisplayName: Chip Slime
 	CardSoldier.DisplayName: Card Soldier

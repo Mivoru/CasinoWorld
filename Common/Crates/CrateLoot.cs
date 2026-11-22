@@ -119,7 +119,7 @@ namespace CasinoWorld.Common.Crates
 						new(ItemID.RegenerationPotion, 2, 2), new(ItemID.SpelunkerPotion, 2, 2), new(ItemID.ArcheryPotion, 2, 2) },
 					new CrateDrop[] { new(token, 80, 120), new(ItemID.GoldCoin, 10, 15), new(ItemID.CobaltShield),
 						new(ItemID.FeralClaws), new(ItemID.AnkletoftheWind), new(ItemID.GoldenKey) },
-					With(pinkBase, new CrateDrop(ModContent.ItemType<TheHouseMask>()), new CrateDrop(ModContent.ItemType<GoldenChip>())),
+					With(pinkBase, new CrateDrop(ModContent.ItemType<WildCardMask>()), new CrateDrop(ModContent.ItemType<GoldenChip>())),
 					With(Gear(dice, deck, roller, lever, hand, wheel), Gear(gamblerSet)),
 					With(Golden(dice, deck, roller, lever, hand, wheel), new CrateDrop(car), new CrateDrop(ItemID.PlatinumCoin, 1, 2))),
 

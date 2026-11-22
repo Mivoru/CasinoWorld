@@ -37,14 +37,14 @@ namespace CasinoWorld.Content.Items
 		}
 
 		public override bool CanUseItem(Player player)
-			=> !Main.dayTime && !CasinoTravel.InCasino && !NPC.AnyNPCs(ModContent.NPCType<TheHouse>());
+			=> !Main.dayTime && !CasinoTravel.InCasino && !NPC.AnyNPCs(ModContent.NPCType<TheWildCard>());
 
 		public override bool? UseItem(Player player)
 		{
 			if (player.whoAmI != Main.myPlayer)
 				return true;
 			SoundEngine.PlaySound(SoundID.Roar, player.position);
-			int type = ModContent.NPCType<TheHouse>();
+			int type = ModContent.NPCType<TheWildCard>();
 			if (Main.netMode != NetmodeID.MultiplayerClient)
 				NPC.SpawnOnPlayer(player.whoAmI, type);
 			else
@@ -66,7 +66,7 @@ namespace CasinoWorld.Content.Items
 	}
 
 	/// <summary>Expert treasure bag of The House.</summary>
-	public class TheHouseBag : ModItem
+	public class WildCardBag : ModItem
 	{
 		public override void SetStaticDefaults()
 		{
@@ -94,8 +94,8 @@ namespace CasinoWorld.Content.Items
 			itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<LuckyCrate>(), 1, 3, 4));
 			itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<GoldenChip>(), 2));
 			itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HouseEdge>()));
-			itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Vanity.TheHouseMask>(), 7));
-			itemLoot.Add(ItemDropRule.CoinsBasedOnNPCValue(ModContent.NPCType<TheHouse>()));
+			itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Vanity.WildCardMask>(), 7));
+			itemLoot.Add(ItemDropRule.CoinsBasedOnNPCValue(ModContent.NPCType<TheWildCard>()));
 		}
 	}
 }

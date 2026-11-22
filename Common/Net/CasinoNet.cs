@@ -44,13 +44,6 @@ namespace CasinoWorld.Common.Net
 					break;
 				}
 
-				case CasinoMessage.HouseLeverHit when Main.netMode == NetmodeID.Server: {
-					int index = reader.ReadByte();
-					if (Main.npc[index].active && Main.npc[index].ModNPC is Content.NPCs.Boss.TheHouse house)
-						house.TriggerBust();
-					break;
-				}
-
 				case CasinoMessage.ReportWin when Main.netMode == NetmodeID.Server:
 					Games.CasinoRecords.HandleReport(reader, sender);
 					break;
@@ -67,14 +60,6 @@ namespace CasinoWorld.Common.Net
 					ModContent.GetInstance<RouletteSystem>().Mod.Logger.Warn($"Unexpected packet {message} (netMode {Main.netMode}).");
 					break;
 			}
-		}
-
-		public static void SendHouseLeverHit(Mod mod, int npc)
-		{
-			ModPacket packet = mod.GetPacket();
-			packet.Write((byte)CasinoMessage.HouseLeverHit);
-			packet.Write((byte)npc);
-			packet.Send();
 		}
 
 		public static void SendPlaceSurfaceCasino(Mod mod, int left, int groundY)
