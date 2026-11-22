@@ -21,6 +21,10 @@ namespace CasinoWorld.Content.Items.Crates
 		public override void SetStaticDefaults()
 		{
 			Item.ResearchUnlockCount = 5;
+			// Count as fishing crates (crate potions, sorting, Angler-style catches).
+			ItemID.Sets.IsFishingCrate[Type] = true;
+			if (Kind == CrateKind.HighRoller)
+				ItemID.Sets.IsFishingCrateHardmode[Type] = true;
 		}
 
 		public override void SetDefaults()

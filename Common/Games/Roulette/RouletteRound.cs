@@ -180,7 +180,9 @@ namespace CasinoWorld.Common.Games.Roulette
 					break;
 
 				case RoulettePhase.ShowingResult:
+					// The ball sits in the winning pocket and turns with the wheel.
 					WheelAngle += 0.004f;
+					BallAngle += 0.004f;
 					if (timer > ResultTicks && Bets.Count == 0)
 						Phase = RoulettePhase.Betting;
 					break;

@@ -13,6 +13,8 @@ namespace CasinoWorld.Common.Games.Roulette
 		High,     // 19-36
 		Dozen,    // Value 0..2: 1-12, 13-24, 25-36, pays 2:1
 		Column,   // Value 0..2: numbers with (n - 1) % 3 == Value, pays 2:1
+		Split,    // Value = a * 100 + b: two neighbouring numbers, pays 17:1
+		Corner,   // Value = v: the four numbers v, v+1, v+3, v+4, pays 8:1
 	}
 
 	public readonly record struct RouletteBet(RouletteBetType Type, int Value = 0);
@@ -49,12 +51,16 @@ namespace CasinoWorld.Common.Games.Roulette
 			RouletteBetType.High => n is >= 19 and <= 36,
 			RouletteBetType.Dozen => n != 0 && (n - 1) / 12 == bet.Value,
 			RouletteBetType.Column => n != 0 && (n - 1) % 3 == bet.Value,
+			RouletteBetType.Split => n != 0 && (n == bet.Value / 100 || n == bet.Value % 100),
+			RouletteBetType.Corner => n != 0 && (n == bet.Value || n == bet.Value + 1 || n == bet.Value + 3 || n == bet.Value + 4),
 			_ => false,
 		};
 
 		/// <summary>Winnings per unit staked, not counting the returned stake.</summary>
 		public static int PayoutMultiplier(RouletteBetType type) => type switch {
 			RouletteBetType.Straight => 35,
+			RouletteBetType.Split => 17,
+			RouletteBetType.Corner => 8,
 			RouletteBetType.Dozen or RouletteBetType.Column => 2,
 			_ => 1,
 		};

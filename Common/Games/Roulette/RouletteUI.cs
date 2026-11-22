@@ -44,7 +44,7 @@ namespace CasinoWorld.Common.Games.Roulette
 		private static Color BlackCell => CasinoDraw.Black;
 		private static Color GreenCell => CasinoDraw.Green;
 
-		private enum RegionKind { Bet, Chip, Spin, Clear, Repeat, Close }
+		private enum RegionKind { Bet, Edge, Chip, Spin, Clear, Repeat, Close }
 
 		private readonly record struct Region(Rectangle Rect, RegionKind Kind, RouletteBet Bet = default, long Chip = 0, string Label = "", Color Color = default);
 
@@ -72,6 +72,25 @@ namespace CasinoWorld.Common.Games.Roulette
 			int bx = a.X + BoardX, by = a.Y + BoardY;
 
 			yield return new Region(new Rectangle(a.Right - 30, a.Y + 8, 22, 22), RegionKind.Close, Label: "X", Color: RedCell);
+
+			// Corner (4 numbers) and split (2 numbers) hot spots come first so they win the hit test.
+			for (int c = 0; c < 11; c++) {
+				for (int r = 0; r < 2; r++) {
+					int v = c * 3 + (2 - r);   // lowest of the four numbers around this corner
+					var point = new Point(bx + ZeroW + (c + 1) * CellW, by + (r + 1) * CellH);
+					yield return new Region(new Rectangle(point.X - 6, point.Y - 6, 12, 12), RegionKind.Edge, new RouletteBet(RouletteBetType.Corner, v));
+				}
+			}
+			for (int c = 0; c < 12; c++) {
+				for (int r = 0; r < 3; r++) {
+					int n = c * 3 + (3 - r);
+					int x = bx + ZeroW + c * CellW, y = by + r * CellH;
+					if (r < 2)   // with the number below: n and n - 1
+						yield return new Region(new Rectangle(x + 7, y + CellH - 4, CellW - 14, 8), RegionKind.Edge, new RouletteBet(RouletteBetType.Split, (n - 1) * 100 + n));
+					if (c < 11)  // with the number to the right: n and n + 3
+						yield return new Region(new Rectangle(x + CellW - 4, y + 7, 8, CellH - 14), RegionKind.Edge, new RouletteBet(RouletteBetType.Split, n * 100 + n + 3));
+				}
+			}
 
 			// Zero spans the three rows.
 			yield return new Region(new Rectangle(bx, by, ZeroW, CellH * 3), RegionKind.Bet, new RouletteBet(RouletteBetType.Straight, 0), Label: "0", Color: GreenCell);
@@ -158,6 +177,7 @@ namespace CasinoWorld.Common.Games.Roulette
 
 			switch (region.Kind) {
 				case RegionKind.Bet:
+				case RegionKind.Edge:
 					if (right)
 						round.RemoveChip(region.Bet, chips[selectedChip]);
 					else
@@ -200,12 +220,16 @@ namespace CasinoWorld.Common.Games.Roulette
 			DrawHistory(sb, round, new Vector2(a.X + 20, a.Y + 262));
 
 			int winning = round.Phase == RoulettePhase.ShowingResult ? round.Result : -1;
+			var edges = new List<Region>();
 			foreach (Region region in Layout()) {
 				bool hover = region.Rect.Contains(mouse);
 				switch (region.Kind) {
+					case RegionKind.Edge:
+						edges.Add(region);
+						break;
 					case RegionKind.Bet:
 						bool won = winning >= 0 && RouletteRules.Wins(region.Bet, winning);
-						DrawCell(sb, region, hover, won);
+						DrawCell(sb, region, hover && !edges.Exists(e => e.Rect.Contains(mouse)), won);
 						if (round.Bets.TryGetValue(region.Bet, out long stake))
 							DrawStake(sb, region.Rect, stake);
 						break;
@@ -219,6 +243,20 @@ namespace CasinoWorld.Common.Games.Roulette
 				}
 			}
 
+			// Split and corner hot spots: a gold marker on hover, a chip when bet on.
+			foreach (Region edge in edges) {
+				bool hover = edge.Rect.Contains(mouse);
+				bool won = winning >= 0 && RouletteRules.Wins(edge.Bet, winning);
+				if (hover || won)
+					Fill(sb, edge.Rect, (won ? Color.White : Gold) * 0.85f);
+				if (round.Bets.TryGetValue(edge.Bet, out long stake)) {
+					Texture2D chip = CasinoDraw.Chip;
+					Vector2 c = edge.Rect.Center.ToVector2();
+					sb.Draw(chip, c, null, Gold, 0f, chip.Size() / 2f, 0.75f, SpriteEffects.None, 0f);
+					Utils.DrawBorderString(sb, Coins.Format(stake), c + new Vector2(0, 14), Color.Yellow, 0.55f, 0.5f, 0.5f);
+				}
+			}
+
 			DrawInfo(sb, round, a);
 		}
 
@@ -227,6 +265,23 @@ namespace CasinoWorld.Common.Games.Roulette
 			Texture2D wheel = wheelTexture.Value;
 			Fill(sb, new Rectangle((int)center.X - 96, (int)center.Y - 96, 192, 192), FeltDark * 0.5f);
 			sb.Draw(wheel, center, null, Color.White, round.WheelAngle, wheel.Size() / 2f, 1f, SpriteEffects.None, 0f);
+
+			// Pocket numbers on the outer rim, turning with the wheel (text stays upright).
+			float step = MathHelper.TwoPi / RouletteRules.Pockets;
+			for (int i = 0; i < RouletteRules.Pockets; i++) {
+				int num = RouletteRules.WheelOrder[i];
+				float a = round.WheelAngle + i * step;
+				Vector2 p = center + 84f * new Vector2((float)Math.Cos(a), (float)Math.Sin(a));
+				Color nc = num == 0 ? new Color(120, 255, 140) : RouletteRules.IsRed(num) ? new Color(255, 120, 120) : Color.White;
+				Utils.DrawBorderString(sb, num.ToString(), p + new Vector2(0, 2), nc, 0.42f, 0.5f, 0.5f);
+			}
+
+			if (round.Phase == RoulettePhase.ShowingResult && round.Result >= 0) {
+				float a = round.WheelAngle + RouletteRules.WheelIndexOf(round.Result) * step;
+				Vector2 p = center + 69f * new Vector2((float)Math.Cos(a), (float)Math.Sin(a));
+				float pulse = 0.5f + 0.5f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 8f);
+				Fill(sb, new Rectangle((int)p.X - 8, (int)p.Y - 8, 16, 16), Gold * (0.35f + 0.35f * pulse));
+			}
 
 			bool ballVisible = round.Phase is RoulettePhase.Spinning or RoulettePhase.ShowingResult;
 			if (ballVisible) {

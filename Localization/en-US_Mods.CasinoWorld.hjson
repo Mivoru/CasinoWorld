@@ -438,7 +438,8 @@ NPCs: {
 		Help:
 			'''
 			Click a field to put your chip there, right-click to take it back.
-			A single number pays 35 to 1. A dozen or a column pays 2 to 1.
+			A single number pays 35 to 1. Put the chip on the line between two numbers (17 to 1)
+			or on the corner of four numbers (8 to 1). A dozen or a column pays 2 to 1.
 			Red, black, odd, even, 1-18 and 19-36 pay 1 to 1. Zero loses all of those.
 			Press Spin and pray.
 			'''

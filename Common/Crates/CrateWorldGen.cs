@@ -20,7 +20,6 @@ namespace CasinoWorld.Common.Crates
 	{
 		private const float LuckyCratesPer1000Tiles = 4.3f;
 		private const float HighRollerCratesPer1000Tiles = 3.0f;
-		private const int ChestChanceOneIn = 4;
 
 		public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight)
 		{
@@ -34,15 +33,46 @@ namespace CasinoWorld.Common.Crates
 			}));
 		}
 
+		/// <summary>
+		/// Chance (in percent) that a generated chest holds a Lucky Crate, by chest type:
+		/// plain wooden chests 15 %, gold chests 35 %, locked dungeon chests 30 %, other biome
+		/// chests (ivy, ice, water, sky, shadow and so on) 25 %. Gold chests may hold two.
+		/// </summary>
+		private static int ChestCrateChance(Chest chest, out int count)
+		{
+			count = 1;
+			Tile tile = Main.tile[chest.x, chest.y];
+			if (tile.TileType != TileID.Containers && tile.TileType != TileID.Containers2)
+				return 0;
+			int style = tile.TileFrameX / 36;
+			if (tile.TileType == TileID.Containers2)
+				return 25;
+			switch (style) {
+				case 0:   // wooden
+					return 15;
+				case 1:   // gold
+					count = WorldGen.genRand.NextBool(4) ? 2 : 1;
+					return 35;
+				case 2:   // locked gold (dungeon)
+					return 30;
+				default:
+					return 25;
+			}
+		}
+
 		public override void PostWorldGen()
 		{
 			int crate = ModContent.ItemType<LuckyCrate>();
 			foreach (Chest chest in Main.chest) {
-				if (chest == null || chest.y < Main.worldSurface || WorldGen.genRand.Next(ChestChanceOneIn) != 0)
+				if (chest == null)
+					continue;
+				int chance = ChestCrateChance(chest, out int count);
+				if (chance <= 0 || WorldGen.genRand.Next(100) >= chance)
 					continue;
 				for (int k = 0; k < Chest.maxItems; k++) {
 					if (chest.item[k].IsAir) {
 						chest.item[k].SetDefaults(crate);
+						chest.item[k].stack = count;
 						break;
 					}
 				}
