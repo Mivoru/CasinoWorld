@@ -58,6 +58,7 @@ namespace CasinoWorld.Common.Systems
 
 			if (UndergroundCasinoStructure.TryFindSite(out int left, out int top)) {
 				UndergroundCasinoStructure.Build(left, top);
+				Crates.CrateWorldGen.ScatterHighRollerCrates();
 				AnnounceUndergroundCasino();
 			}
 			else {

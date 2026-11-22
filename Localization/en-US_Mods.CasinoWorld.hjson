@@ -90,6 +90,24 @@ Items: {
 			'''
 	}
 
+	LuckyCrate: {
+		DisplayName: Lucky Crate
+		Tooltip:
+			'''
+			<right> to open
+			Blue 60%, Purple 25%, Pink 10%, Red 4%, Gold 1%
+			'''
+	}
+
+	HighRollerCrate: {
+		DisplayName: High Roller Crate
+		Tooltip:
+			'''
+			<right> to open
+			Hardmode loot. Blue 60%, Purple 25%, Pink 10%, Red 4%, Gold 1%
+			'''
+	}
+
 	SnakeEyes: {
 		DisplayName: Snake Eyes
 		Tooltip: Throws a die that bounces and explodes
@@ -140,12 +158,15 @@ Tiles: {
 	CasinoFacade.MapEntry: Casino
 	RouletteTable.MapEntry: Roulette Table
 	SlotMachine.MapEntry: Slot Machine
+	LuckyCrateTile.MapEntry: Lucky Crate
+	HighRollerCrateTile.MapEntry: High Roller Crate
 	UndergroundCasinoFacade.MapEntry: High Rollers Casino
 	BlackjackTable.MapEntry: Blackjack Table
 }
 
 WorldGen: {
 	SurfaceCasino: Building the casino
+	Crates: Hiding lucky crates
 	UndergroundOpened: "Deep underground, a casino for high rollers has opened its vault! (about {0} ft {1} of spawn, {2} ft deep)"
 	East: east
 	West: west
@@ -319,6 +340,18 @@ UI: {
 			Black: Black {0}
 			Green: Green {0}
 		}
+	}
+
+	Crate: {
+		Opening: Rolling...
+		OpenAnother: Open another
+		Done: Collect
+		GoldMessage: "GOLD! You unboxed {0}!"
+		RarityBlue: Common
+		RarityPurple: Uncommon
+		RarityPink: Rare
+		RarityRed: Epic
+		RarityGold: Legendary
 	}
 
 	Slots: {
