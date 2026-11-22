@@ -108,6 +108,44 @@ Items: {
 			'''
 	}
 
+	GoldenChip: {
+		DisplayName: Golden Chip
+		Tooltip:
+			'''
+			Summons The House
+			Only works at night
+			'''
+	}
+
+	TheHouseBag: {
+		DisplayName: Treasure Bag (The House)
+		Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+	}
+
+	JackpotLever: {
+		DisplayName: Jackpot Lever
+		Tooltip: Every third hit spins the reels for a random bonus effect
+	}
+
+	DealersHand: {
+		DisplayName: Dealer's Hand
+		Tooltip: Deals a stream of cards; every eighth throw is a whole fan
+	}
+
+	WheelOfFortune: {
+		DisplayName: Wheel of Fortune
+		Tooltip: Throws a roulette disc that explodes red or black when it returns
+	}
+
+	HouseEdge: {
+		DisplayName: House Edge
+		Tooltip:
+			'''
+			5% increased jackpot chance
+			The first bust every 10 seconds becomes a normal hit
+			'''
+	}
+
 	SnakeEyes: {
 		DisplayName: Snake Eyes
 		Tooltip: Throws a die that bounces and explodes
@@ -151,6 +189,7 @@ Buffs: {
 Gambler: {
 	Jackpot: JACKPOT!
 	Bust: bust
+	Saved: edge!
 	JackpotItem: JACKPOT!
 	JackpotMessage: Jackpot! You won {0}!
 }
@@ -204,7 +243,16 @@ Upgrade: {
 	ArmorBonus: Upgrade +{0}: +{1} defense, +{2} Luck
 }
 
+Boss: {
+	Intro: The House is open for business!
+	PhaseTwo: "Double or nothing! The Wheel of Fate spins..."
+	Defeat: The house... always... wins...?
+	Leave: The house closes at dawn.
+	Bust: BUST!
+}
+
 Bestiary: {
+	TheHouse: A slot machine that won so much it woke up. It never pays out, but it does deal.
 	ChipSlime: A poker chip that rolled away from the tables and learned to bite. It still remembers its value.
 	CardSoldier: The house guard of a deck nobody plays with anymore. It marches in suits.
 	SlotMimic: It pays out, eventually. Mostly it pays out teeth.
@@ -212,6 +260,8 @@ Bestiary: {
 
 NPCs: {
 	HowToPlay: How to play
+	TheHouse.DisplayName: The House
+	HouseHand.DisplayName: Croupier Hand
 	ChipSlime.DisplayName: Chip Slime
 	CardSoldier.DisplayName: Card Soldier
 	SlotMimic.DisplayName: Slot Mimic

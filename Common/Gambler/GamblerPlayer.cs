@@ -41,6 +41,10 @@ namespace CasinoWorld.Common.Gambler
 		/// <summary>Wearing the full Gambler set: jackpots grant Hot Streak.</summary>
 		public bool HotStreakSet;
 
+		/// <summary>House Edge (expert): the first bust every 10 seconds becomes a normal hit.</summary>
+		public bool HouseEdge;
+		private int houseEdgeCooldown;
+
 		/// <summary>Copper wagered since the last loyalty token was paid out.</summary>
 		public long TokenProgress;
 
@@ -53,6 +57,9 @@ namespace CasinoWorld.Common.Gambler
 			Luck = 0;
 			BonusJackpotChance = 0f;
 			HotStreakSet = false;
+			HouseEdge = false;
+			if (houseEdgeCooldown > 0)
+				houseEdgeCooldown--;
 		}
 
 		public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers)
@@ -80,6 +87,10 @@ namespace CasinoWorld.Common.Gambler
 				SoundEngine.PlaySound(SoundID.CoinPickup with { Pitch = 0.3f }, target.Center);
 				for (int k = 0; k < 8; k++)
 					Dust.NewDust(target.position, target.width, target.height, DustID.GoldCoin, Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-4f, -1f));
+			}
+			else if (roll < JackpotChance + BustChance && HouseEdge && houseEdgeCooldown <= 0) {
+				houseEdgeCooldown = 600;
+				CombatText.NewText(target.Hitbox, new Color(120, 220, 255), Language.GetTextValue("Mods.CasinoWorld.Gambler.Saved"));
 			}
 			else if (roll < JackpotChance + BustChance) {
 				modifiers.SourceDamage *= BustMultiplier;

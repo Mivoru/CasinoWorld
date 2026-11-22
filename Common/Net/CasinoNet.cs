@@ -13,6 +13,7 @@ namespace CasinoWorld.Common.Net
 		RouletteSpinRequest, // client -> server: table
 		RouletteSpinResult,  // server -> all clients: player, table, number
 		PlaceSurfaceCasino,  // client -> server: left, ground row (Casino Blueprint)
+		HouseLeverHit,       // client -> server: boss index (lever hit during a spin)
 	}
 
 	/// <summary>Writes and dispatches the mod's network packets.</summary>
@@ -40,10 +41,25 @@ namespace CasinoWorld.Common.Net
 					break;
 				}
 
+				case CasinoMessage.HouseLeverHit when Main.netMode == NetmodeID.Server: {
+					int index = reader.ReadByte();
+					if (Main.npc[index].active && Main.npc[index].ModNPC is Content.NPCs.Boss.TheHouse house)
+						house.TriggerBust();
+					break;
+				}
+
 				default:
 					ModContent.GetInstance<RouletteSystem>().Mod.Logger.Warn($"Unexpected packet {message} (netMode {Main.netMode}).");
 					break;
 			}
+		}
+
+		public static void SendHouseLeverHit(Mod mod, int npc)
+		{
+			ModPacket packet = mod.GetPacket();
+			packet.Write((byte)CasinoMessage.HouseLeverHit);
+			packet.Write((byte)npc);
+			packet.Send();
 		}
 
 		public static void SendPlaceSurfaceCasino(Mod mod, int left, int groundY)

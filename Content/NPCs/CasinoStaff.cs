@@ -87,6 +87,7 @@ namespace CasinoWorld.Content.NPCs
 			new NPCShop(Type)
 				.Add(Prize(ModContent.ItemType<Items.Crates.LuckyCrate>(), 60))
 				.Add(Prize(ModContent.ItemType<Items.Crates.HighRollerCrate>(), 150), Condition.Hardmode)
+				.Add(Prize(ModContent.ItemType<Items.GoldenChip>(), 150), Condition.DownedSkeletron)
 				.Add(Prize(ModContent.ItemType<Items.Mounts.Gamblorghini>(), 200))
 				.Add(Prize(ModContent.ItemType<Items.Accessories.GolexWatch>(), 150))
 				.Add(Prize(ItemID.TopHat, 25))
