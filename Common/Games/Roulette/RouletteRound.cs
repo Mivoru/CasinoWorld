@@ -204,7 +204,11 @@ namespace CasinoWorld.Common.Games.Roulette
 
 			WheelAngle = wheelStart + WheelTurns * MathHelper.TwoPi * wheelEase;
 			BallAngle = ballStart - ballTravel * ballEase;
+			float lastDrop = BallDrop;
 			BallDrop = MathHelper.Clamp((p - 0.7f) / 0.25f, 0f, 1f);
+			// The moment the ball leaves the rim it hops over the metal diamonds.
+			if (lastDrop <= 0f && BallDrop > 0f)
+				SoundEngine.PlaySound(CasinoSounds.RouletteBallBounce);
 
 			// Clicks as the ball passes pockets; they slow down with the ball.
 			int pocket = (int)Math.Floor(Modulo(BallAngle - WheelAngle, MathHelper.TwoPi) / PocketAngle);

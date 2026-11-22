@@ -70,6 +70,7 @@ namespace CasinoWorld.Common.Games
 			Coins.GiveItem(player, new Item(itemType));
 			CombatText.NewText(player.Hitbox, new Color(255, 215, 60), Language.GetTextValue("Mods.CasinoWorld.Gambler.JackpotItem"), dramatic: true);
 			SoundEngine.PlaySound(CasinoSounds.Jackpot, player.Center);
+			SoundEngine.PlaySound(CasinoSounds.CrowdCheer, player.Center);
 			for (int k = 0; k < 30; k++)
 				Dust.NewDust(player.position, player.width, player.height, DustID.GoldCoin, Main.rand.NextFloat(-4f, 4f), Main.rand.NextFloat(-6f, -1f));
 			Main.NewText(Language.GetTextValue("Mods.CasinoWorld.Gambler.JackpotMessage", Lang.GetItemNameValue(itemType)), new Color(255, 215, 60));

@@ -1,3 +1,4 @@
+using CasinoWorld.Common;
 using CasinoWorld.Common.Gambler;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -37,7 +38,7 @@ namespace CasinoWorld.Content.Projectiles
 			if (++Bounces > MaxBounces)
 				return true;
 
-			SoundEngine.PlaySound(SoundID.Dig with { Pitch = 0.6f, Volume = 0.5f }, Projectile.Center);
+			SoundEngine.PlaySound(CasinoSounds.DiceBounce, Projectile.Center);
 			if (Projectile.velocity.X != oldVelocity.X)
 				Projectile.velocity.X = -oldVelocity.X * 0.8f;
 			if (Projectile.velocity.Y != oldVelocity.Y)

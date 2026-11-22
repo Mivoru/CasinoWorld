@@ -108,7 +108,7 @@ namespace CasinoWorld.Content.Tiles
 			player.velocity = Vector2.Zero;
 			if (Main.netMode == NetmodeID.MultiplayerClient)
 				NetMessage.SendData(MessageID.TeleportEntity, -1, -1, null, 0, player.whoAmI, destination.X, destination.Y, TeleportationStyleID.TeleporterTile);
-			SoundEngine.PlaySound(SoundID.Item35 with { Pitch = 0.5f, Volume = 0.7f }, destination);
+			SoundEngine.PlaySound(global::CasinoWorld.Common.CasinoSounds.ElevatorDing, destination);
 			return true;
 		}
 

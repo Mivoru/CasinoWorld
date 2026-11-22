@@ -1,3 +1,4 @@
+using CasinoWorld.Common;
 using CasinoWorld.Content.Items;
 using CasinoWorld.Content.Items.Crates;
 using CasinoWorld.Content.Items.Weapons;
@@ -33,8 +34,8 @@ namespace CasinoWorld.Content.NPCs.Enemies
 			NPC.lifeMax = 45;
 			NPC.knockBackResist = 0.8f;
 			NPC.value = Item.buyPrice(silver: 2);
-			NPC.HitSound = SoundID.NPCHit4;
-			NPC.DeathSound = SoundID.NPCDeath6;
+			NPC.HitSound = CasinoSounds.ChipSlimeHit;
+			NPC.DeathSound = CasinoSounds.ChipSlimeDeath;
 		}
 
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -81,8 +82,8 @@ namespace CasinoWorld.Content.NPCs.Enemies
 			NPC.lifeMax = 80;
 			NPC.knockBackResist = 0.5f;
 			NPC.value = Item.buyPrice(silver: 5);
-			NPC.HitSound = SoundID.NPCHit1;
-			NPC.DeathSound = SoundID.NPCDeath1;
+			NPC.HitSound = CasinoSounds.CardSoldierHit;
+			NPC.DeathSound = CasinoSounds.CardSoldierDeath;
 		}
 
 		public override void FindFrame(int frameHeight)
@@ -143,8 +144,8 @@ namespace CasinoWorld.Content.NPCs.Enemies
 			NPC.lifeMax = 1200;
 			NPC.knockBackResist = 0.1f;
 			NPC.value = Item.buyPrice(gold: 2);
-			NPC.HitSound = SoundID.NPCHit4;
-			NPC.DeathSound = SoundID.NPCDeath6;
+			NPC.HitSound = CasinoSounds.SlotMimicHit;
+			NPC.DeathSound = CasinoSounds.SlotMimicDeath;
 		}
 
 		public override void FindFrame(int frameHeight)

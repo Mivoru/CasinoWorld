@@ -1,3 +1,4 @@
+using CasinoWorld.Common;
 using CasinoWorld.Common.Gambler;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -52,7 +53,7 @@ namespace CasinoWorld.Content.Projectiles
 				return false;
 			}
 
-			SoundEngine.PlaySound(SoundID.Dig with { Pitch = 0.6f, Volume = 0.5f }, Projectile.Center);
+			SoundEngine.PlaySound(CasinoSounds.DiceBounce, Projectile.Center);
 			if (Projectile.velocity.X != oldVelocity.X)
 				Projectile.velocity.X = -oldVelocity.X * 0.8f;
 			if (Projectile.velocity.Y != oldVelocity.Y)
@@ -62,7 +63,8 @@ namespace CasinoWorld.Content.Projectiles
 
 		public override void OnKill(int timeLeft)
 		{
-			SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
+			SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.6f }, Projectile.Center);
+			SoundEngine.PlaySound(CasinoSounds.ChipExplode, Projectile.Center);
 			for (int k = 0; k < 25; k++) {
 				Dust dust = Dust.NewDustDirect(Projectile.Center - new Vector2(30), 60, 60, DustID.Torch, Scale: 1.6f);
 				dust.noGravity = true;

@@ -145,8 +145,11 @@ namespace CasinoWorld.Content.NPCs.Boss
 			NPC.dontTakeDamage = true;
 			Vector2 goal = target.Center + new Vector2(0, -260);
 			NPC.velocity = (goal - NPC.Center) * 0.05f;
-			if (++Timer == 1 && Main.netMode != NetmodeID.MultiplayerClient)
-				Broadcast("Mods.CasinoWorld.Boss.Intro", new Color(255, 200, 80));
+			if (++Timer == 1) {
+				SoundEngine.PlaySound(CasinoSounds.HouseLaugh, NPC.Center);
+				if (Main.netMode != NetmodeID.MultiplayerClient)
+					Broadcast("Mods.CasinoWorld.Boss.Intro", new Color(255, 200, 80));
+			}
 			if (Timer >= 120) {
 				NPC.dontTakeDamage = false;
 				SetState(State.Hover);
@@ -503,6 +506,8 @@ namespace CasinoWorld.Content.NPCs.Boss
 		{
 			CurrentState = state;
 			Timer = 0;
+			if (state == State.Transition && !Main.dedServ)
+				SoundEngine.PlaySound(CasinoSounds.HouseLaugh with { Pitch = -0.2f }, NPC.Center);
 			if (state == State.Hover)
 				nextSpinIn = PhaseTwo ? Main.rand.Next(80, 140) : Main.rand.Next(150, 230);
 			NPC.netUpdate = true;

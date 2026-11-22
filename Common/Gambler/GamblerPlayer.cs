@@ -97,7 +97,7 @@ namespace CasinoWorld.Common.Gambler
 				if (HotStreakSet)
 					Player.AddBuff(ModContent.BuffType<Content.Buffs.HotStreak>(), Content.Buffs.HotStreak.Duration);
 				CombatText.NewText(target.Hitbox, new Color(255, 215, 60), Language.GetTextValue("Mods.CasinoWorld.Gambler.Jackpot"), dramatic: true);
-				SoundEngine.PlaySound(SoundID.CoinPickup with { Pitch = 0.3f }, target.Center);
+				SoundEngine.PlaySound(CasinoSounds.JackpotProc, target.Center);
 				for (int k = 0; k < 8; k++)
 					Dust.NewDust(target.position, target.width, target.height, DustID.GoldCoin, Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-4f, -1f));
 			}
@@ -108,6 +108,8 @@ namespace CasinoWorld.Common.Gambler
 			else if (roll < JackpotChance + BustChance) {
 				modifiers.SourceDamage *= BustMultiplier;
 				CombatText.NewText(target.Hitbox, Color.Gray, Language.GetTextValue("Mods.CasinoWorld.Gambler.Bust"));
+				if (Main.rand.NextBool(3))   // not on every bust, it would get tiring
+					SoundEngine.PlaySound(CasinoSounds.BustProc, target.Center);
 			}
 		}
 

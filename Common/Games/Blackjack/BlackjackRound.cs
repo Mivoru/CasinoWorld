@@ -105,6 +105,7 @@ namespace CasinoWorld.Common.Games.Blackjack
 			if (shoe.Count < ReshuffleBelow) {
 				Shuffle();
 				SoundEngine.PlaySound(CasinoSounds.CardShuffle);
+				Queue(() => SoundEngine.PlaySound(CasinoSounds.CardBridge));
 				SetMessage(Text("Shuffle"), Color.Gold);
 			}
 			else {
@@ -230,7 +231,7 @@ namespace CasinoWorld.Common.Games.Blackjack
 			Phase = BlackjackPhase.DealerTurn;
 			Queue(() => {
 				HoleCardHidden = false;
-				SoundEngine.PlaySound(CasinoSounds.CardDeal with { Pitch = -0.3f });
+				SoundEngine.PlaySound(CasinoSounds.CardFlip);
 			});
 
 			// The dealer only draws if some hand is still alive.
