@@ -22,7 +22,7 @@ namespace CasinoWorld.Content.Items.Weapons
 		public override void SetDefaults()
 		{
 			base.SetDefaults();
-			Item.damage = 72;
+			Item.damage = 60;
 			Item.knockBack = 3f;
 			Item.useTime = Item.useAnimation = 24;
 			Item.shoot = ModContent.ProjectileType<SpectralCard>();
@@ -40,7 +40,7 @@ namespace CasinoWorld.Content.Items.Weapons
 		public override void SetDefaults()
 		{
 			base.SetDefaults();
-			Item.damage = 55;
+			Item.damage = 46;
 			Item.knockBack = 4f;
 			Item.useTime = Item.useAnimation = 28;
 			Item.shoot = ModContent.ProjectileType<DoublingDie>();
@@ -60,7 +60,7 @@ namespace CasinoWorld.Content.Items.Weapons
 		public override void SetDefaults()
 		{
 			base.SetDefaults();
-			Item.damage = 36;
+			Item.damage = 30;
 			Item.knockBack = 2f;
 			Item.useTime = Item.useAnimation = 16;
 			Item.useStyle = ItemUseStyleID.Shoot;
