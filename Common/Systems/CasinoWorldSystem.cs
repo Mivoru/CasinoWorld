@@ -67,15 +67,31 @@ namespace CasinoWorld.Common.Systems
 			}
 		}
 
-		private static void AnnounceUndergroundCasino()
+		public static readonly Color AnnounceColor = new(255, 120, 220);
+
+		/// <summary>Message text: distance, left or right of spawn, depth.</summary>
+		public static NetworkText UndergroundCasinoDirections()
 		{
 			Point pos = UndergroundCasinoPosition;
 			int dx = pos.X - Main.spawnTileX;
 			int depthFeet = (int)((pos.Y - Main.worldSurface) * 2);
 			string side = dx >= 0 ? "Mods.CasinoWorld.WorldGen.East" : "Mods.CasinoWorld.WorldGen.West";
-			var text = NetworkText.FromKey("Mods.CasinoWorld.WorldGen.UndergroundOpened",
-				System.Math.Abs(dx) * 2, NetworkText.FromKey(side), depthFeet);
-			ChatHelper.BroadcastChatMessage(text, new Color(255, 120, 220));
+			return NetworkText.FromKey("Mods.CasinoWorld.WorldGen.UndergroundOpened", System.Math.Abs(dx) * 2, NetworkText.FromKey(side), depthFeet);
+		}
+
+		/// <summary>
+		/// Tells everyone that the hardmode casino opened and where. ChatHelper only reaches clients
+		/// on a server, so singleplayer prints it directly (it used to be silent there).
+		/// </summary>
+		private static void AnnounceUndergroundCasino()
+		{
+			NetworkText text = UndergroundCasinoDirections();
+			if (Main.netMode == NetmodeID.Server)
+				ChatHelper.BroadcastChatMessage(text, AnnounceColor);
+			else
+				Main.NewText(text.ToString(), AnnounceColor);
+			if (!Main.dedServ)
+				Terraria.Audio.SoundEngine.PlaySound(Common.CasinoSounds.VaultDoor);
 		}
 
 		public override void SaveWorldData(TagCompound tag)

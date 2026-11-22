@@ -26,6 +26,8 @@ namespace CasinoWorld.Common.Systems
 
 			returnPosition = Main.LocalPlayer.position;
 			returnWorldId = Main.worldID;
+			if (typeof(T) == typeof(UndergroundCasino))
+				Main.LocalPlayer.GetModPlayer<Players.CasinoPlayer>().VisitedUnderground = true;
 			Terraria.Audio.SoundEngine.PlaySound(typeof(T) == typeof(UndergroundCasino) ? CasinoSounds.VaultDoor : CasinoSounds.DoorEnter);
 			if (!SubworldSystem.Enter<T>())
 				returnPosition = null;

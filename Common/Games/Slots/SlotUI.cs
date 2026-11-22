@@ -244,7 +244,7 @@ namespace CasinoWorld.Common.Games.Slots
 			// Two of a kind on reels 1-2: one compact line for all symbols.
 			for (int k = 0; k < 2; k++)
 				sb.Draw(tex, new Vector2(pos.X + k * 18, y), new Rectangle(6 * SymbolPx, 0, SymbolPx, SymbolPx), Color.White, 0f, Vector2.Zero, 0.25f, SpriteEffects.None, 0f);
-			Utils.DrawBorderString(sb, Text("PairPays", SlotRules.PairPays[1], SlotRules.PairPays[6]), new Vector2(pos.X + 40, y + 2), Color.White, 0.65f);
+			Utils.DrawBorderString(sb, Text("PairPays", SlotRules.PairPays[1], SlotRules.PairPays[6]), new Vector2(pos.X + 62, y + 2), Color.White, 0.75f);
 			y += 20;
 			sb.Draw(tex, new Vector2(pos.X, y), new Rectangle(0, 0, SymbolPx, SymbolPx), Color.White, 0f, Vector2.Zero, 0.25f, SpriteEffects.None, 0f);
 			Utils.DrawBorderString(sb, "x" + SlotRules.OneCherryPay, new Vector2(pos.X + 62, y + 2), Color.White, 0.75f);

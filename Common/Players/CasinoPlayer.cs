@@ -24,6 +24,9 @@ namespace CasinoWorld.Common.Players
 		/// <summary>Characters made before the Casino Blueprint existed get one, once.</summary>
 		private bool receivedBlueprint;
 
+		/// <summary>Has entered the high rollers casino at least once (until then, a reminder on joining).</summary>
+		public bool VisitedUnderground;
+
 		public override void OnEnterWorld()
 		{
 			restoreTimer = RestoreDelay;
@@ -34,16 +37,22 @@ namespace CasinoWorld.Common.Players
 				if (!Player.HasItemInAnyInventory(type))
 					Player.QuickSpawnItem(Player.GetSource_Misc("CasinoWorld"), type);
 			}
+
+			// Reminder of the hardmode casino for players who have not found it yet.
+			if (!VisitedUnderground && !CasinoTravel.InCasino && CasinoWorldSystem.HasUndergroundCasino)
+				Main.NewText(CasinoWorldSystem.UndergroundCasinoDirections().ToString(), CasinoWorldSystem.AnnounceColor);
 		}
 
 		public override void SaveData(TagCompound tag)
 		{
 			tag["receivedBlueprint"] = receivedBlueprint;
+			tag["visitedUnderground"] = VisitedUnderground;
 		}
 
 		public override void LoadData(TagCompound tag)
 		{
 			receivedBlueprint = tag.ContainsKey("receivedBlueprint") && tag.GetBool("receivedBlueprint");
+			VisitedUnderground = tag.ContainsKey("visitedUnderground") && tag.GetBool("visitedUnderground");
 		}
 
 		public override void PostUpdate()

@@ -399,9 +399,9 @@ Tiles: {
 WorldGen: {
 	SurfaceCasino: Building the casino
 	Crates: Hiding lucky crates
-	UndergroundOpened: Deep underground, a casino for high rollers has opened its vault! (about {0} ft {1} of spawn, {2} ft deep)
-	East: east
-	West: west
+	UndergroundOpened: A vault door has opened deep underground: the High Rollers Casino! It is about {0} ft {1} of spawn, {2} ft below the surface.
+	East: to the RIGHT (east)
+	West: to the LEFT (west)
 }
 
 Upgrade: {
@@ -771,7 +771,7 @@ UI: {
 		Title: LUCKY SLOTS
 		Spin: SPIN
 		Pays: Pays
-		PairPays: 2 same (reels 1-2): x{0}-x{1}
+		PairPays: x{0}-x{1} pair
 		Money: Money: {0}
 		Bet: Bet per spin: {0}
 		Hint: Pick a bet and pull the lever!
