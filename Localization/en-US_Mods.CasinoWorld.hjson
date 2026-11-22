@@ -173,7 +173,7 @@ Items: {
 	}
 
 	WildCardRelicItem: {
-		DisplayName: The House Relic
+		DisplayName: The Wild Card Relic
 		Tooltip: ""
 	}
 
@@ -183,12 +183,12 @@ Items: {
 	}
 
 	WildCardMask: {
-		DisplayName: The House Mask
+		DisplayName: Wild Card Mask
 		Tooltip: ""
 	}
 
 	WildCardTrophy: {
-		DisplayName: The House Trophy
+		DisplayName: The Wild Card Trophy
 		Tooltip: ""
 	}
 
@@ -292,13 +292,13 @@ Items: {
 		DisplayName: Golden Chip
 		Tooltip:
 			'''
-			Summons The House
+			Summons The Wild Card
 			Only works at night
 			'''
 	}
 
 	WildCardBag: {
-		DisplayName: Treasure Bag (The House)
+		DisplayName: Treasure Bag (The Wild Card)
 		Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 	}
 
@@ -440,11 +440,6 @@ Boss: {
 		Roll: "{0} + {1} = {2}!"
 	}
 
-	Intro: The House is open for business!
-	PhaseTwo: Double or nothing! The Wheel of Fate spins...
-	Defeat: The house... always... wins...?
-	Leave: The house closes at dawn.
-	Bust: BUST!
 }
 
 Bestiary: {
@@ -528,7 +523,7 @@ NPCs: {
 			3: Never bet more than you can afford to lose. I say that to myself every morning.
 			4: I once won a house in a card game. Then I bet the house. Literally.
 			5: You want a tip? Split aces. Always split aces. And never trust a slot machine with teeth.
-			6: The House? Big golden machine, lots of hands. I hear it shows up when you flip a Golden Chip at night.
+			6: The Wild Card? A jester made of cards. Flip a Golden Chip at night and it comes to play. Keep your eye on the real card.
 			7: Crates, my friend. Blue, purple, pink, red... and if you're very lucky, gold.
 			8: Luck is a skill. A skill I'm still working on.
 			9: Shh. I'm counting cards. Well, I was. Now I've lost count.
@@ -553,7 +548,6 @@ NPCs: {
 	}
 
 	TheWildCard.DisplayName: The Wild Card
-	HouseHand.DisplayName: Croupier Hand
 	ChipSlime.DisplayName: Chip Slime
 	CardSoldier.DisplayName: Card Soldier
 	SlotMimic.DisplayName: Slot Mimic
