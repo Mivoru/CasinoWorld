@@ -691,7 +691,7 @@ UI: {
 		Week: THIS WEEK
 		AllTime: ALL TIME
 		Empty: no wins yet
-		Latest: {0} just won {1} at {2}!
+		Latest: "{0} just won {1} at {2}!"
 		GameRoulette: roulette
 		GameBlackjack: blackjack
 		GameSlots: the slots
