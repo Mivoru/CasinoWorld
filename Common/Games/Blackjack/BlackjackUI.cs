@@ -24,13 +24,17 @@ namespace CasinoWorld.Common.Games.Blackjack
 		}
 	}
 
-	/// <summary>Blackjack window: dealer at the top, player hands in the middle, chips and actions at the bottom.</summary>
+	/// <summary>
+	/// Blackjack window laid out like a real table: dealer and shoe at the top, the printed
+	/// table arc, player hands in the middle, and a control rail with chips and actions at the bottom.
+	/// </summary>
 	public class BlackjackPanel : UIElement
 	{
-		public const int PanelWidth = 620;
-		public const int PanelHeight = 400;
+		public const int PanelWidth = 720;
+		public const int PanelHeight = 440;
 
-		private const int CardW = 44, CardH = 62, CardStep = 30;
+		private const int CardW = 44, CardH = 62, CardStep = 26;
+		private const int RailHeight = 64;
 
 		private enum Action { Close, Chip, Clear, Deal, Hit, Stand, Double, Split }
 
@@ -48,27 +52,30 @@ namespace CasinoWorld.Common.Games.Blackjack
 
 		private Rectangle Area => GetDimensions().ToRectangle();
 
+		private Rectangle Rail => new(Area.X + 10, Area.Bottom - 56 - RailHeight, Area.Width - 20, RailHeight);
+
 		private IEnumerable<Button> Buttons()
 		{
 			Rectangle a = Area;
+			Rectangle rail = Rail;
 			BlackjackRound round = System.Round;
 
-			yield return new Button(new Rectangle(a.Right - 30, a.Y + 8, 22, 22), Action.Close, "X", true, CasinoDraw.Red);
+			yield return new Button(new Rectangle(a.Right - 32, a.Y + 10, 22, 22), Action.Close, "X", true, CasinoDraw.Red);
 
-			int y = a.Bottom - 96;
+			int y = rail.Y + 10;
 			long[] chips = Chips;
 			for (int k = 0; k < chips.Length; k++)
-				yield return new Button(new Rectangle(a.X + 16 + k * 62, y, 58, 40), Action.Chip, Coins.Format(chips[k]), round.CanBet, default, k);
+				yield return new Button(new Rectangle(rail.X + 8 + k * 60, y, 56, 44), Action.Chip, Coins.Format(chips[k]), round.CanBet, default, k);
 
-			int x = a.X + 16 + chips.Length * 62 + 6;
-			yield return new Button(new Rectangle(x, y, 70, 19), Action.Clear, Text("Clear"), round.CanBet, CasinoDraw.FeltDark);
-			yield return new Button(new Rectangle(x, y + 21, 70, 19), Action.Deal, Text("Deal"), round.CanBet, CasinoDraw.ButtonGold);
+			int x = rail.X + 8 + chips.Length * 60 + 6;
+			yield return new Button(new Rectangle(x, y, 84, 21), Action.Clear, Text("Clear"), round.CanBet, CasinoDraw.FeltDark);
+			yield return new Button(new Rectangle(x, y + 23, 84, 21), Action.Deal, Text("Deal"), round.CanBet, CasinoDraw.ButtonGold);
 
-			int bx = a.Right - 16 - 4 * 74;
-			yield return new Button(new Rectangle(bx, y, 70, 40), Action.Hit, Text("Hit"), round.CanHit, CasinoDraw.ButtonGold);
-			yield return new Button(new Rectangle(bx + 74, y, 70, 40), Action.Stand, Text("Stand"), round.CanHit, CasinoDraw.ButtonGold);
-			yield return new Button(new Rectangle(bx + 148, y, 70, 40), Action.Double, Text("Double"), round.CanDouble, CasinoDraw.ButtonGold);
-			yield return new Button(new Rectangle(bx + 222, y, 70, 40), Action.Split, Text("Split"), round.CanSplit, CasinoDraw.ButtonGold);
+			int bx = rail.Right - 8 - 4 * 80;
+			yield return new Button(new Rectangle(bx, y, 76, 44), Action.Hit, Text("Hit"), round.CanHit, CasinoDraw.ButtonGold);
+			yield return new Button(new Rectangle(bx + 80, y, 76, 44), Action.Stand, Text("Stand"), round.CanHit, CasinoDraw.ButtonGold);
+			yield return new Button(new Rectangle(bx + 160, y, 76, 44), Action.Double, Text("Double"), round.CanDouble, CasinoDraw.ButtonGold);
+			yield return new Button(new Rectangle(bx + 240, y, 76, 44), Action.Split, Text("Split"), round.CanSplit, CasinoDraw.ButtonGold);
 		}
 
 		public override void Update(GameTime gameTime)
@@ -81,7 +88,7 @@ namespace CasinoWorld.Common.Games.Blackjack
 			if (!(Main.mouseLeft && Main.mouseLeftRelease))
 				return;
 
-			Point mouse = Main.MouseScreen.ToPoint();
+			Point mouse = CasinoTableGameSystem.UIMouse;
 			foreach (Button button in Buttons()) {
 				if (button.Enabled && button.Rect.Contains(mouse)) {
 					Click(button);
@@ -119,43 +126,61 @@ namespace CasinoWorld.Common.Games.Blackjack
 
 			Rectangle a = Area;
 			BlackjackRound round = System.Round;
-			Point mouse = Main.MouseScreen.ToPoint();
+			Point mouse = CasinoTableGameSystem.UIMouse;
 
 			CasinoDraw.Panel(sb, a);
-			Utils.DrawBorderString(sb, Text("Title"), new Vector2(a.X + 16, a.Y + 12), CasinoDraw.Gold, 1.1f);
-			Utils.DrawBorderString(sb, Text("Rules"), new Vector2(a.Center.X, a.Y + 14), Color.White * 0.7f, 0.7f, 0.5f);
+			Utils.DrawBorderString(sb, Text("Title"), new Vector2(a.X + 18, a.Y + 14), CasinoDraw.Gold, 1.15f);
 
-			// Dealer.
-			Vector2 dealerPos = new(a.X + 40, a.Y + 60);
+			DrawTablePrint(sb, a);
+			DrawShoe(sb, new Vector2(a.Right - 92, a.Y + 44));
+
+			// Dealer, centred at the top.
+			int dealerY = a.Y + 70;
 			string dealerLabel = Text("Dealer");
 			if (round.Dealer.Count > 0)
-				dealerLabel += "  " + (round.HoleCardHidden ? "?" : BlackjackRules.Value(round.Dealer).ToString());
-			Utils.DrawBorderString(sb, dealerLabel, dealerPos - new Vector2(0, 22), Color.White, 0.9f);
-			for (int k = 0; k < round.Dealer.Count; k++)
-				DrawCard(sb, dealerPos + new Vector2(k * CardStep, 0), round.Dealer[k], hidden: k == 1 && round.HoleCardHidden);
+				dealerLabel += ":  " + (round.HoleCardHidden ? "?" : BlackjackRules.Value(round.Dealer).ToString());
+			Utils.DrawBorderString(sb, dealerLabel, new Vector2(a.Center.X, dealerY - 6), Color.White, 0.9f, 0.5f, 1f);
+			DrawHand(sb, round.Dealer, new Vector2(a.Center.X, dealerY), hideSecond: round.HoleCardHidden);
 
-			// Player hands.
-			for (int h = 0; h < round.Hands.Count; h++) {
+			// Player hands, centred in the middle.
+			int handsY = a.Y + 214;
+			int count = Math.Max(1, round.Hands.Count);
+			for (int h = 0; h < count; h++) {
+				float cx = count == 1 ? a.Center.X : a.Center.X + (h == 0 ? -150 : 150);
+				if (h >= round.Hands.Count) {
+					DrawHand(sb, Array.Empty<int>(), new Vector2(cx, handsY), false);
+					continue;
+				}
+
 				BlackjackHand hand = round.Hands[h];
-				Vector2 pos = new(a.X + 40 + h * 280, a.Y + 186);
 				bool active = round.Phase == BlackjackPhase.PlayerTurn && h == round.ActiveHand;
-				if (active)
-					CasinoDraw.Fill(sb, new Rectangle((int)pos.X - 6, (int)pos.Y - 6, CardW + CardStep * Math.Max(1, hand.Cards.Count - 1) + 12, CardH + 12), CasinoDraw.Gold * 0.6f);
-				for (int k = 0; k < hand.Cards.Count; k++)
-					DrawCard(sb, pos + new Vector2(k * CardStep, 0), hand.Cards[k], hidden: false);
+				if (active) {
+					int width = CardW + CardStep * Math.Max(1, hand.Cards.Count - 1);
+					CasinoDraw.Fill(sb, new Rectangle((int)cx - width / 2 - 6, handsY - 6, width + 12, CardH + 12), CasinoDraw.Gold * 0.55f);
+				}
+				DrawHand(sb, hand.Cards, new Vector2(cx, handsY), false);
 
-				string label = Text("You") + "  " + hand.Value + "   " + Coins.Format(hand.Bet) + (hand.Doubled ? " x2" : "");
-				Color color = hand.Busted ? Color.OrangeRed : Color.White;
-				if (hand.Payout >= 0 && round.Phase == BlackjackPhase.Result)
-					label += "  " + (hand.Payout > hand.Bet ? "+" + Coins.Format(hand.Payout) : hand.Payout == hand.Bet ? Text("PushShort") : "");
-				Utils.DrawBorderString(sb, label, pos - new Vector2(0, 22), color, 0.85f);
+				string label = hand.Value.ToString();
+				if (hand.IsBlackjack)
+					label = Text("BlackjackShort");
+				else if (hand.Busted)
+					label = Text("BustShort");
+				Color color = hand.Busted ? Color.OrangeRed : hand.IsBlackjack ? CasinoDraw.Gold : Color.White;
+				Utils.DrawBorderString(sb, label, new Vector2(cx, handsY - 6), color, 0.95f, 0.5f, 1f);
+
+				string bet = Coins.Format(hand.Bet) + (hand.Doubled ? "  x2" : "");
+				if (round.Phase == BlackjackPhase.Result && hand.Payout >= 0)
+					bet += hand.Payout > hand.Bet ? "   +" + Coins.Format(hand.Payout) : hand.Payout == hand.Bet ? "   " + Text("PushShort") : "";
+				DrawBetChip(sb, new Vector2(cx, handsY + CardH + 18), bet);
 			}
 
-			if (round.CanBet) {
-				string bet = Text("YourBet", Coins.Format(round.PendingBet), Coins.Format(MaxBet));
-				Utils.DrawBorderString(sb, bet, new Vector2(a.X + 16, a.Bottom - 118), Color.White, 0.85f);
-			}
+			if (round.CanBet && round.PendingBet > 0)
+				DrawBetChip(sb, new Vector2(a.Center.X, handsY + CardH + 18), Text("NextBet", Coins.Format(round.PendingBet)));
 
+			// Control rail.
+			Rectangle rail = Rail;
+			CasinoDraw.Fill(sb, rail, CasinoDraw.Gold);
+			CasinoDraw.Fill(sb, CasinoDraw.Shrink(rail, 2), new Color(60, 30, 20));
 			foreach (Button button in Buttons()) {
 				bool hover = button.Rect.Contains(mouse);
 				if (button.Kind == Action.Chip)
@@ -164,15 +189,71 @@ namespace CasinoWorld.Common.Games.Blackjack
 					CasinoDraw.Button(sb, button.Rect, button.Label, button.Color, hover, button.Enabled, button.Kind is Action.Clear or Action.Deal or Action.Close ? 0.8f : 0.95f);
 			}
 
-			Utils.DrawBorderString(sb, Text("Money", Coins.Format(Coins.Count(Main.LocalPlayer))), new Vector2(a.X + 16, a.Bottom - 46), Color.White, 0.8f);
-			if (!string.IsNullOrEmpty(round.Message))
-				Utils.DrawBorderString(sb, round.Message, new Vector2(a.X + 16, a.Bottom - 26), round.MessageColor, 0.9f);
+			// Status lines under the rail.
+			Utils.DrawBorderString(sb, Text("Money", Coins.Format(Coins.Count(Main.LocalPlayer))), new Vector2(a.X + 20, a.Bottom - 46), Color.White, 0.8f);
+			Utils.DrawBorderString(sb, Text("Limit", Coins.Format(MaxBet)), new Vector2(a.Right - 20, a.Bottom - 46), Color.White * 0.8f, 0.8f, 1f);
+			string message = round.Message;
+			if (string.IsNullOrEmpty(message))
+				message = round.Phase switch {
+					BlackjackPhase.Betting => Text("HintBet"),
+					BlackjackPhase.PlayerTurn => Text("HintPlay"),
+					_ => "",
+				};
+			Utils.DrawBorderString(sb, message, new Vector2(a.Center.X, a.Bottom - 22), round.MessageColor, 0.9f, 0.5f, 0.5f);
+		}
+
+		/// <summary>The printed arc and rules text on the felt.</summary>
+		private static void DrawTablePrint(SpriteBatch sb, Rectangle a)
+		{
+			var center = new Vector2(a.Center.X, a.Y + 120);
+			const float rx = 300f, ry = 140f;
+			for (float t = 0.12f; t <= MathHelper.Pi - 0.12f; t += 0.012f) {
+				var p = center + new Vector2((float)Math.Cos(t) * rx, (float)Math.Sin(t) * ry);
+				CasinoDraw.Fill(sb, new Rectangle((int)p.X, (int)p.Y, 2, 2), CasinoDraw.Gold * 0.6f);
+				var q = center + new Vector2((float)Math.Cos(t) * (rx - 16), (float)Math.Sin(t) * (ry - 12));
+				CasinoDraw.Fill(sb, new Rectangle((int)q.X, (int)q.Y, 2, 2), CasinoDraw.Gold * 0.35f);
+			}
+			Utils.DrawBorderString(sb, Text("Rules"), new Vector2(a.Center.X, a.Y + 168), CasinoDraw.Gold * 0.75f, 0.75f, 0.5f, 0.5f);
+		}
+
+		private static void DrawShoe(SpriteBatch sb, Vector2 pos)
+		{
+			var body = new Rectangle((int)pos.X, (int)pos.Y + 10, 64, 40);
+			sb.Draw(CasinoDraw.CardBack, new Rectangle(body.X + 8, body.Y - 14, CardW - 6, CardH - 20), Color.White);
+			CasinoDraw.Fill(sb, body, new Color(30, 14, 40));
+			CasinoDraw.Fill(sb, new Rectangle(body.X, body.Y, body.Width, 3), CasinoDraw.Gold);
+			Utils.DrawBorderString(sb, Text("Shoe"), new Vector2(body.Center.X, body.Bottom - 6), Color.White * 0.8f, 0.6f, 0.5f, 1f);
+		}
+
+		/// <summary>Draws cards centred on centerX; empty hands show two outlined card slots.</summary>
+		private static void DrawHand(SpriteBatch sb, IReadOnlyList<int> cards, Vector2 top, bool hideSecond)
+		{
+			if (cards.Count == 0) {
+				for (int k = 0; k < 2; k++) {
+					var slot = new Rectangle((int)top.X - CardW - 4 + k * (CardW + 8), (int)top.Y, CardW, CardH);
+					CasinoDraw.Fill(sb, slot, Color.White * 0.25f);
+					CasinoDraw.Fill(sb, CasinoDraw.Shrink(slot, 2), CasinoDraw.Felt);
+				}
+				return;
+			}
+
+			int width = CardW + CardStep * (cards.Count - 1);
+			float x = top.X - width / 2f;
+			for (int k = 0; k < cards.Count; k++)
+				DrawCard(sb, new Vector2(x + k * CardStep, top.Y), cards[k], hidden: hideSecond && k == 1);
+		}
+
+		private static void DrawBetChip(SpriteBatch sb, Vector2 center, string text)
+		{
+			Texture2D chip = CasinoDraw.Chip;
+			sb.Draw(chip, center, null, CasinoDraw.Gold, 0f, chip.Size() / 2f, 1f, SpriteEffects.None, 0f);
+			Utils.DrawBorderString(sb, text, center + new Vector2(16, 3), Color.Yellow, 0.8f, 0f, 0.5f);
 		}
 
 		private static void DrawCard(SpriteBatch sb, Vector2 pos, int card, bool hidden)
 		{
 			var rect = new Rectangle((int)pos.X, (int)pos.Y, CardW, CardH);
-			CasinoDraw.Fill(sb, new Rectangle(rect.X + 2, rect.Y + 2, CardW, CardH), Color.Black * 0.35f);
+			CasinoDraw.Fill(sb, new Rectangle(rect.X + 3, rect.Y + 3, CardW, CardH), Color.Black * 0.35f);
 			if (hidden) {
 				sb.Draw(CasinoDraw.CardBack, rect, Color.White);
 				return;
@@ -183,13 +264,11 @@ namespace CasinoWorld.Common.Games.Blackjack
 
 			int suit = BlackjackRules.Suit(card);
 			Color ink = suit is 1 or 2 ? CasinoDraw.Red : CasinoDraw.Black;
-			string rank = BlackjackRules.RankName(card);
-			Utils.DrawBorderString(sb, rank, new Vector2(rect.X + 4, rect.Y + 3), ink, 0.85f);
+			Utils.DrawBorderString(sb, BlackjackRules.RankName(card), new Vector2(rect.X + 4, rect.Y + 3), ink, 0.85f);
 
-			// Plain text without the border reads better on a white card.
 			Texture2D suits = CasinoDraw.Suits;
 			var src = new Rectangle(suit * 12, 0, 12, 12);
-			sb.Draw(suits, new Vector2(rect.X + 5, rect.Y + 24), src, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+			sb.Draw(suits, new Vector2(rect.X + 5, rect.Y + 24), src, Color.White);
 			sb.Draw(suits, new Vector2(rect.Center.X - 6, rect.Center.Y), src, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
 		}
 	}

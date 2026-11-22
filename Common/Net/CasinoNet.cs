@@ -1,5 +1,6 @@
 using System.IO;
 using CasinoWorld.Common.Games.Roulette;
+using CasinoWorld.Common.Systems;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -11,6 +12,7 @@ namespace CasinoWorld.Common.Net
 	{
 		RouletteSpinRequest, // client -> server: table
 		RouletteSpinResult,  // server -> all clients: player, table, number
+		PlaceSurfaceCasino,  // client -> server: left, ground row (Casino Blueprint)
 	}
 
 	/// <summary>Writes and dispatches the mod's network packets.</summary>
@@ -30,10 +32,27 @@ namespace CasinoWorld.Common.Net
 					roulette.HandleSpinResult(reader);
 					break;
 
+				case CasinoMessage.PlaceSurfaceCasino when Main.netMode == NetmodeID.Server: {
+					int left = reader.ReadInt16();
+					int groundY = reader.ReadInt16();
+					if (SurfaceCasinoStructure.CanBuildAt(left, groundY))
+						SurfaceCasinoStructure.Build(left, groundY);
+					break;
+				}
+
 				default:
 					ModContent.GetInstance<RouletteSystem>().Mod.Logger.Warn($"Unexpected packet {message} (netMode {Main.netMode}).");
 					break;
 			}
+		}
+
+		public static void SendPlaceSurfaceCasino(Mod mod, int left, int groundY)
+		{
+			ModPacket packet = mod.GetPacket();
+			packet.Write((byte)CasinoMessage.PlaceSurfaceCasino);
+			packet.Write((short)left);
+			packet.Write((short)groundY);
+			packet.Send();
 		}
 
 		public static void SendRouletteSpinRequest(Mod mod, Point16 table)

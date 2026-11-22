@@ -34,6 +34,12 @@ namespace CasinoWorld.Common.Games
 
 		public static CasinoSubworld Casino => SubworldSystem.Current as CasinoSubworld;
 
+		/// <summary>
+		/// Mouse position in UI coordinates (UI scale applied). Element dimensions use these
+		/// coordinates, so hit tests must use this instead of Main.MouseScreen.
+		/// </summary>
+		public static Point UIMouse => (active?.ui?.MousePosition ?? Main.MouseScreen).ToPoint();
+
 		protected abstract int TableTileType { get; }
 
 		protected abstract UIState CreateState();

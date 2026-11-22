@@ -19,15 +19,9 @@ namespace CasinoWorld.Common.Systems
 
 		public static bool HasSurfaceCasino => SurfaceCasinoPosition.X >= 0;
 
-		public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight)
-		{
-			int index = tasks.FindIndex(pass => pass.Name == "Final Cleanup");
-			if (index < 0)
-				index = tasks.Count;
-
-			tasks.Insert(index, new PassLegacy("Casino World: Surface Casino", GenerateSurfaceCasino));
-		}
-
+		// The surface casino is placed by the player with the Casino Blueprint, so world creation
+		// does not generate it. GenerateSurfaceCasino stays for a future "generate in world" option;
+		// the hardmode underground casino will use the same site search.
 		private void GenerateSurfaceCasino(GenerationProgress progress, GameConfiguration configuration)
 		{
 			progress.Message = Language.GetTextValue("Mods.CasinoWorld.WorldGen.SurfaceCasino");

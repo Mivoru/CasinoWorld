@@ -1,6 +1,8 @@
 using System.Linq;
 using CasinoWorld.Common.Systems;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.Enums;
@@ -17,7 +19,7 @@ namespace CasinoWorld.Content.Tiles
 	/// Only the door area reacts to clicks. The tile cannot be mined or blown up,
 	/// and it has no anchors, so digging the ground under it does not break it.
 	/// </summary>
-	public class CasinoFacade : ModTile
+	public partial class CasinoFacade : ModTile
 	{
 		public const int Width = 24;
 		public const int Height = 16;
@@ -51,6 +53,40 @@ namespace CasinoWorld.Content.Tiles
 			AddMapEntry(new Color(140, 22, 38), CreateMapEntryName());
 			DustType = DustID.GoldCoin;
 			MinPick = int.MaxValue;
+		}
+
+		private static Asset<Texture2D> glowTexture;
+
+		public override void Unload()
+		{
+			glowTexture = null;
+		}
+
+		/// <summary>Windows, sign letters, bulbs and lanterns give off warm light.</summary>
+		public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
+		{
+			Tile tile = Main.tile[i, j];
+			int x = tile.TileFrameX / 18, y = tile.TileFrameY / 18;
+			if (x >= Width || y >= Height)
+				return;
+
+			float strength = LightMap[y, x] / 255f;
+			r = strength * 1.05f;
+			g = strength * 0.78f;
+			b = strength * 0.42f;
+		}
+
+		/// <summary>Draws the glowing parts at full brightness, so they stay lit at night.</summary>
+		public override void PostDraw(int i, int j, SpriteBatch spriteBatch)
+		{
+			Tile tile = Main.tile[i, j];
+			glowTexture ??= ModContent.Request<Texture2D>(Texture + "_Glow");
+			Vector2 offScreen = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
+			Vector2 position = new Vector2(i * 16, j * 16) - Main.screenPosition + offScreen;
+
+			// Gentle flicker so the bulbs feel alive.
+			float flicker = 0.9f + 0.1f * (float)System.Math.Sin(Main.GlobalTimeWrappedHourly * 4f + i * 0.7f);
+			spriteBatch.Draw(glowTexture.Value, position, new Rectangle(tile.TileFrameX, tile.TileFrameY, 16, 16), Color.White * flicker);
 		}
 
 		public override bool CanKillTile(int i, int j, ref bool blockDamaged) => false;

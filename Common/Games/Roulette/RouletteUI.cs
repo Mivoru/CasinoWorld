@@ -141,7 +141,7 @@ namespace CasinoWorld.Common.Games.Roulette
 			if (!left && !right)
 				return;
 
-			Point mouse = Main.MouseScreen.ToPoint();
+			Point mouse = CasinoTableGameSystem.UIMouse;
 			foreach (Region region in Layout()) {
 				if (region.Rect.Contains(mouse)) {
 					Click(region, right);
@@ -190,7 +190,7 @@ namespace CasinoWorld.Common.Games.Roulette
 
 			Rectangle a = Area;
 			RouletteRound round = System.Round;
-			Point mouse = Main.MouseScreen.ToPoint();
+			Point mouse = CasinoTableGameSystem.UIMouse;
 
 			CasinoDraw.Panel(sb, a);
 

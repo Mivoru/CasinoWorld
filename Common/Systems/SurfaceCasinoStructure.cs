@@ -126,9 +126,66 @@ namespace CasinoWorld.Common.Systems
 				or TileID.Heart or TileID.ShadowOrbs or TileID.DemonAltar or TileID.TeleportationPylon;
 		}
 
+		/// <summary>
+		/// Checks a player-chosen site for the Casino Blueprint: inside the world, not floating
+		/// (at least half the foundation row is solid ground), and no chests, liquid or protected
+		/// structures in the space that will be cleared.
+		/// </summary>
+		public static bool CanBuildAt(int left, int groundY)
+		{
+			int x0 = left - Margin;
+			int x1 = left + Width + Margin;
+			int top = groundY - Height - 6;
+			if (x0 < 50 || x1 > Main.maxTilesX - 50 || top < 50 || groundY > Main.maxTilesY - 220)
+				return false;
+
+			int solid = 0;
+			for (int x = left; x < left + Width; x++) {
+				Tile ground = Main.tile[x, groundY];
+				if (ground.HasTile && Main.tileSolid[ground.TileType])
+					solid++;
+			}
+			if (solid < Width / 2)
+				return false;
+
+			ushort facade = (ushort)ModContent.TileType<CasinoFacade>();
+			for (int x = x0; x < x1; x++) {
+				for (int y = top; y < groundY; y++) {
+					Tile tile = Main.tile[x, y];
+					if (tile.LiquidAmount > 0)
+						return false;
+					if (tile.HasTile && tile.TileType != facade && IsProtectedStructure(tile.TileType))
+						return false;
+				}
+			}
+			return true;
+		}
+
+		/// <summary>Removes the current surface casino facade, so the blueprint can move it.</summary>
+		public static void RemoveExisting()
+		{
+			if (!CasinoWorldSystem.HasSurfaceCasino)
+				return;
+
+			Point pos = CasinoWorldSystem.SurfaceCasinoPosition;
+			ushort facade = (ushort)ModContent.TileType<CasinoFacade>();
+			for (int x = pos.X; x < pos.X + Width; x++) {
+				for (int y = pos.Y; y < pos.Y + Height; y++) {
+					if (WorldGen.InWorld(x, y) && Main.tile[x, y].TileType == facade)
+						Main.tile[x, y].ClearTile();
+				}
+			}
+			WorldGen.RangeFrame(pos.X - 1, pos.Y - 1, pos.X + Width + 1, pos.Y + Height + 1);
+			if (Main.netMode == NetmodeID.Server)
+				NetMessage.SendTileSquare(-1, pos.X - 1, pos.Y - 1, Width + 2, Height + 2);
+			CasinoWorldSystem.SurfaceCasinoPosition = new Point(-1, -1);
+		}
+
 		/// <summary>Builds the casino with its facade bottom row resting on groundY - 1.</summary>
 		public static void Build(int left, int groundY)
 		{
+			RemoveExisting();
+
 			int x0 = left - Margin;
 			int x1 = left + Width + Margin;
 			int top = groundY - Height - 6;
@@ -167,10 +224,16 @@ namespace CasinoWorld.Common.Systems
 			PlaceFacade(left, groundY - Height);
 
 			WorldGen.RangeFrame(x0 - 2, top - 2, x1 + 2, groundY + 32);
-			if (Main.netMode == NetmodeID.Server)
-				NetMessage.SendTileSquare(-1, x0 - 2, top - 2, x1 - x0 + 4, groundY + 34 - top);
+
+			// Lamp posts on both sides of the entrance.
+			WorldGen.PlaceObject(left - 2, groundY - 1, TileID.Lampposts, mute: true);
+			WorldGen.PlaceObject(left + Width + 1, groundY - 1, TileID.Lampposts, mute: true);
 
 			CasinoWorldSystem.SurfaceCasinoPosition = new Point(left, groundY - Height);
+			if (Main.netMode == NetmodeID.Server) {
+				NetMessage.SendTileSquare(-1, x0 - 2, top - 2, x1 - x0 + 4, groundY + 34 - top);
+				NetMessage.SendData(MessageID.WorldData);
+			}
 		}
 
 		private static void PlaceFacade(int left, int top)

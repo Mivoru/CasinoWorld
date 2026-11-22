@@ -16,13 +16,5 @@ namespace CasinoWorld.Content.Items
 			Item.value = Item.buyPrice(gold: 1);
 			Item.rare = ItemRarityID.Yellow;
 		}
-
-		// TEMP: cheap recipe for testing. Remove once the casino generates in the world.
-		public override void AddRecipes()
-		{
-			CreateRecipe()
-				.AddIngredient(ItemID.Wood)
-				.Register();
-		}
 	}
 }

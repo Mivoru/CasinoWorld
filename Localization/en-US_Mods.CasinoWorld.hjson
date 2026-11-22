@@ -11,6 +11,19 @@ Items: {
 			'''
 	}
 
+	CasinoBlueprint: {
+		DisplayName: Casino Blueprint
+		Tooltip:
+			'''
+			Builds the casino where you point
+			Clears the space it is built on
+			Use it again to move the casino
+			'''
+		Valid: Build the casino here
+		Invalid: "Can't build here: needs solid ground, no chests or water"
+		Built: The casino is open for business!
+	}
+
 	LoyaltyToken: {
 		DisplayName: Loyalty Token
 		Tooltip:
@@ -43,7 +56,7 @@ Gambler: {
 	Jackpot: JACKPOT!
 	Bust: bust
 	JackpotItem: JACKPOT!
-	JackpotMessage: "Jackpot! You won {0}!"
+	JackpotMessage: Jackpot! You won {0}!
 }
 
 Tiles: {
@@ -60,6 +73,7 @@ NPCs: {
 
 	RouletteCroupier: {
 		DisplayName: Croupier
+
 		Chat: {
 			0: Place your bets, place your bets! The wheel waits for no one.
 			1: Zero is green, and green is the house's favourite colour.
@@ -68,6 +82,7 @@ NPCs: {
 			4: Lovely evening for losing money, isn't it? I mean, winning. Definitely winning.
 			5: Tips are appreciated. So are platinum coins.
 		}
+
 		Help:
 			'''
 			Click a field to put your chip there, right-click to take it back.
@@ -79,6 +94,7 @@ NPCs: {
 
 	BlackjackDealer: {
 		DisplayName: Dealer
+
 		Chat: {
 			0: Get closer to 21 than me without going over. Simple. Painful, but simple.
 			1: Always split aces and eights. Never split tens. Trust me, I've watched.
@@ -87,6 +103,7 @@ NPCs: {
 			4: Hit me? Sir, this is a card game.
 			5: If you see me smile at 16, that's just my face.
 		}
+
 		Help:
 			'''
 			Pick chips for your bet and press Deal.
@@ -100,6 +117,7 @@ NPCs: {
 	PrizeCashier: {
 		DisplayName: Cashier
 		Prizes: Prizes
+
 		Chat: {
 			0: Every bet earns loyalty tokens, win or lose. The house is generous like that.
 			1: Ten silver wagered, one token earned. Spend them here on something shiny.
@@ -110,6 +128,7 @@ NPCs: {
 
 	Bartender: {
 		DisplayName: Bartender
+
 		Chat: {
 			0: Drinks are on the house! Kidding. Drinks are on you.
 			1: Nobody ever won a hand sober. Nobody ever won a hand drunk either.
@@ -122,6 +141,7 @@ NPCs: {
 
 	CasinoGuest: {
 		DisplayName: Gambler
+
 		Chat: {
 			0: One more spin. Just one. Then I go home. Probably.
 			1: I'm not addicted, I'm invested.
@@ -136,6 +156,7 @@ NPCs: {
 			10: I sold my pickaxe for chips. Mining is for people without a plan.
 			11: Lucky charm? I've got seven of them. They're not working.
 		}
+
 		Overhead: {
 			0: Come on, red!
 			1: Just one more...
@@ -151,9 +172,11 @@ NPCs: {
 	}
 }
 
-Commands.CasinoHere: {
-	Description: "[Dev] Builds the surface casino where you stand"
-	Done: Casino built.
+Commands: {
+	CasinoHere: {
+		Description: "[Dev] Builds the surface casino where you stand"
+		Done: Casino built.
+	}
 }
 
 Subworlds: {
@@ -171,6 +194,8 @@ Coins: {
 UI: {
 	EnterCasino: Enter
 	ExitCasino: Exit
+	EnterPrompt: "[{0}] or right-click: Enter"
+	ExitPrompt: "[{0}] or right-click: Exit"
 
 	Roulette: {
 		Hover: Play roulette
@@ -179,10 +204,10 @@ UI: {
 		Clear: Clear
 		Repeat: Repeat
 		History: Last numbers
-		Money: "Money:"
-		Bet: "Bet:"
-		Max: "max"
-		Column: "2:1"
+		Money: Money:
+		Bet: Bet:
+		Max: max
+		Column: 2:1
 		Dozen1: 1st 12
 		Dozen2: 2nd 12
 		Dozen3: 3rd 12
@@ -193,7 +218,7 @@ UI: {
 		Red: Red
 		Black: Black
 		NoBet: Place a chip on the table first.
-		OverMax: "The table limit is {0}."
+		OverMax: The table limit is {0}.
 		NotEnough: You can't cover that bet.
 		NoMoreBets: No more bets!
 		NoResponse: The croupier didn't answer. Your bet was returned.
@@ -201,16 +226,23 @@ UI: {
 		Lose: "{0}. The house wins."
 
 		Number: {
-			Red: "Red {0}"
-			Black: "Black {0}"
-			Green: "Green {0}"
+			Red: Red {0}
+			Black: Black {0}
+			Green: Green {0}
 		}
 	}
 
 	Blackjack: {
 		Hover: Play blackjack
 		Title: Blackjack
-		Rules: Blackjack pays 3:2 - Dealer stands on 17
+		Rules: BLACKJACK PAYS 3 TO 2  -  DEALER STANDS ON 17
+		Shoe: SHOE
+		BlackjackShort: BLACKJACK!
+		BustShort: BUST
+		NextBet: "Bet: {0}"
+		Limit: "Table limit: {0}"
+		HintBet: Pick chips, then press Deal.
+		HintPlay: Hit or Stand?
 		Dealer: Dealer
 		You: You
 		Clear: Clear
@@ -219,18 +251,24 @@ UI: {
 		Stand: Stand
 		Double: Double
 		Split: Split
-		YourBet: "Bet: {0}   (max {1})"
-		Money: "Money: {0}"
+		YourBet: Bet: {0}   (max {1})
+		Money: Money: {0}
 		PushShort: push
 		NoBet: Pick a chip to place your bet.
-		OverMax: "The table limit is {0}."
+		OverMax: The table limit is {0}.
 		NotEnough: You can't cover that bet.
 		Shuffle: The dealer shuffles a fresh shoe.
-		Blackjack: "Blackjack! You get {0}."
-		Win: "You win! You get {0}."
-		PartWin: "Some of it came back: {0}."
+		Blackjack: Blackjack! You get {0}.
+		Win: You win! You get {0}.
+		PartWin: Some of it came back: {0}.
 		Push: Push. Your bet is returned.
 		Lose: The house wins.
 		DealerBlackjack: Dealer has blackjack.
 	}
+}
+
+Projectiles: {
+	HighRollerChip.DisplayName: High Roller Chip
+	LoadedDie.DisplayName: Loaded Die
+	ThrownCard.DisplayName: Thrown Card
 }
