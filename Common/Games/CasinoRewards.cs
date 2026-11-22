@@ -19,8 +19,8 @@ namespace CasinoWorld.Common.Games
 	/// cosmetics and other customisable items at the prize counter.
 	///
 	/// Jackpots: big wins can drop Gambler weapons and armour from the casino's jackpot pool.
-	/// The chance scales with the stake up to <see cref="FullChanceStake"/>, and stakes below
-	/// <see cref="MinJackpotStake"/> never drop anything, so 1-silver farming does not work.
+	/// The chance scales with the stake up to the casino's FullJackpotStake, and stakes below its
+	/// MinJackpotStake never drop anything, so small-bet farming does not work.
 	///
 	/// Expected cost per jackpot at full stake (1 gold), from the game odds:
 	///   Roulette straight bet: wins 1/37, drop 25 % => 1 drop per 148 bets,
@@ -31,8 +31,6 @@ namespace CasinoWorld.Common.Games
 	public static class CasinoRewards
 	{
 		public const long CopperPerToken = 10 * Coins.Silver;
-		public const long MinJackpotStake = 10 * Coins.Silver;
-		public const long FullChanceStake = Coins.Gold;
 
 		public const float RouletteStraightJackpot = 0.25f;
 		public const float BlackjackNaturalJackpot = 0.12f;
@@ -56,14 +54,14 @@ namespace CasinoWorld.Common.Games
 		/// <summary>Rolls for a jackpot item after a big win with the given stake.</summary>
 		public static void TryJackpot(Player player, long stake, float chanceAtFullStake)
 		{
-			if (stake < MinJackpotStake || SubworldSystem.Current is not CasinoSubworld casino)
+			if (SubworldSystem.Current is not CasinoSubworld casino || stake < casino.MinJackpotStake || chanceAtFullStake <= 0f)
 				return;
 
 			int[] pool = casino.JackpotItems;
 			if (pool.Length == 0)
 				return;
 
-			float chance = chanceAtFullStake * Math.Min(1f, stake / (float)FullChanceStake);
+			float chance = chanceAtFullStake * Math.Min(1f, stake / (float)casino.FullJackpotStake);
 			if (Main.rand.NextFloat() >= chance)
 				return;
 

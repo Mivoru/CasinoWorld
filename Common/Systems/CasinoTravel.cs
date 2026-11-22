@@ -17,18 +17,31 @@ namespace CasinoWorld.Common.Systems
 
 		public static bool InCasino => SubworldSystem.Current is CasinoSubworld;
 
-		/// <summary>Called when the local player uses a casino door.</summary>
-		public static void UseDoor()
+		/// <summary>Enters the given casino and remembers where to come back to.</summary>
+		public static void Enter<T>() where T : CasinoSubworld
 		{
-			if (InCasino) {
-				SubworldSystem.Exit();
+			if (InCasino)
 				return;
-			}
 
 			returnPosition = Main.LocalPlayer.position;
 			returnWorldId = Main.worldID;
-			if (!SubworldSystem.Enter<SurfaceCasino>())
+			if (!SubworldSystem.Enter<T>())
 				returnPosition = null;
+		}
+
+		public static void Exit()
+		{
+			if (InCasino)
+				SubworldSystem.Exit();
+		}
+
+		/// <summary>Standalone casino door: exits inside a casino, enters the surface casino outside.</summary>
+		public static void UseDoor()
+		{
+			if (InCasino)
+				Exit();
+			else
+				Enter<SurfaceCasino>();
 		}
 
 		/// <summary>

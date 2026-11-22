@@ -1,3 +1,4 @@
+using System;
 using CasinoWorld.Common.Systems;
 using CasinoWorld.Content.Tiles;
 using Microsoft.Xna.Framework;
@@ -16,6 +17,8 @@ namespace CasinoWorld.Common.Players
 		/// <summary>Top centre of a casino door the local player stands at, in world pixels; null if none.</summary>
 		public Vector2? NearbyDoor { get; private set; }
 
+		private Action nearbyDoorAction;
+
 		public override void OnEnterWorld()
 		{
 			restoreTimer = RestoreDelay;
@@ -29,25 +32,30 @@ namespace CasinoWorld.Common.Players
 			if (restoreTimer >= 0 && restoreTimer-- == 0)
 				CasinoTravel.TryRestorePosition(Player);
 
-			NearbyDoor = FindDoor();
+			FindDoor();
 
 			// Up (W by default) uses the door, like entering a minecart or climbing a rope.
 			if (NearbyDoor != null && Player.controlUp && Player.releaseUp && !Player.mouseInterface)
-				CasinoTravel.UseDoor();
+				nearbyDoorAction?.Invoke();
 		}
 
-		/// <summary>Looks for the facade door or a standalone casino door overlapping the player.</summary>
-		private Vector2? FindDoor()
+		/// <summary>Looks for an entrance door or a standalone casino door overlapping the player.</summary>
+		private void FindDoor()
 		{
+			NearbyDoor = null;
+			nearbyDoorAction = null;
 			Rectangle hitbox = Player.Hitbox;
 			hitbox.Inflate(8, 0);
 
-			if (!CasinoTravel.InCasino && CasinoWorldSystem.HasSurfaceCasino) {
-				Point pos = CasinoWorldSystem.SurfaceCasinoPosition;
-				var door = new Rectangle((pos.X + CasinoFacade.DoorLeft) * 16, (pos.Y + CasinoFacade.DoorTop) * 16,
-					(CasinoFacade.DoorRight - CasinoFacade.DoorLeft + 1) * 16, (CasinoFacade.DoorBottom - CasinoFacade.DoorTop + 1) * 16);
-				if (door.Intersects(hitbox))
-					return new Vector2(door.Center.X, door.Top);
+			if (!CasinoTravel.InCasino) {
+				foreach ((CasinoEntrance entrance, Point topLeft) in CasinoWorldSystem.Entrances()) {
+					Rectangle door = entrance.DoorWorldRect(topLeft);
+					if (door.Intersects(hitbox)) {
+						NearbyDoor = new Vector2(door.Center.X, door.Top);
+						nearbyDoorAction = entrance.Enter;
+						return;
+					}
+				}
 			}
 
 			int doorType = ModContent.TileType<CasinoDoor>();
@@ -61,11 +69,12 @@ namespace CasinoWorld.Common.Players
 					if (tile.HasTile && tile.TileType == doorType) {
 						int left = x - tile.TileFrameX / 18 % 2;
 						int top = y - tile.TileFrameY / 18 % 3;
-						return new Vector2(left * 16 + 16, top * 16);
+						NearbyDoor = new Vector2(left * 16 + 16, top * 16);
+						nearbyDoorAction = CasinoTravel.UseDoor;
+						return;
 					}
 				}
 			}
-			return null;
 		}
 	}
 }

@@ -42,6 +42,9 @@ namespace CasinoWorld.Common.Games
 
 		protected abstract int TableTileType { get; }
 
+		/// <summary>Size of the table tile in tiles; used to find its centre for the distance check.</summary>
+		protected virtual Point TableSize => new(CasinoTable.Width, CasinoTable.Height);
+
 		protected abstract UIState CreateState();
 
 		/// <summary>Runs every frame on the client, also while the window is closed.</summary>
@@ -105,7 +108,7 @@ namespace CasinoWorld.Common.Games
 
 			Tile tile = Main.tile[Table.X, Table.Y];
 			bool tableGone = !tile.HasTile || tile.TileType != TableTileType;
-			Vector2 tableCenter = new Point16(Table.X + CasinoTable.Width / 2, Table.Y + 1).ToWorldCoordinates();
+			Vector2 tableCenter = new Point16(Table.X + TableSize.X / 2, Table.Y + TableSize.Y / 2).ToWorldCoordinates();
 			if (player.dead || tableGone || Casino == null || player.Distance(tableCenter) > MaxDistance
 				|| PlayerInput.Triggers.JustPressed.Inventory) {
 				Close();

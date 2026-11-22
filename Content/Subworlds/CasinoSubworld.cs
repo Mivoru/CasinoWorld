@@ -30,8 +30,17 @@ namespace CasinoWorld.Content.Subworlds
 		/// <summary>Largest total bet allowed in one round, in copper coins.</summary>
 		public abstract long MaxBet { get; }
 
+		/// <summary>Smallest stake that can drop a jackpot item, in copper.</summary>
+		public virtual long MinJackpotStake => 10 * Common.Games.Coins.Silver;
+
+		/// <summary>Stake at which the jackpot item chance reaches its full value, in copper.</summary>
+		public virtual long FullJackpotStake => Common.Games.Coins.Gold;
+
 		/// <summary>Items that big wins in this casino can drop (Gambler weapons and armour).</summary>
 		public abstract int[] JackpotItems { get; }
+
+		/// <summary>Tile x positions guests walk between (tables, machines, bar).</summary>
+		public abstract int[] GuestSpots { get; }
 
 		/// <summary>Spawns the staff and guests. Runs on the server or in single player only.</summary>
 		protected abstract void SpawnPeople();

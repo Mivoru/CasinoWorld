@@ -90,6 +90,21 @@ Items: {
 			'''
 	}
 
+	SnakeEyes: {
+		DisplayName: Snake Eyes
+		Tooltip: Throws a die that bounces and explodes
+	}
+
+	RoyalFlush: {
+		DisplayName: Royal Flush
+		Tooltip: Throws five homing cards
+	}
+
+	JackpotCannon: {
+		DisplayName: Jackpot Cannon
+		Tooltip: Fires a heavy chip that ricochets to two more enemies
+	}
+
 	LoadedDice: {
 		DisplayName: Loaded Dice
 		Tooltip: Throws a die that bounces along the ground
@@ -124,10 +139,17 @@ Tiles: {
 	CasinoDoor.MapEntry: Casino Door
 	CasinoFacade.MapEntry: Casino
 	RouletteTable.MapEntry: Roulette Table
+	SlotMachine.MapEntry: Slot Machine
+	UndergroundCasinoFacade.MapEntry: High Rollers Casino
 	BlackjackTable.MapEntry: Blackjack Table
 }
 
-WorldGen.SurfaceCasino: Building the casino
+WorldGen: {
+	SurfaceCasino: Building the casino
+	UndergroundOpened: "Deep underground, a casino for high rollers has opened its vault! (about {0} ft {1} of spawn, {2} ft deep)"
+	East: east
+	West: west
+}
 
 NPCs: {
 	HowToPlay: How to play
@@ -243,6 +265,7 @@ Commands: {
 Subworlds: {
 	Generating: Opening the casino...
 	SurfaceCasino.DisplayName: Casino
+	UndergroundCasino.DisplayName: High Rollers Casino
 }
 
 Coins: {
@@ -291,6 +314,20 @@ UI: {
 			Black: Black {0}
 			Green: Green {0}
 		}
+	}
+
+	Slots: {
+		Hover: Play the slots
+		Title: LUCKY SLOTS
+		Spin: SPIN
+		Pays: Pays
+		Money: "Money: {0}"
+		Bet: "Bet per spin: {0}"
+		Hint: Pick a bet and pull the lever!
+		NotEnough: You can't cover that bet.
+		Win: "Winner! x{0}: {1}"
+		BetBack: Cherry! Your bet is back.
+		Lose: No luck this time.
 	}
 
 	Blackjack: {

@@ -44,7 +44,9 @@ namespace CasinoWorld.Content.Subworlds
 		private const int GuestCount = 6;
 
 		/// <summary>Tile x positions guests walk to: beside the tables and at the bar.</summary>
-		public static readonly int[] GuestSpots = {
+		public override int[] GuestSpots => Spots;
+
+		private static readonly int[] Spots = {
 			HallLeft + RouletteA + 2, HallLeft + RouletteA + 4, HallLeft + RouletteB + 2, HallLeft + RouletteB + 4,
 			HallLeft + BlackjackA + 2, HallLeft + BlackjackA + 4, HallLeft + BlackjackB + 2, HallLeft + BlackjackB + 4,
 			HallLeft + BarStart + 1, HallLeft + BarStart + 6, HallLeft + BarStart + 11, HallLeft + PrizeCounter - 4,
@@ -63,7 +65,7 @@ namespace CasinoWorld.Content.Subworlds
 			SpawnAt<PrizeCashier>(HallLeft + PrizeCounter + 1, HallFloor, -1);
 
 			for (int k = 0; k < GuestCount; k++)
-				SpawnAt<CasinoGuest>(GuestSpots[Main.rand.Next(GuestSpots.Length)], HallFloor);
+				SpawnAt<CasinoGuest>(Spots[Main.rand.Next(Spots.Length)], HallFloor);
 		}
 	}
 

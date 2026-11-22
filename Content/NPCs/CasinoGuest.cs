@@ -91,9 +91,11 @@ namespace CasinoWorld.Content.NPCs
 			}
 		}
 
-		private static float PickDestination()
+		private float PickDestination()
 		{
-			int[] spots = SurfaceCasino.GuestSpots;
+			int[] spots = (SubworldLibrary.SubworldSystem.Current as CasinoSubworld)?.GuestSpots;
+			if (spots == null || spots.Length == 0)
+				return NPC.Center.X;
 			int tileX = spots[Main.rand.Next(spots.Length)] + Main.rand.Next(-2, 3);
 			return tileX * 16 + 8;
 		}
