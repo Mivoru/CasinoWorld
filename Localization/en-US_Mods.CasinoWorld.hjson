@@ -3,12 +3,114 @@
 
 Items: {
 	GamblerStick: {
-		DisplayName: "Gambler Stick"
+		DisplayName: Gambler Stick
 		Tooltip:
 			'''
 			Template of an item
-			Replacing this tooltip is duty 
+			Replacing this tooltip is duty
 			It's snowing on Mt.Fuji
 			'''
+	}
+
+	CasinoDoorItem: {
+		DisplayName: Casino Door
+		Tooltip:
+			'''
+			Leads into the casino
+			[Development item]
+			'''
+	}
+}
+
+Tiles: {
+	CasinoDoor.MapEntry: Casino Door
+	CasinoFacade.MapEntry: Casino
+	RouletteTable.MapEntry: Roulette Table
+	BlackjackTable.MapEntry: Blackjack Table
+}
+
+WorldGen.SurfaceCasino: Building the casino
+
+Commands.CasinoHere: {
+	Description: "[Dev] Builds the surface casino where you stand"
+	Done: Casino built.
+}
+
+Subworlds: {
+	Generating: Opening the casino...
+	SurfaceCasino.DisplayName: Casino
+}
+
+Coins: {
+	P: "{0}p"
+	G: "{0}g"
+	S: "{0}s"
+	C: "{0}c"
+}
+
+UI: {
+	EnterCasino: Enter
+	ExitCasino: Exit
+
+	Roulette: {
+		Hover: Play roulette
+		Title: Roulette
+		Spin: Spin
+		Clear: Clear
+		Repeat: Repeat
+		History: Last numbers
+		Money: "Money:"
+		Bet: "Bet:"
+		Max: "max"
+		Column: "2:1"
+		Dozen1: 1st 12
+		Dozen2: 2nd 12
+		Dozen3: 3rd 12
+		Low: 1-18
+		High: 19-36
+		Even: Even
+		Odd: Odd
+		Red: Red
+		Black: Black
+		NoBet: Place a chip on the table first.
+		OverMax: "The table limit is {0}."
+		NotEnough: You can't cover that bet.
+		NoMoreBets: No more bets!
+		NoResponse: The croupier didn't answer. Your bet was returned.
+		Win: "{0}! You win {1}."
+		Lose: "{0}. The house wins."
+
+		Number: {
+			Red: "Red {0}"
+			Black: "Black {0}"
+			Green: "Green {0}"
+		}
+	}
+
+	Blackjack: {
+		Hover: Play blackjack
+		Title: Blackjack
+		Rules: Blackjack pays 3:2 - Dealer stands on 17
+		Dealer: Dealer
+		You: You
+		Clear: Clear
+		Deal: Deal
+		Hit: Hit
+		Stand: Stand
+		Double: Double
+		Split: Split
+		YourBet: "Bet: {0}   (max {1})"
+		Money: "Money: {0}"
+		PushShort: push
+		NoBet: Pick a chip to place your bet.
+		OverMax: "The table limit is {0}."
+		NotEnough: You can't cover that bet.
+		Shuffle: The dealer shuffles a fresh shoe.
+		Blackjack: "Blackjack! You get {0}."
+		Win: "You win! You get {0}."
+		PartWin: "Some of it came back: {0}."
+		Push: Push. Your bet is returned.
+		Lose: The house wins.
+		DealerBlackjack: Dealer has blackjack.
 	}
 }

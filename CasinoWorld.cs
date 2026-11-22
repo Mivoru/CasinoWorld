@@ -1,15 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using CasinoWorld.Common.Net;
 using Terraria.ModLoader;
 
 namespace CasinoWorld
 {
-	// Please read https://github.com/tModLoader/tModLoader/wiki/Basic-tModLoader-Modding-Guide#mod-skeleton-contents for more information about the various files in a mod.
 	public class CasinoWorld : Mod
 	{
-
+		public override void HandlePacket(BinaryReader reader, int whoAmI) => CasinoNet.Handle(reader, whoAmI);
 	}
 }

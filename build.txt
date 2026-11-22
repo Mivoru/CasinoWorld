@@ -1,3 +1,5 @@
 displayName = Casino World
 author = Mivoru
 version = 0.1
+modReferences = SubworldLibrary
+buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*, .git\*, lib\*, *.md

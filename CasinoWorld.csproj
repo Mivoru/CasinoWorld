@@ -5,12 +5,13 @@
 
 	<!-- General -->
 	<PropertyGroup>
-		
+
 	</PropertyGroup>
 
 	<!-- References -->
 	<ItemGroup>
-		
+		<!-- SubworldLibrary 2.3.0.1, extracted from its .tmod. Also listed in build.txt modReferences. -->
+		<Reference Include="lib\SubworldLibrary.dll" Private="false" />
 	</ItemGroup>
 
 </Project>
