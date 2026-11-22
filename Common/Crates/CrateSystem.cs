@@ -44,6 +44,12 @@ namespace CasinoWorld.Common.Crates
 			CrateLoot.Unload();
 		}
 
+		public override void PreSaveAndQuit()
+		{
+			if (IsOpen)
+				Close();
+		}
+
 		public override void OnWorldUnload()
 		{
 			if (IsOpen)

@@ -4,6 +4,7 @@ using CasinoWorld.Content.Items;
 using CasinoWorld.Content.Subworlds;
 using Microsoft.Xna.Framework;
 using SubworldLibrary;
+using CasinoWorld.Common;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -46,7 +47,7 @@ namespace CasinoWorld.Common.Games
 			long tokens = gambler.TokenProgress / CopperPerToken;
 			if (tokens > 0) {
 				gambler.TokenProgress %= CopperPerToken;
-				player.QuickSpawnItem(player.GetSource_Misc("CasinoWorld"), ModContent.ItemType<LoyaltyToken>(), (int)Math.Min(tokens, 9999));
+				Coins.GiveItem(player, new Item(ModContent.ItemType<LoyaltyToken>(), (int)Math.Min(tokens, 9999)));
 			}
 			return true;
 		}
@@ -66,9 +67,9 @@ namespace CasinoWorld.Common.Games
 				return;
 
 			int itemType = pool[Main.rand.Next(pool.Length)];
-			player.QuickSpawnItem(player.GetSource_Misc("CasinoWorld"), itemType);
+			Coins.GiveItem(player, new Item(itemType));
 			CombatText.NewText(player.Hitbox, new Color(255, 215, 60), Language.GetTextValue("Mods.CasinoWorld.Gambler.JackpotItem"), dramatic: true);
-			SoundEngine.PlaySound(SoundID.Item4, player.Center);
+			SoundEngine.PlaySound(CasinoSounds.Jackpot, player.Center);
 			for (int k = 0; k < 30; k++)
 				Dust.NewDust(player.position, player.width, player.height, DustID.GoldCoin, Main.rand.NextFloat(-4f, 4f), Main.rand.NextFloat(-6f, -1f));
 			Main.NewText(Language.GetTextValue("Mods.CasinoWorld.Gambler.JackpotMessage", Lang.GetItemNameValue(itemType)), new Color(255, 215, 60));

@@ -382,8 +382,10 @@ Bestiary: {
 
 NPCs: {
 	HowToPlay: How to play
+
 	TownGambler: {
 		DisplayName: Gambler
+
 		Chat: {
 			0: Feeling lucky? Everybody's feeling lucky until the river card.
 			1: I built my whole life on a system. The system was red, red, black. It did not work.
@@ -395,6 +397,23 @@ NPCs: {
 			7: Crates, my friend. Blue, purple, pink, red... and if you're very lucky, gold.
 			8: Luck is a skill. A skill I'm still working on.
 			9: Shh. I'm counting cards. Well, I was. Now I've lost count.
+		}
+
+		TownNPCMood: {
+			Content: I am content.
+			NoHome: I hate not having a home.
+			FarFromHome: I am too far from home.
+			LoveSpace: I love having so much space.
+			DislikeCrowded: I dislike how crowded I am.
+			HateCrowded: I hate how crowded I am.
+			LoveBiome: I love {BiomeName}.
+			LikeBiome: I like {BiomeName}.
+			DislikeBiome: I dislike {BiomeName}.
+			LoveNPC: I love {NPCName}.
+			LikeNPC: I like {NPCName}.
+			DislikeNPC: I dislike {NPCName}.
+			LikeNPC_Princess: I like {NPCName}.
+			Princess_LovesNPC: I like {NPCName}.
 		}
 	}
 
@@ -652,4 +671,11 @@ Projectiles: {
 	RouletteStripe.DisplayName: Roulette Stripe
 	SourDrop.DisplayName: Sour Drop
 	WheelOfFortuneDisc.DisplayName: Wheel Of Fortune Disc
+	DoublingDie.DisplayName: Doubling Die
+	GalaxyCard.DisplayName: Galaxy Card
+	MeteorDie.DisplayName: Meteor Die
+	MiniSlotPet.DisplayName: Mini Slot Pet
+	RevolverChip.DisplayName: Revolver Chip
+	SpectralCard.DisplayName: Spectral Card
+	SymbolShot.DisplayName: Symbol Shot
 }

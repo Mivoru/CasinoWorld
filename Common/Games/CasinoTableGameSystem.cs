@@ -73,6 +73,13 @@ namespace CasinoWorld.Common.Games
 			active = null;
 		}
 
+		// Runs before the player file is saved, so a running round pays out into the inventory first.
+		public override void PreSaveAndQuit()
+		{
+			if (IsOpen)
+				Close();
+		}
+
 		public override void OnWorldUnload()
 		{
 			if (IsOpen)

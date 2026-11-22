@@ -3,6 +3,7 @@ using CasinoWorld.Common.Games;
 using CasinoWorld.Content.Tiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using CasinoWorld.Common;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -52,7 +53,7 @@ namespace CasinoWorld.Common.Upgrades
 			if (Phase == UpgradePhase.Working)
 				Resolve();
 			if (!Slot.IsAir) {
-				player.QuickSpawnItem(player.GetSource_Misc("CasinoWorld"), Slot, Slot.stack);
+				Coins.GiveItem(player, Slot);
 				Slot = new Item();
 			}
 			Phase = UpgradePhase.Idle;
@@ -127,7 +128,7 @@ namespace CasinoWorld.Common.Upgrades
 			Phase = UpgradePhase.Working;
 			Timer = 0;
 			SetMessage(Language.GetTextValue("Mods.CasinoWorld.Upgrade.Working"), new Color(120, 220, 255));
-			SoundEngine.PlaySound(SoundID.Item37);
+			SoundEngine.PlaySound(CasinoSounds.UpgradeWork);
 		}
 
 		protected override void UpdateGame(Player player)
@@ -135,8 +136,8 @@ namespace CasinoWorld.Common.Upgrades
 			if (Phase != UpgradePhase.Working)
 				return;
 			Timer++;
-			if (Timer % 15 == 0)
-				SoundEngine.PlaySound(SoundID.Item37 with { Pitch = Timer / (float)WorkTicks - 0.3f, Volume = 0.5f });
+			if (Timer % 30 == 0 && Timer < WorkTicks)
+				SoundEngine.PlaySound(SoundID.Item37 with { Pitch = Timer / (float)WorkTicks - 0.3f, Volume = 0.4f });
 			if (Timer >= WorkTicks)
 				Resolve();
 		}
@@ -148,12 +149,12 @@ namespace CasinoWorld.Common.Upgrades
 			if (LastSucceeded && Slot.TryGetGlobalItem(out UpgradeGlobalItem g)) {
 				g.Level++;
 				SetMessage(Language.GetTextValue("Mods.CasinoWorld.Upgrade.Success", g.Level), new Color(255, 215, 60));
-				SoundEngine.PlaySound(SoundID.Item4);
+				SoundEngine.PlaySound(CasinoSounds.UpgradeSuccess);
 				CombatText.NewText(Main.LocalPlayer.Hitbox, new Color(255, 215, 60), "+" + g.Level, dramatic: true);
 			}
 			else {
 				SetMessage(Language.GetTextValue("Mods.CasinoWorld.Upgrade.Fail"), Color.LightGray);
-				SoundEngine.PlaySound(SoundID.Item27);
+				SoundEngine.PlaySound(CasinoSounds.UpgradeFail);
 			}
 		}
 

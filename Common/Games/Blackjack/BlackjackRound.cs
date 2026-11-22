@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using CasinoWorld.Common;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -77,7 +78,7 @@ namespace CasinoWorld.Common.Games.Blackjack
 				return;
 			}
 			PendingBet += chip;
-			SoundEngine.PlaySound(SoundID.MenuTick);
+			SoundEngine.PlaySound(CasinoSounds.ChipPlace);
 		}
 
 		public void ClearBet()
@@ -103,13 +104,14 @@ namespace CasinoWorld.Common.Games.Blackjack
 
 			if (shoe.Count < ReshuffleBelow) {
 				Shuffle();
+				SoundEngine.PlaySound(CasinoSounds.CardShuffle);
 				SetMessage(Text("Shuffle"), Color.Gold);
 			}
 			else {
 				SetMessage("", Color.White);
 			}
 
-			SoundEngine.PlaySound(SoundID.Coins);
+			SoundEngine.PlaySound(CasinoSounds.ChipStack);
 			Hands.Clear();
 			Dealer.Clear();
 			var hand = new BlackjackHand { Bet = PendingBet };
@@ -169,7 +171,7 @@ namespace CasinoWorld.Common.Games.Blackjack
 				return;
 			}
 
-			SoundEngine.PlaySound(SoundID.Coins);
+			SoundEngine.PlaySound(CasinoSounds.ChipStack);
 			Current.Bet *= 2;
 			Current.Doubled = true;
 			Draw(Current.Cards);
@@ -185,7 +187,7 @@ namespace CasinoWorld.Common.Games.Blackjack
 				return;
 			}
 
-			SoundEngine.PlaySound(SoundID.Coins);
+			SoundEngine.PlaySound(CasinoSounds.ChipStack);
 			BlackjackHand first = Current;
 			var second = new BlackjackHand { Bet = first.Bet, FromSplit = true };
 			first.FromSplit = true;
@@ -228,7 +230,7 @@ namespace CasinoWorld.Common.Games.Blackjack
 			Phase = BlackjackPhase.DealerTurn;
 			Queue(() => {
 				HoleCardHidden = false;
-				SoundEngine.PlaySound(SoundID.Grab);
+				SoundEngine.PlaySound(CasinoSounds.CardDeal with { Pitch = -0.3f });
 			});
 
 			// The dealer only draws if some hand is still alive.
@@ -284,7 +286,8 @@ namespace CasinoWorld.Common.Games.Blackjack
 			if (total > staked) {
 				bool natural = Hands.Count == 1 && Hands[0].IsBlackjack;
 				SetMessage(Text(natural ? "Blackjack" : "Win", Coins.Format(total)), Color.LightGreen);
-				SoundEngine.PlaySound(SoundID.CoinPickup);
+				SoundEngine.PlaySound(natural ? CasinoSounds.Jackpot : CasinoSounds.SmallWin);
+				SoundEngine.PlaySound(CasinoSounds.CoinsPayout);
 				CombatText.NewText(player.Hitbox, Color.Gold, "+" + Coins.Format(total), dramatic: natural);
 			}
 			else if (total == staked) {
@@ -340,7 +343,7 @@ namespace CasinoWorld.Common.Games.Blackjack
 				Shuffle();
 			into.Add(shoe[^1]);
 			shoe.RemoveAt(shoe.Count - 1);
-			SoundEngine.PlaySound(SoundID.Grab with { Volume = 0.6f, Pitch = 0.4f });
+			SoundEngine.PlaySound(CasinoSounds.CardDeal);
 		}
 
 		private void Shuffle()

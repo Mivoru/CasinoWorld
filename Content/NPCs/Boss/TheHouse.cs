@@ -11,6 +11,7 @@ using CasinoWorld.Content.Projectiles.Boss;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
+using CasinoWorld.Common;
 using Terraria;
 using Terraria.Audio;
 using Terraria.Chat;
@@ -90,7 +91,7 @@ namespace CasinoWorld.Content.NPCs.Boss
 			NPC.value = Item.buyPrice(gold: 8);
 			NPC.HitSound = SoundID.NPCHit4;
 			NPC.DeathSound = SoundID.NPCDeath14;
-			Music = MusicID.Boss2;
+			Music = CasinoMusic.TheHouse;
 		}
 
 		public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)
@@ -189,26 +190,35 @@ namespace CasinoWorld.Content.NPCs.Boss
 				} while (Reels[0] == Reels[1] && Reels[1] == Reels[2]);
 			}
 			SetState(State.Spin);
-			SoundEngine.PlaySound(SoundID.Unlock with { Pitch = -0.4f }, NPC.Center);
+			SoundEngine.PlaySound(CasinoSounds.BossSpin, NPC.Center);
 		}
 
 		private void Spin(Player target)
 		{
 			NPC.velocity *= 0.9f;
 			Timer++;
-			if (Timer % 8 == 0 && Timer < SpinTicks - 10)
-				SoundEngine.PlaySound(SoundID.MenuTick with { Volume = 0.6f, Pitch = -0.3f }, NPC.Center);
 			if (Timer == 60 || Timer == 85 || Timer == SpinTicks)
-				SoundEngine.PlaySound(SoundID.Item37 with { Pitch = -0.2f }, NPC.Center);
+				SoundEngine.PlaySound(CasinoSounds.ReelStop with { Pitch = -0.4f, Volume = 1.2f }, NPC.Center);
 
 			if (Main.netMode == NetmodeID.MultiplayerClient || Timer < SpinTicks)
 				return;
 
 			if (Reels[0] == Reels[1] && Reels[1] == Reels[2])
-				StartAttack((Attack)Reels[0]);   // symbol order matches the first six attacks
+				StartAttack(AttackFor((SlotSymbol)Reels[0]));
 			else
 				StartAttack(Attack.Hands);
 		}
+
+		/// <summary>Which attack three of a kind triggers (design/CasinoWorld/boss.md).</summary>
+		private static Attack AttackFor(SlotSymbol symbol) => symbol switch {
+			SlotSymbol.Cherry => Attack.CherryBombs,
+			SlotSymbol.Lemon => Attack.SourSpray,
+			SlotSymbol.Bell => Attack.BellToll,
+			SlotSymbol.Bar => Attack.GoldRush,
+			SlotSymbol.Seven => Attack.LuckySevens,
+			SlotSymbol.Diamond => Attack.Shatter,
+			_ => Attack.Hands,              // clover: the lucky hands come out
+		};
 
 		/// <summary>Lever hit during a spin: the reels jam on BUST.</summary>
 		public void TriggerBust()
@@ -222,7 +232,7 @@ namespace CasinoWorld.Content.NPCs.Boss
 			Reels[0] = Reels[1] = Reels[2] = 255;
 			SetState(State.Stunned);
 			CombatText.NewText(NPC.Hitbox, Color.OrangeRed, Language.GetTextValue("Mods.CasinoWorld.Boss.Bust"), dramatic: true);
-			SoundEngine.PlaySound(SoundID.Item62, NPC.Center);
+			SoundEngine.PlaySound(CasinoSounds.BossBust, NPC.Center);
 		}
 
 		private void Stunned()
@@ -246,8 +256,8 @@ namespace CasinoWorld.Content.NPCs.Boss
 				Dust.NewDust(NPC.position, NPC.width, NPC.height, k == 0 ? DustID.GoldCoin : DustID.Electric, Main.rand.NextFloat(-6, 6), Main.rand.NextFloat(-6, 2));
 			if (Timer == TransitionTicks / 2) {
 				PhaseTwo = true;
-				Music = MusicID.Boss3;
-				SoundEngine.PlaySound(SoundID.Roar, NPC.Center);
+				Music = CasinoMusic.TheHouseWheel;
+				SoundEngine.PlaySound(CasinoSounds.BossBreak, NPC.Center);
 				Main.instance.CameraModifiers.Add(new PunchCameraModifier(NPC.Center, Vector2.UnitY, 14f, 8f, 40, 2000f, "TheHouse"));
 				for (int k = 0; k < 60; k++)
 					Dust.NewDust(NPC.Center, 0, 0, DustID.GoldCoin, Main.rand.NextFloat(-10, 10), Main.rand.NextFloat(-10, 10), Scale: 1.6f);
@@ -316,7 +326,7 @@ namespace CasinoWorld.Content.NPCs.Boss
 					if (server && (t == 20 || t == 75 || t == 130)) {
 						float gap = toPlayer.ToRotation() + Main.rand.NextFloat(-1.2f, 1.2f);
 						Projectile.NewProjectile(source, NPC.Center, Vector2.Zero, ModContent.ProjectileType<BellWave>(), Damage(28, 46), 0f, -1, gap);
-						SoundEngine.PlaySound(SoundID.Item35 with { Pitch = -0.6f, Volume = 1.2f }, NPC.Center);
+						SoundEngine.PlaySound(CasinoSounds.BossBell, NPC.Center);
 					}
 					break;
 

@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using CasinoWorld.Common;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -55,8 +56,8 @@ namespace CasinoWorld.Common.Games.Slots
 			timer = 0;
 			WinFlash = 0;
 			SetMessage("", Color.White);
-			SoundEngine.PlaySound(SoundID.Coins);
-			SoundEngine.PlaySound(SoundID.Unlock with { Pitch = -0.3f });
+			SoundEngine.PlaySound(CasinoSounds.LeverPull);
+			SoundEngine.PlaySound(CasinoSounds.ReelSpin);
 			return true;
 		}
 
@@ -76,7 +77,7 @@ namespace CasinoWorld.Common.Games.Slots
 				if (timer >= StopTicks[k]) {
 					Stopped[k] = true;
 					Offset[k] = (int)Result[k];
-					SoundEngine.PlaySound(SoundID.MenuTick with { Pitch = -0.2f, Volume = 0.9f });
+					SoundEngine.PlaySound(CasinoSounds.ReelStop);
 				}
 			}
 
@@ -105,10 +106,10 @@ namespace CasinoWorld.Common.Games.Slots
 
 			if (multiplier > 1) {
 				SetMessage(Language.GetTextValue("Mods.CasinoWorld.UI.Slots.Win", multiplier, Coins.Format(LastPayout)), Color.LightGreen);
-				SoundEngine.PlaySound(SoundID.CoinPickup);
+				SoundEngine.PlaySound(multiplier >= 30 ? CasinoSounds.Jackpot : CasinoSounds.SmallWin);
+				SoundEngine.PlaySound(CasinoSounds.CoinsPayout);
 				WinFlash = FlashTicks;
 				if (multiplier >= 30) {
-					SoundEngine.PlaySound(SoundID.Item4);
 					CombatText.NewText(player.Hitbox, new Color(255, 215, 60), "+" + Coins.Format(LastPayout), dramatic: true);
 				}
 			}

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using CasinoWorld.Common;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -71,7 +72,7 @@ namespace CasinoWorld.Common.Games.Roulette
 			}
 
 			Bets[bet] = Bets.GetValueOrDefault(bet) + chip;
-			SoundEngine.PlaySound(SoundID.MenuTick);
+			SoundEngine.PlaySound(CasinoSounds.ChipPlace);
 		}
 
 		public void RemoveChip(RouletteBet bet, long chip)
@@ -84,7 +85,7 @@ namespace CasinoWorld.Common.Games.Roulette
 				Bets.Remove(bet);
 			else
 				Bets[bet] = stake;
-			SoundEngine.PlaySound(SoundID.MenuTick);
+			SoundEngine.PlaySound(CasinoSounds.ChipPlace with { Pitch = -0.2f });
 		}
 
 		public void Clear()
@@ -131,7 +132,7 @@ namespace CasinoWorld.Common.Games.Roulette
 			Phase = RoulettePhase.WaitingForResult;
 			timer = 0;
 			SetMessage(Language.GetTextValue("Mods.CasinoWorld.UI.Roulette.NoMoreBets"), Color.Gold);
-			SoundEngine.PlaySound(SoundID.Coins);
+			SoundEngine.PlaySound(CasinoSounds.ChipStack);
 			return true;
 		}
 
@@ -154,6 +155,7 @@ namespace CasinoWorld.Common.Games.Roulette
 			float target = wheelEnd + RouletteRules.WheelIndexOf(number) * PocketAngle;
 			float delta = Modulo(ballStart - target, MathHelper.TwoPi);
 			ballTravel = delta + BallTurns * MathHelper.TwoPi;
+			SoundEngine.PlaySound(CasinoSounds.RouletteSpin);
 		}
 
 		/// <summary>Advances the round by one tick. Call every frame on the client.</summary>
@@ -206,7 +208,8 @@ namespace CasinoWorld.Common.Games.Roulette
 			int pocket = (int)Math.Floor(Modulo(BallAngle - WheelAngle, MathHelper.TwoPi) / PocketAngle);
 			ticksSinceSound++;
 			if (pocket != lastTickPocket && ticksSinceSound >= 3 && p < 0.97f) {
-				SoundEngine.PlaySound(SoundID.MenuTick with { Volume = 0.35f + 0.4f * BallDrop, Pitch = 0.3f });
+				if (BallDrop > 0f)
+					SoundEngine.PlaySound(SoundID.MenuTick with { Volume = 0.25f + 0.35f * BallDrop, Pitch = 0.3f });
 				ticksSinceSound = 0;
 			}
 			lastTickPocket = pocket;
@@ -217,6 +220,7 @@ namespace CasinoWorld.Common.Games.Roulette
 			timer = SpinTicks;
 			AnimateSpin();
 
+			SoundEngine.PlaySound(CasinoSounds.RouletteBallDrop);
 			LastPayout = RouletteRules.Resolve(lastBets, Result);
 			Coins.Give(player, LastPayout);
 
@@ -231,9 +235,8 @@ namespace CasinoWorld.Common.Games.Roulette
 			string number = NumberName(Result);
 			if (LastPayout > 0) {
 				SetMessage(Language.GetTextValue("Mods.CasinoWorld.UI.Roulette.Win", number, Coins.Format(LastPayout)), Color.LightGreen);
-				SoundEngine.PlaySound(SoundID.CoinPickup);
-				if (LastPayout >= LastStake * 10)
-					SoundEngine.PlaySound(SoundID.Item4);
+				SoundEngine.PlaySound(LastPayout >= LastStake * 10 ? CasinoSounds.Jackpot : CasinoSounds.SmallWin);
+				SoundEngine.PlaySound(CasinoSounds.CoinsPayout);
 				CombatText.NewText(player.Hitbox, Color.Gold, "+" + Coins.Format(LastPayout), dramatic: LastPayout >= LastStake * 10);
 			}
 			else {

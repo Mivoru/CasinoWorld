@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using CasinoWorld.Common;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -54,7 +55,7 @@ namespace CasinoWorld.Common.Crates
 			lastTickSlot = 0;
 			Active = true;
 			Done = false;
-			SoundEngine.PlaySound(SoundID.Unlock);
+			SoundEngine.PlaySound(CasinoSounds.CrateOpen);
 		}
 
 		public void Update(Player player)
@@ -70,7 +71,7 @@ namespace CasinoWorld.Common.Crates
 			int slot = (int)((Offset + SlotWidth / 2f) / SlotWidth);
 			if (slot != lastTickSlot) {
 				lastTickSlot = slot;
-				SoundEngine.PlaySound(SoundID.MenuTick with { Volume = 0.5f, Pitch = 0.2f + p * 0.3f });
+				SoundEngine.PlaySound(CasinoSounds.CrateTick with { Pitch = p * 0.3f });
 			}
 
 			if (Timer >= SpinTicks)
@@ -88,11 +89,11 @@ namespace CasinoWorld.Common.Crates
 		{
 			Offset = finalOffset;
 			Done = true;
-			player.QuickSpawnItem(player.GetSource_Misc("CasinoWorld"), Prize.ItemType, PrizeStack);
+			Games.Coins.GiveItem(player, new Item(Prize.ItemType, PrizeStack));
 
-			SoundEngine.PlaySound(PrizeRarity >= CrateRarity.Red ? SoundID.Item4 : SoundID.Grab);
+			SoundEngine.PlaySound(PrizeRarity >= CrateRarity.Pink ? CasinoSounds.RareReveal : CasinoSounds.SmallWin);
 			if (PrizeRarity == CrateRarity.Gold) {
-				SoundEngine.PlaySound(SoundID.Roar with { Pitch = 0.6f, Volume = 0.5f });
+				SoundEngine.PlaySound(CasinoSounds.Jackpot);
 				string name = Lang.GetItemNameValue(Prize.ItemType);
 				Main.NewText(Language.GetTextValue("Mods.CasinoWorld.UI.Crate.GoldMessage", name), CrateLoot.RarityColors[(int)CrateRarity.Gold]);
 			}

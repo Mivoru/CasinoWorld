@@ -1,6 +1,7 @@
 using CasinoWorld.Content.Subworlds;
 using Microsoft.Xna.Framework;
 using SubworldLibrary;
+using CasinoWorld.Common;
 using Terraria;
 
 namespace CasinoWorld.Common.Systems
@@ -25,6 +26,7 @@ namespace CasinoWorld.Common.Systems
 
 			returnPosition = Main.LocalPlayer.position;
 			returnWorldId = Main.worldID;
+			Terraria.Audio.SoundEngine.PlaySound(typeof(T) == typeof(UndergroundCasino) ? CasinoSounds.VaultDoor : CasinoSounds.DoorEnter);
 			if (!SubworldSystem.Enter<T>())
 				returnPosition = null;
 		}
