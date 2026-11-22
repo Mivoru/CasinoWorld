@@ -788,6 +788,28 @@ UI: {
 		Pity: Rare or better in at most {0} | Legendary in at most {1}
 	}
 
+	VideoSlots: {
+		Hint: 10 lines. Three scatters anywhere start the free spins!
+		Bonus: "FREE SPINS! {0} spins coming up!"
+		Retrigger: "+{0} free spins!"
+		Nothing: No win this time.
+		BonusTotal: "Bonus over: you won {0}!"
+		FreeSpinsLeft: "Free spins left: {0}"
+		Bet: "Bet per spin: {0}"
+		Wild: WILD
+		Scatter: BONUS
+		PaysNote: 3 / 4 / 5 in a row, per line (bet / 10)
+		ScatterPays: 3+ anywhere: {0} free spins
+		TitleLunarGods: Gates of the Lunar Gods
+		TitleAngler: Angler's Bonanza
+		TitleBoreal: Boreal Wilds
+		TitleBloodMoon: Blood Moon Hunter
+		FeatureLunarGods: Wins tumble away. Orbs multiply; in free spins they add up.
+		FeatureAngler: Fish carry cash. In free spins the Angler collects it all.
+		FeatureBoreal: In free spins, every wild freezes in place.
+		FeatureBloodMoon: Free spins pick a symbol that expands and pays every line.
+	}
+
 	Slots: {
 		Hover: Play the slots
 		Title: LUCKY SLOTS

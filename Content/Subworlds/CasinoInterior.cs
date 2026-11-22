@@ -185,8 +185,9 @@ namespace CasinoWorld.Content.Subworlds
 
 			if (hardmode) {
 				Vanilla(ModContent.TileType<UpgradeMachine>(), 98, s);
-				for (int k = 0; k < 3; k++)
-					Vanilla(ModContent.TileType<SlotMachine>(), 102 + k * 3, s);
+				Vanilla(ModContent.TileType<VideoSlotLunarGods>(), 102, s);
+				Vanilla(ModContent.TileType<VideoSlotAngler>(), 105, s);
+				Vanilla(ModContent.TileType<VideoSlotBoreal>(), 108, s);
 			}
 			else {
 				for (int k = 0; k < 4; k++)
@@ -224,8 +225,10 @@ namespace CasinoWorld.Content.Subworlds
 			Floor<MarblePlanter>(64, s);
 			Pilaster(67, s);
 
+			// The high rollers casino has a row of themed video slots instead of classic machines.
+			int[] videoSlots = { ModContent.TileType<VideoSlotLunarGods>(), ModContent.TileType<VideoSlotAngler>(), ModContent.TileType<VideoSlotBoreal>(), ModContent.TileType<VideoSlotBloodMoon>() };
 			for (int k = 0; k < 10; k++)
-				Vanilla(ModContent.TileType<SlotMachine>(), 70 + k * 3, s);
+				Vanilla(hardmode ? videoSlots[k % 4] : ModContent.TileType<SlotMachine>(), 70 + k * 3, s);
 			Pilaster(101, s);
 
 			Vanilla(ModContent.TileType<BlackjackTable>(), 104, s);
@@ -282,7 +285,7 @@ namespace CasinoWorld.Content.Subworlds
 			Vanilla(ModContent.TileType<RouletteTable>(), 88, s);
 			Vanilla(ModContent.TileType<BlackjackTable>(), 97, s);
 			for (int k = 0; k < 3; k++)
-				Vanilla(ModContent.TileType<SlotMachine>(), 106 + k * 3, s);
+				Vanilla(hardmode ? (k == 1 ? ModContent.TileType<VideoSlotBloodMoon>() : ModContent.TileType<VideoSlotLunarGods>()) : ModContent.TileType<SlotMachine>(), 106 + k * 3, s);
 			OnWall<WallSconce>(116, s, 9);
 			Floor<CocktailTable>(119, s);
 			Floor<VelvetSofa>(123, s);
