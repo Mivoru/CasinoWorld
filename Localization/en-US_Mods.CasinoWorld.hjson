@@ -443,6 +443,11 @@ Boss: {
 }
 
 Bestiary: {
+	BrokeGambler: He bet the house, then the horse, then his own heartbeat. He still swears the next spin is the one.
+	LuckyBat: A cave bat that stole a gold coin from a careless miner and refuses to let go.
+	RoyalGuard: The knight of spades guards the deepest card tables. Its shield is a giant playing card.
+	RouletteWraith: The restless spirit of a croupier, still spinning the wheel long after the last bet.
+	LoanShark: Borrow from him once and he will follow you to every beach in the world.
 	TownGambler: A smooth talker in a purple suit who moved to town the day the casino opened. He has a system.
 	TheWildCard: Every deck has one card that plays by its own rules. This one learned magic, and it never loses.
 	ChipSlime: A poker chip that rolled away from the tables and learned to bite. It still remembers its value.
@@ -474,6 +479,22 @@ NPCs: {
 			3: Tip the dancer, sugar. The House takes enough from you downstairs.
 		}
 	}
+
+	BrokeGambler: {
+		DisplayName: Broke Gambler
+		Moan: {
+			0: Just... one... more... spin...
+			1: Red... it was supposed to be red...
+			2: Lend me... a silver...
+			3: The house... always wins...
+			4: My lucky... coin...
+		}
+	}
+
+	LuckyBat.DisplayName: Lucky Bat
+	RoyalGuard.DisplayName: Royal Guard
+	RouletteWraith.DisplayName: Roulette Wraith
+	LoanShark.DisplayName: Loan Shark
 
 	Togi: {
 		DisplayName: Togi

@@ -68,7 +68,7 @@ namespace CasinoWorld.Content.NPCs.Enemies
 	{
 		public override void SetStaticDefaults()
 		{
-			Main.npcFrameCount[Type] = 4;
+			Main.npcFrameCount[Type] = 5;
 		}
 
 		public override void SetDefaults()
@@ -88,16 +88,18 @@ namespace CasinoWorld.Content.NPCs.Enemies
 
 		public override void FindFrame(int frameHeight)
 		{
-			if (NPC.velocity.Y != 0f) {
-				NPC.frame.Y = frameHeight;
+			// Frames 0-3 walk, 4 is the spear thrust (used while airborne or right next to the target).
+			NPC.spriteDirection = -NPC.direction;   // the sprite faces right
+			bool close = NPC.HasValidTarget && NPC.Distance(Main.player[NPC.target].Center) < 60f;
+			if (NPC.velocity.Y != 0f || close) {
+				NPC.frame.Y = frameHeight * 4;
 				return;
 			}
 			NPC.frameCounter += System.Math.Abs(NPC.velocity.X) * 1.6f;
 			if (NPC.frameCounter >= 10) {
 				NPC.frameCounter = 0;
-				NPC.frame.Y = (NPC.frame.Y + frameHeight) % (frameHeight * Main.npcFrameCount[Type]);
+				NPC.frame.Y = (NPC.frame.Y / frameHeight + 1) % 4 * frameHeight;
 			}
-			NPC.spriteDirection = NPC.direction;
 		}
 
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
