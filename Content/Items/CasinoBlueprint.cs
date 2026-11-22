@@ -49,7 +49,8 @@ namespace CasinoWorld.Content.Items
 
 		public override bool? UseItem(Player player)
 		{
-			if (player.whoAmI != Main.myPlayer || player.itemAnimation != player.itemAnimationMax - 1)
+			// UseItem runs once at the start of each use; only the local player builds (sends the request).
+			if (player.whoAmI != Main.myPlayer)
 				return true;
 
 			(int left, int groundY) = SiteAtMouse();

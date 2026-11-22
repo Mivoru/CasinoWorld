@@ -245,7 +245,7 @@ Upgrade: {
 
 Boss: {
 	Intro: The House is open for business!
-	PhaseTwo: "Double or nothing! The Wheel of Fate spins..."
+	PhaseTwo: Double or nothing! The Wheel of Fate spins...
 	Defeat: The house... always... wins...?
 	Leave: The house closes at dawn.
 	Bust: BUST!
@@ -501,4 +501,17 @@ Projectiles: {
 	ExplodingDie.DisplayName: Exploding Die
 	JackpotChip.DisplayName: Jackpot Chip
 	RoyalCard.DisplayName: Royal Card
+	BellWave.DisplayName: Bell Wave
+	BossCard.DisplayName: Boss Card
+	BossDie.DisplayName: Boss Die
+	CherryBomb.DisplayName: Cherry Bomb
+	CroupierBall.DisplayName: Croupier Ball
+	DiamondShard.DisplayName: Diamond Shard
+	GoldBarDrop.DisplayName: Gold Bar Drop
+	GoldRushMarker.DisplayName: Gold Rush Marker
+	LuckySeven.DisplayName: Lucky Seven
+	OrbitChip.DisplayName: Orbit Chip
+	RouletteStripe.DisplayName: Roulette Stripe
+	SourDrop.DisplayName: Sour Drop
+	WheelOfFortuneDisc.DisplayName: Wheel Of Fortune Disc
 }
