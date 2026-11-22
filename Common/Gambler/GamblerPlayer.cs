@@ -54,10 +54,13 @@ namespace CasinoWorld.Common.Gambler
 		public bool HouseEdge;
 		private int houseEdgeCooldown;
 
-		/// <summary>Martingale Medallion: the hit after a bust gets +25 % jackpot chance (up to 75 %).</summary>
+		/// <summary>
+		/// Martingale Medallion: every gambler hit without a jackpot adds +2 % jackpot chance (up to 75 %),
+		/// a jackpot resets it. Measured in tools/gambler_dps.py: +13 % / +9 % / +8 % DPS at set Luck 4 / 10 / 13.
+		/// </summary>
 		public bool Martingale;
-		public const float MartingaleBonus = 0.25f;
-		private bool martingaleArmed;
+		public const float MartingaleStep = 0.02f;
+		private int martingaleMisses;
 
 		/// <summary>Copper wagered since the last loyalty token was paid out.</summary>
 		public long TokenProgress;
@@ -97,12 +100,14 @@ namespace CasinoWorld.Common.Gambler
 			lastHitJackpot = false;
 
 			float jackpotChance = JackpotChance;
-			if (Martingale && martingaleArmed)
-				jackpotChance = Math.Min(jackpotChance + MartingaleBonus, 0.75f);
-			martingaleArmed = false;
+			if (Martingale)
+				jackpotChance = Math.Min(jackpotChance + MartingaleStep * martingaleMisses, 0.75f);
 
 			float roll = Main.rand.NextFloat();
+			if (Martingale && roll >= jackpotChance)
+				martingaleMisses++;
 			if (roll < jackpotChance) {
+				martingaleMisses = 0;
 				modifiers.SourceDamage *= JackpotMultiplier;
 				lastHitJackpot = true;
 				if (HotStreakSet)
@@ -118,7 +123,6 @@ namespace CasinoWorld.Common.Gambler
 			}
 			else if (roll < jackpotChance + BustChance) {
 				modifiers.SourceDamage *= BustMultiplier;
-				martingaleArmed = Martingale;
 				CombatText.NewText(target.Hitbox, Color.Gray, Language.GetTextValue("Mods.CasinoWorld.Gambler.Bust"));
 				if (Main.rand.NextBool(3))   // not on every bust, it would get tiring
 					SoundEngine.PlaySound(CasinoSounds.BustProc, target.Center);

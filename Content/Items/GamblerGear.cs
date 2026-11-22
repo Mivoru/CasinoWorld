@@ -162,7 +162,7 @@ namespace CasinoWorld.Content.Items.Accessories
 		}
 	}
 
-	/// <summary>Martingale Medallion: after a bust, the next gambler hit gets +25 % jackpot chance. Hardmode crates.</summary>
+	/// <summary>Martingale Medallion: each gambler hit without a jackpot adds +2 % jackpot chance until the next jackpot. Hardmode crates.</summary>
 	public class MartingaleMedallion : ModItem
 	{
 		public override void SetDefaults()
@@ -180,7 +180,7 @@ namespace CasinoWorld.Content.Items.Accessories
 		}
 	}
 
-	/// <summary>Dealer's Visor: +1 Luck and +2 % jackpot chance. Hardmode, prize counter.</summary>
+	/// <summary>Dealer's Visor: +2 Luck and +3 % jackpot chance (+11 % / +8 % / +7 % DPS at set Luck 4 / 10 / 13). Hardmode, prize counter.</summary>
 	public class DealersVisor : ModItem
 	{
 		public override void SetDefaults()
@@ -195,8 +195,8 @@ namespace CasinoWorld.Content.Items.Accessories
 		public override void UpdateAccessory(Player player, bool hideVisual)
 		{
 			GamblerPlayer gambler = player.GetModPlayer<GamblerPlayer>();
-			gambler.Luck += 1;
-			gambler.BonusJackpotChance += 0.02f;
+			gambler.Luck += 2;
+			gambler.BonusJackpotChance += 0.03f;
 		}
 	}
 }

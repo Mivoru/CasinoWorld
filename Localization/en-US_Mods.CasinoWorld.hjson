@@ -122,7 +122,8 @@ Items: {
 		DisplayName: Martingale Medallion
 		Tooltip:
 			'''
-			After a Bust, your next gambler hit has +25% jackpot chance
+			Each gambler hit without a jackpot adds 2% jackpot chance
+			A jackpot resets the bonus
 			'Double down. It worked last time.'
 			'''
 	}
@@ -131,8 +132,8 @@ Items: {
 		DisplayName: Dealer's Visor
 		Tooltip:
 			'''
-			+1 Luck
-			2% increased jackpot chance
+			+2 Luck
+			3% increased jackpot chance
 			'''
 	}
 
