@@ -44,6 +44,15 @@ namespace CasinoWorld.Content.NPCs
 		/// <summary>Extra vertical offset in pixels (for example a dance hop).</summary>
 		protected virtual float DrawLift(int tick) => 0f;
 
+		/// <summary>Extra horizontal offset in pixels (for example circling a pole).</summary>
+		protected virtual float DrawShiftX(int tick) => 0f;
+
+		/// <summary>Body rotation in radians.</summary>
+		protected virtual float DrawRotation(int tick) => 0f;
+
+		/// <summary>Facing for this tick (0 = the NPC's own direction).</summary>
+		protected virtual int DrawFacing(int tick) => 0;
+
 		private PersonDoll doll;
 		private bool dollFailed;
 
@@ -58,7 +67,10 @@ namespace CasinoWorld.Content.NPCs
 				bool talking = Main.LocalPlayer.talkNPC == NPC.whoAmI;
 				doll.BodyPose = talking ? -1 : BodyPose(tick);
 				doll.LegPose = talking ? -1 : LegPose(tick);
-				doll.Draw(NPC, look, NPC.Bottom + new Vector2(0f, NPC.gfxOffY - (talking ? 0f : DrawLift(tick))));
+				doll.Rotation = talking ? 0f : DrawRotation(tick);
+				doll.Facing = talking ? 0 : DrawFacing(tick);
+				Vector2 shift = talking ? Vector2.Zero : new Vector2(DrawShiftX(tick), -DrawLift(tick));
+				doll.Draw(NPC, look, NPC.Bottom + new Vector2(0f, NPC.gfxOffY) + shift);
 			}
 			catch (System.Exception e) {
 				// Never crash the game over a cosmetic: fall back to the sprite sheet for good.

@@ -103,6 +103,7 @@ namespace CasinoWorld.Common.Games.Slots
 			int multiplier = SlotRules.Payout(Result[0], Result[1], Result[2]);
 			LastPayout = LastBet * multiplier;
 			Coins.Give(player, LastPayout);
+			CasinoRecords.Report(player, CasinoGame.Slots, LastPayout - LastBet);
 
 			if (multiplier > 1) {
 				SetMessage(Language.GetTextValue("Mods.CasinoWorld.UI.Slots.Win", multiplier, Coins.Format(LastPayout)), Color.LightGreen);

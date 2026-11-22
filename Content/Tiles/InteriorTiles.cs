@@ -36,8 +36,8 @@ namespace CasinoWorld.Content.Tiles
 	}
 
 	/// <summary>
-	/// Brass elevator (3x4). Right-click to ride to the elevator directly above or below,
-	/// on the other floor. The doors chime and the ride is instant.
+	/// Brass elevator (3x4). Right-click the upper half of the doors to ride one floor up, the lower half
+	/// to ride one floor down (to the next elevator in the same column). The doors chime; the ride is instant.
 	/// </summary>
 	public class CasinoElevator : ModTile
 	{
@@ -77,29 +77,36 @@ namespace CasinoWorld.Content.Tiles
 
 		public override bool HasSmartInteract(int i, int j, SmartInteractScanSettings settings) => true;
 
-		/// <summary>Finds the other elevator in the same column (closest one above or below).</summary>
-		private int FindOther(Point16 origin)
+		/// <summary>Finds the nearest elevator above (up) or below (down) in the same column, or -1.</summary>
+		private int FindNext(Point16 origin, bool up)
 		{
-			int best = -1, bestDistance = int.MaxValue;
-			for (int y = origin.Y - SearchRange; y <= origin.Y + SearchRange; y++) {
-				if (y == origin.Y || !WorldGen.InWorld(origin.X, y))
-					continue;
+			for (int d = 1; d <= SearchRange; d++) {
+				int y = up ? origin.Y - d : origin.Y + d;
+				if (!WorldGen.InWorld(origin.X, y))
+					break;
 				Tile tile = Main.tile[origin.X, y];
-				if (tile.HasTile && tile.TileType == Type && tile.TileFrameX % 54 == 0 && tile.TileFrameY % 72 == 0) {
-					int d = System.Math.Abs(y - origin.Y);
-					if (d < bestDistance) {
-						bestDistance = d;
-						best = y;
-					}
-				}
+				if (tile.HasTile && tile.TileType == Type && tile.TileFrameX % 54 == 0 && tile.TileFrameY % 72 == 0)
+					return y;
 			}
-			return best;
+			return -1;
+		}
+
+		/// <summary>Upper half of the doors = up, lower half = down; falls back to the only direction there is.</summary>
+		private int Destination(Point16 origin, out bool up)
+		{
+			up = Main.MouseWorld.Y < (origin.Y + Height / 2f) * 16f;
+			int target = FindNext(origin, up);
+			if (target < 0) {
+				up = !up;
+				target = FindNext(origin, up);
+			}
+			return target;
 		}
 
 		public override bool RightClick(int i, int j)
 		{
 			Point16 origin = TopLeft(i, j);
-			int other = FindOther(origin);
+			int other = Destination(origin, out _);
 			if (other < 0)
 				return false;
 			Player player = Main.LocalPlayer;
@@ -118,9 +125,8 @@ namespace CasinoWorld.Content.Tiles
 			player.noThrow = 2;
 			player.cursorItemIconEnabled = true;
 			player.cursorItemIconID = -1;
-			Point16 origin = TopLeft(i, j);
-			int other = FindOther(origin);
-			player.cursorItemIconText = Language.GetTextValue(other < origin.Y ? "Mods.CasinoWorld.UI.ElevatorUp" : "Mods.CasinoWorld.UI.ElevatorDown");
+			Destination(TopLeft(i, j), out bool up);
+			player.cursorItemIconText = Language.GetTextValue(up ? "Mods.CasinoWorld.UI.ElevatorUp" : "Mods.CasinoWorld.UI.ElevatorDown");
 		}
 
 		public override void PostDraw(int i, int j, SpriteBatch spriteBatch)

@@ -14,6 +14,9 @@ namespace CasinoWorld.Common.Net
 		RouletteSpinResult,  // server -> all clients: player, table, number
 		PlaceSurfaceCasino,  // client -> server: left, ground row (Casino Blueprint)
 		HouseLeverHit,       // client -> server: boss index (lever hit during a spin)
+		ReportWin,           // client -> casino server: game, net win
+		RecordsSync,         // casino server -> clients: leaderboard
+		RecordsRequest,      // client -> casino server: send me the leaderboard
 	}
 
 	/// <summary>Writes and dispatches the mod's network packets.</summary>
@@ -47,6 +50,18 @@ namespace CasinoWorld.Common.Net
 						house.TriggerBust();
 					break;
 				}
+
+				case CasinoMessage.ReportWin when Main.netMode == NetmodeID.Server:
+					Games.CasinoRecords.HandleReport(reader, sender);
+					break;
+
+				case CasinoMessage.RecordsRequest when Main.netMode == NetmodeID.Server:
+					Games.CasinoRecords.Broadcast(sender);
+					break;
+
+				case CasinoMessage.RecordsSync when Main.netMode == NetmodeID.MultiplayerClient:
+					Games.CasinoRecords.HandleSync(reader);
+					break;
 
 				default:
 					ModContent.GetInstance<RouletteSystem>().Mod.Logger.Warn($"Unexpected packet {message} (netMode {Main.netMode}).");

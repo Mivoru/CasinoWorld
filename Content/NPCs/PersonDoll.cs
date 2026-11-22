@@ -91,6 +91,12 @@ namespace CasinoWorld.Content.NPCs
 		/// <summary>Leg pose override for this frame (-1 = vanilla pose from movement).</summary>
 		public int LegPose = -1;
 
+		/// <summary>Rotation around the body centre (radians), for acrobatics such as pole spins.</summary>
+		public float Rotation;
+
+		/// <summary>Facing override for this frame (0 = from the NPC).</summary>
+		public int Facing;
+
 		private void Apply(PersonLook look)
 		{
 			if (ReferenceEquals(appliedLook, look))
@@ -121,7 +127,7 @@ namespace CasinoWorld.Content.NPCs
 		public void Draw(NPC npc, PersonLook look, Vector2 bottom)
 		{
 			Apply(look);
-			player.direction = npc.spriteDirection == 0 ? npc.direction : npc.spriteDirection;
+			player.direction = Facing != 0 ? Facing : npc.spriteDirection == 0 ? npc.direction : npc.spriteDirection;
 			player.velocity = new Vector2(npc.velocity.X, 0f);
 			player.position = new Vector2(bottom.X - player.width / 2f, bottom.Y - player.height);
 
@@ -155,7 +161,7 @@ namespace CasinoWorld.Content.NPCs
 			if (LegPose >= 0)
 				player.legFrame.Y = LegPose * FrameHeight;
 
-			Main.PlayerRenderer.DrawPlayer(Main.Camera, player, player.position, 0f, player.Size / 2f);
+			Main.PlayerRenderer.DrawPlayer(Main.Camera, player, player.position, Rotation, player.Size / 2f);
 		}
 	}
 }

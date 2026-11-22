@@ -229,6 +229,7 @@ namespace CasinoWorld.Common.Games.Roulette
 			SoundEngine.PlaySound(CasinoSounds.RouletteBallDrop);
 			LastPayout = RouletteRules.Resolve(lastBets, Result);
 			Coins.Give(player, LastPayout);
+			CasinoRecords.Report(player, CasinoGame.Roulette, LastPayout - LastStake);
 
 			// A hit on a single number can drop a jackpot item.
 			if (lastBets.TryGetValue(new RouletteBet(RouletteBetType.Straight, Result), out long straightStake))

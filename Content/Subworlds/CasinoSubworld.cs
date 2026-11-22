@@ -54,6 +54,7 @@ namespace CasinoWorld.Content.Subworlds
 			SubworldSystem.CopyWorldData(nameof(NPC.downedMechBossAny), NPC.downedMechBossAny);
 			SubworldSystem.CopyWorldData(nameof(NPC.downedPlantBoss), NPC.downedPlantBoss);
 			SubworldSystem.CopyWorldData(nameof(NPC.downedMoonlord), NPC.downedMoonlord);
+			SubworldSystem.CopyWorldData("CasinoWorldKey", Main.ActiveWorldFileData.UniqueId.ToString());
 		}
 
 		public override void ReadCopiedMainWorldData()
@@ -63,14 +64,20 @@ namespace CasinoWorld.Content.Subworlds
 			NPC.downedMechBossAny = SubworldSystem.ReadCopiedWorldData<bool>(nameof(NPC.downedMechBossAny));
 			NPC.downedPlantBoss = SubworldSystem.ReadCopiedWorldData<bool>(nameof(NPC.downedPlantBoss));
 			NPC.downedMoonlord = SubworldSystem.ReadCopiedWorldData<bool>(nameof(NPC.downedMoonlord));
+			Common.Games.CasinoRecords.WorldKey = SubworldSystem.ReadCopiedWorldData<string>("CasinoWorldKey");
 		}
 
 		public override void OnLoad()
 		{
 			Main.dayTime = true;
 			Main.time = 27000;
-			if (Main.netMode != NetmodeID.MultiplayerClient)
+			if (Main.netMode != NetmodeID.MultiplayerClient) {
 				SpawnPeople();
+				Common.Games.CasinoRecords.Load();
+			}
+			else {
+				Common.Games.CasinoRecords.RequestSync();
+			}
 		}
 
 		/// <summary>

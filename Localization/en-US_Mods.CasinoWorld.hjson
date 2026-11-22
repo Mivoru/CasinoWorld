@@ -460,6 +460,16 @@ NPCs: {
 		}
 	}
 
+	PoleDancer: {
+		DisplayName: Pole Dancer
+		Chat: {
+			0: Six years of gymnastics, and this is where it got me. Best decision ever.
+			1: Grip, spin, invert, smile. If you can do that after three cocktails, you're hired.
+			2: People think it's easy. Try holding yourself upside down on a chrome pole. I'll wait.
+			3: Tip the dancer, sugar. The House takes enough from you downstairs.
+		}
+	}
+
 	Togi: {
 		DisplayName: Togi
 		Bonus: BONUS!!! CHAT, LOOK!
@@ -673,8 +683,26 @@ Crates: {
 
 UI: {
 	EnterCasino: Enter
-	ElevatorUp: Elevator: up
-	ElevatorDown: Elevator: down
+	ElevatorUp: Elevator: up a floor
+	ElevatorDown: Elevator: down a floor
+	Records: {
+		Title: BIGGEST WINS
+		Today: TODAY
+		Week: THIS WEEK
+		AllTime: ALL TIME
+		Empty: no wins yet
+		Latest: {0} just won {1} at {2}!
+		GameRoulette: roulette
+		GameBlackjack: blackjack
+		GameSlots: the slots
+	}
+
+	Wheel: {
+		Spin: Wheel of Fortune: free daily spin!
+		Tomorrow: Wheel of Fortune: come back tomorrow
+		WonTokens: The wheel stops... {0} loyalty tokens!
+		WonCrate: The wheel stops on the star... a Lucky Crate!
+	}
 	ExitCasino: Exit
 	EnterPrompt: "[{0}] or right-click: Enter"
 	ExitPrompt: "[{0}] or right-click: Exit"

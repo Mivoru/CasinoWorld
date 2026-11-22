@@ -278,6 +278,7 @@ namespace CasinoWorld.Common.Games.Blackjack
 			}
 
 			Coins.Give(player, total);
+			CasinoRecords.Report(player, CasinoGame.Blackjack, total - staked);
 			Phase = BlackjackPhase.Result;
 
 			// A natural blackjack that beats the dealer can drop a jackpot item.
