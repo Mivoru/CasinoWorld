@@ -108,6 +108,16 @@ Items: {
 			'''
 	}
 
+	TheHouseMask: {
+		DisplayName: The House Mask
+		Tooltip: ""
+	}
+
+	TheHouseTrophy: {
+		DisplayName: The House Trophy
+		Tooltip: ""
+	}
+
 	GoldenChip: {
 		DisplayName: Golden Chip
 		Tooltip:

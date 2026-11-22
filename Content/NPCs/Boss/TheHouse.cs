@@ -527,11 +527,13 @@ namespace CasinoWorld.Content.NPCs.Boss
 		public override void ModifyNPCLoot(NPCLoot npcLoot)
 		{
 			npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<TheHouseBag>()));
+			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Vanity.TheHouseTrophy>(), 10));
 			var normal = new LeadingConditionRule(new Conditions.NotExpert());
 			normal.OnSuccess(ItemDropRule.OneFromOptions(1, ModContent.ItemType<JackpotLever>(), ModContent.ItemType<DealersHand>(), ModContent.ItemType<WheelOfFortune>()));
 			normal.OnSuccess(ItemDropRule.Common(ModContent.ItemType<LoyaltyToken>(), 1, 80, 120));
 			normal.OnSuccess(ItemDropRule.Common(ModContent.ItemType<LuckyCrate>(), 1, 2, 3));
 			normal.OnSuccess(ItemDropRule.Common(ModContent.ItemType<GoldenChip>(), 3));
+			normal.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Items.Vanity.TheHouseMask>(), 7));
 			npcLoot.Add(normal);
 		}
 

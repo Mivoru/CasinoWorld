@@ -230,7 +230,7 @@ namespace CasinoWorld.Common.Games.Roulette
 
 			bool ballVisible = round.Phase is RoulettePhase.Spinning or RoulettePhase.ShowingResult;
 			if (ballVisible) {
-				float radius = MathHelper.Lerp(84f, 66f, round.BallDrop);
+				float radius = MathHelper.Lerp(80f, 69f, round.BallDrop);
 				Vector2 ball = center + radius * new Vector2((float)Math.Cos(round.BallAngle), (float)Math.Sin(round.BallAngle));
 				Texture2D tex = ballTexture.Value;
 				sb.Draw(tex, ball, null, Color.White, 0f, tex.Size() / 2f, 1f, SpriteEffects.None, 0f);

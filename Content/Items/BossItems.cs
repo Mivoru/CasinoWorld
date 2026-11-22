@@ -94,6 +94,7 @@ namespace CasinoWorld.Content.Items
 			itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<LuckyCrate>(), 1, 3, 4));
 			itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<GoldenChip>(), 2));
 			itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HouseEdge>()));
+			itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Vanity.TheHouseMask>(), 7));
 			itemLoot.Add(ItemDropRule.CoinsBasedOnNPCValue(ModContent.NPCType<TheHouse>()));
 		}
 	}
