@@ -84,7 +84,7 @@ namespace CasinoWorld.Content.Subworlds
 		/// Soft ambient light given off by every background wall of the hall (see CasinoWallProtection),
 		/// so the room is evenly lit like a real interior instead of patchy torchlight.
 		/// </summary>
-		public virtual Microsoft.Xna.Framework.Vector3 Ambient => new(0.30f, 0.22f, 0.15f);
+		public virtual Microsoft.Xna.Framework.Vector3 Ambient => new(0.70f, 0.62f, 0.50f);
 
 		/// <summary>Spawns a casino NPC standing on the floor at the given tile.</summary>
 		protected static void SpawnAt<T>(int tileX, int floorY, int facing = 1) where T : ModNPC

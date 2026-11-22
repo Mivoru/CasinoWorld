@@ -49,7 +49,20 @@ namespace CasinoWorld.Content.Tiles.Interior
 			AddMapEntry(MapColor);
 			DustType = DustID.Gold;
 			hasGlow = ModContent.HasAsset(Texture + "_Glow");
-			InteriorLights.Table.TryGetValue(Name, out lights);
+			// The table holds average glow per tile; normalise it so the brightest tile of each prop
+			// gives full light, otherwise thin lamps (whose glow covers few pixels) barely light anything.
+			if (InteriorLights.Table.TryGetValue(Name, out float[,,] raw)) {
+				float max = 0.01f;
+				foreach (float v in raw)
+					max = System.Math.Max(max, v);
+				lights = new float[raw.GetLength(0), raw.GetLength(1), 3];
+				for (int y = 0; y < raw.GetLength(0); y++) {
+					for (int x = 0; x < raw.GetLength(1); x++) {
+						for (int c = 0; c < 3; c++)
+							lights[y, x, c] = System.Math.Min(1f, raw[y, x, c] / max * 1.1f);
+					}
+				}
+			}
 		}
 
 		public override void Unload() => glow = null;
@@ -225,4 +238,27 @@ namespace CasinoWorld.Content.Tiles.Interior
 		protected override Color MapColor => new(200, 200, 210);
 		protected override float LightStrength => 1.5f;
 	}
+}
+
+namespace CasinoWorld.Content.Tiles.Interior
+{
+	/// <summary>Framed casino paintings for the walls (tools/casino_paintings.py).</summary>
+	public abstract class CasinoPainting : InteriorFurniture
+	{
+		protected override Color MapColor => new(200, 150, 55);
+	}
+
+	public class PaintingRoyalFlush : CasinoPainting { public override int Width => 6; public override int Height => 4; }
+
+	public class PaintingLuckySevens : CasinoPainting { public override int Width => 4; public override int Height => 6; }
+
+	public class PaintingWheel : CasinoPainting { public override int Width => 6; public override int Height => 6; }
+
+	public class PaintingTheHouse : CasinoPainting { public override int Width => 6; public override int Height => 8; }
+
+	public class PaintingVegasNight : CasinoPainting { public override int Width => 10; public override int Height => 6; }
+
+	public class PaintingJackpot : CasinoPainting { public override int Width => 8; public override int Height => 5; }
+
+	public class PaintingGoldenDice : CasinoPainting { public override int Width => 5; public override int Height => 4; }
 }

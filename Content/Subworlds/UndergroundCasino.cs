@@ -39,7 +39,7 @@ namespace CasinoWorld.Content.Subworlds
 
 		public override List<GenPass> Tasks => new() { new UndergroundCasinoPass() };
 
-		public override Vector3 Ambient => new(0.24f, 0.18f, 0.32f);
+		public override Vector3 Ambient => new(0.55f, 0.46f, 0.68f);
 
 		protected override void SpawnPeople() => CasinoInterior.SpawnPeople(true, GuestCount);
 	}

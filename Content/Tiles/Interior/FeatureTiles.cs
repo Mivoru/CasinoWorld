@@ -140,28 +140,30 @@ namespace CasinoWorld.Content.Tiles.Interior
 					spriteBatch.Draw(pixel, new Rectangle((int)origin.X + x, (int)origin.Y + y, 2, 2), new Color(255, 120, 40) * 0.05f);
 			}
 
+			// Big, readable text: title, three columns with one line per winner (name and amount), and the
+			// latest win at the bottom. Names are cut to fit the column.
 			float pulse = 0.85f + 0.15f * (float)Math.Sin(t * 4f);
-			Utils.DrawBorderString(spriteBatch, Text("Title"), origin + new Vector2(160, 18), Amber * pulse, 0.75f, 0.5f, 0.5f);
+			Utils.DrawBorderString(spriteBatch, Text("Title"), origin + new Vector2(160, 20), Amber * pulse, 1.05f, 0.5f, 0.5f);
 
 			var columns = new[] { (Text("Today"), CasinoRecords.Today), (Text("Week"), CasinoRecords.ThisWeek), (Text("AllTime"), CasinoRecords.Best) };
 			for (int c = 0; c < 3; c++) {
 				float cx = 58 + c * 102;
-				Utils.DrawBorderString(spriteBatch, columns[c].Item1, origin + new Vector2(cx, 36), HeaderColors[c], 0.55f, 0.5f, 0.5f);
+				Utils.DrawBorderString(spriteBatch, columns[c].Item1, origin + new Vector2(cx, 42), HeaderColors[c], 0.78f, 0.5f, 0.5f);
 				var wins = columns[c].Item2.ToList();
 				if (wins.Count == 0)
-					Utils.DrawBorderString(spriteBatch, Text("Empty"), origin + new Vector2(cx, 56), Color.Gray, 0.45f, 0.5f, 0.5f);
+					Utils.DrawBorderString(spriteBatch, Text("Empty"), origin + new Vector2(cx, 66), Color.Gray, 0.6f, 0.5f, 0.5f);
 				for (int k = 0; k < wins.Count; k++) {
-					string name = wins[k].Player.Length > 10 ? wins[k].Player[..10] : wins[k].Player;
-					float y = 52 + k * 20;
-					Utils.DrawBorderString(spriteBatch, $"{k + 1}. {name}", origin + new Vector2(cx, y), Color.White, 0.42f, 0.5f, 0.5f);
-					Utils.DrawBorderString(spriteBatch, Coins.Format(wins[k].Amount), origin + new Vector2(cx, y + 9), Amber, 0.42f, 0.5f, 0.5f);
+					string name = wins[k].Player.Length > 8 ? wins[k].Player[..8] : wins[k].Player;
+					float y = 62 + k * 15;
+					Utils.DrawBorderString(spriteBatch, name, origin + new Vector2(cx - 46, y), Color.White, 0.6f, 0f, 0.5f);
+					Utils.DrawBorderString(spriteBatch, Coins.Format(wins[k].Amount), origin + new Vector2(cx + 46, y), Amber, 0.6f, 1f, 0.5f);
 				}
 			}
 
 			// Latest win, blinking at the bottom.
 			if (CasinoRecords.Latest is CasinoWin latest && (int)(t * 2) % 4 != 0) {
 				string line = Text("Latest", latest.Player, Coins.Format(latest.Amount), CasinoRecords.GameName(latest.Game));
-				Utils.DrawBorderString(spriteBatch, line, origin + new Vector2(160, 112), new Color(120, 255, 140), 0.45f, 0.5f, 0.5f);
+				Utils.DrawBorderString(spriteBatch, line, origin + new Vector2(160, 112), new Color(120, 255, 140), 0.66f, 0.5f, 0.5f);
 			}
 		}
 	}

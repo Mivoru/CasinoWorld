@@ -139,10 +139,13 @@ namespace CasinoWorld.Content.Subworlds
 				InteriorFurniture.Place(type, X(offset), y);
 		}
 
+		/// <summary>Two elevators on each side of every floor: one always goes down, the other always up.</summary>
 		private static void Elevators(int storey)
 		{
-			Vanilla(ModContent.TileType<CasinoElevator>(), 7, storey);
-			Vanilla(ModContent.TileType<CasinoElevator>(), 136, storey);
+			Vanilla(ModContent.TileType<CasinoElevatorDown>(), 5, storey);
+			Vanilla(ModContent.TileType<CasinoElevatorUp>(), 8, storey);
+			Vanilla(ModContent.TileType<CasinoElevatorDown>(), 132, storey);
+			Vanilla(ModContent.TileType<CasinoElevatorUp>(), 135, storey);
 		}
 
 		private static void Lights()
@@ -192,8 +195,11 @@ namespace CasinoWorld.Content.Subworlds
 			OnWall<FortuneWheel>(112, s, 3);
 			Floor<CocktailTable>(122, s);
 			Floor<VelvetSofa>(126, s);
-			Floor<MarblePlanter>(132, s);
 			OnWall<WallSconce>(139, s, 8);
+			OnWall<PaintingWheel>(50, s, 9);
+			OnWall<PaintingVegasNight>(80, s, 7);
+			OnWall<PaintingGoldenDice>(100, s, 7);
+			OnWall<PaintingTheHouse>(123, s, 6);
 			Pilaster(141, s);
 			Floor<MarblePlanter>(145, s);
 		}
@@ -228,7 +234,12 @@ namespace CasinoWorld.Content.Subworlds
 			Floor<CocktailTable>(121, s);
 			Floor<CocktailTable>(125, s);
 			Floor<MarblePlanter>(130, s);
-			OnWall<WallSconce>(132, s, 8);
+			OnWall<PaintingRoyalFlush>(13, s, 9);
+			OnWall<PaintingLuckySevens>(40, s, 7);
+			OnWall<PaintingJackpot>(52, s, 7);
+			OnWall<PaintingTheHouse>(82, s, 7);
+			OnWall<PaintingGoldenDice>(105, s, 7);
+			OnWall<PaintingWheel>(122, s, 7);
 		}
 
 		/// <summary>Raised show stage: carpet top on marble, framed by pilasters, lit from the front edge.</summary>
@@ -276,7 +287,11 @@ namespace CasinoWorld.Content.Subworlds
 			Floor<CocktailTable>(119, s);
 			Floor<VelvetSofa>(123, s);
 			Floor<MarblePlanter>(129, s);
-			OnWall<WallSconce>(132, s, 8);
+			OnWall<PaintingLuckySevens>(41, s, 7);
+			OnWall<PaintingRoyalFlush>(59, s, 8);
+			OnWall<PaintingJackpot>(73, s, 7);
+			OnWall<PaintingVegasNight>(92, s, 7);
+			OnWall<PaintingTheHouse>(119, s, 6);
 		}
 
 		// ------------------------------------------------------------------ people

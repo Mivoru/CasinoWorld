@@ -385,6 +385,8 @@ Tiles: {
 	RouletteTable.MapEntry: Roulette Table
 	SlotMachine.MapEntry: Slot Machine
 	CasinoElevator.MapEntry: Elevator
+	CasinoElevatorUp.MapEntry: Elevator (up)
+	CasinoElevatorDown.MapEntry: Elevator (down)
 	CasinoFountain.MapEntry: Fountain
 	CasinoSignTile.MapEntry: Casino Sign
 	UpgradeMachine.MapEntry: Upgrade Machine
@@ -462,6 +464,7 @@ NPCs: {
 
 	PoleDancer: {
 		DisplayName: Pole Dancer
+
 		Chat: {
 			0: Six years of gymnastics, and this is where it got me. Best decision ever.
 			1: Grip, spin, invert, smile. If you can do that after three cocktails, you're hired.
@@ -685,6 +688,7 @@ UI: {
 	EnterCasino: Enter
 	ElevatorUp: Elevator: up a floor
 	ElevatorDown: Elevator: down a floor
+
 	Records: {
 		Title: BIGGEST WINS
 		Today: TODAY
@@ -692,6 +696,7 @@ UI: {
 		AllTime: ALL TIME
 		Empty: no wins yet
 		Latest: "{0} just won {1} at {2}!"
+		Announce: "[Casino] {0} won {1} at {2}!"
 		GameRoulette: roulette
 		GameBlackjack: blackjack
 		GameSlots: the slots
@@ -703,6 +708,7 @@ UI: {
 		WonTokens: The wheel stops... {0} loyalty tokens!
 		WonCrate: The wheel stops on the star... a Lucky Crate!
 	}
+
 	ExitCasino: Exit
 	EnterPrompt: "[{0}] or right-click: Enter"
 	ExitPrompt: "[{0}] or right-click: Exit"
@@ -765,6 +771,7 @@ UI: {
 		Title: LUCKY SLOTS
 		Spin: SPIN
 		Pays: Pays
+		PairPays: 2 same (reels 1-2): x{0}-x{1}
 		Money: Money: {0}
 		Bet: Bet per spin: {0}
 		Hint: Pick a bet and pull the lever!

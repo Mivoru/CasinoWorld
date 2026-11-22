@@ -6,8 +6,11 @@ namespace CasinoWorld.Common.Games.Slots
 
 	/// <summary>
 	/// Three independent reels with weighted symbols (32 stops each).
-	/// Return to player is 95.72 % (house edge 4.28 %), hit rate 27.2 %, computed exactly over all
-	/// 32^3 outcomes by tools/slots.py. Keep both files in sync when changing any number.
+	/// Return to player is 100.53 % (slightly in the player's favour, chosen so the slots are fun and
+	/// a little profitable without printing money): a net win on 13.7 % of spins and at least the
+	/// bet back on 37.1 %. Pays: three of a kind, two of a kind on reels 1-2 (2-5x, cherries 1x),
+	/// a cherry on reel 1 (bet back). Computed exactly over all 32^3 outcomes by tools/slots.py;
+	/// keep both files in sync when changing any number.
 	/// </summary>
 	public static class SlotRules
 	{
@@ -18,9 +21,11 @@ namespace CasinoWorld.Common.Games.Slots
 		public static readonly int[] Weights = { 8, 7, 6, 5, 3, 2, 1 };
 
 		/// <summary>Total return for three of a kind, in multiples of the bet.</summary>
-		public static readonly int[] TriplePays = { 8, 11, 18, 30, 60, 150, 750 };
+		public static readonly int[] TriplePays = { 8, 11, 17, 28, 56, 140, 500 };
 
-		public const int TwoCherriesPay = 4;   // cherries on reels 1 and 2
+		/// <summary>Two of a kind on reels 1 and 2 (not three), by symbol.</summary>
+		public static readonly int[] PairPays = { 1, 2, 2, 2, 3, 4, 5 };
+
 		public const int OneCherryPay = 1;     // cherry on reel 1 (bet back)
 
 		/// <summary>
@@ -55,8 +60,8 @@ namespace CasinoWorld.Common.Games.Slots
 		{
 			if (a == b && b == c)
 				return TriplePays[(int)a];
-			if (a == SlotSymbol.Cherry && b == SlotSymbol.Cherry)
-				return TwoCherriesPay;
+			if (a == b)
+				return PairPays[(int)a];
 			if (a == SlotSymbol.Cherry)
 				return OneCherryPay;
 			return 0;

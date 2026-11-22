@@ -41,6 +41,11 @@ namespace CasinoWorld.Content.Tiles
 	/// </summary>
 	public class CasinoElevator : ModTile
 	{
+		/// <summary>Fixed direction: 1 = always up, -1 = always down, 0 = chosen by the half of the doors clicked.</summary>
+		protected virtual int Direction => 0;
+
+		public override string Texture => "CasinoWorld/Content/Tiles/CasinoElevator";
+
 		public const int Width = 3;
 		public const int Height = 4;
 		private const int SearchRange = 60;
@@ -91,15 +96,25 @@ namespace CasinoWorld.Content.Tiles
 			return -1;
 		}
 
-		/// <summary>Upper half of the doors = up, lower half = down; falls back to the only direction there is.</summary>
+		/// <summary>The farthest elevator in the column in one direction (for wrapping around), or -1.</summary>
+		private int FindLast(Point16 origin, bool up)
+		{
+			int last = -1;
+			for (int y = FindNext(origin, up); y >= 0; y = FindNext(new Point16(origin.X, y), up))
+				last = y;
+			return last;
+		}
+
+		/// <summary>
+		/// Fixed-direction elevators go one floor up or down and wrap around (up from the top floor
+		/// goes to the lobby, down from the lobby to the top). The generic one uses the half of the doors.
+		/// </summary>
 		private int Destination(Point16 origin, out bool up)
 		{
-			up = Main.MouseWorld.Y < (origin.Y + Height / 2f) * 16f;
+			up = Direction != 0 ? Direction > 0 : Main.MouseWorld.Y < (origin.Y + Height / 2f) * 16f;
 			int target = FindNext(origin, up);
-			if (target < 0) {
-				up = !up;
-				target = FindNext(origin, up);
-			}
+			if (target < 0)
+				target = Direction != 0 ? FindLast(origin, !up) : FindNext(origin, up = !up);
 			return target;
 		}
 
@@ -134,9 +149,30 @@ namespace CasinoWorld.Content.Tiles
 			Tile tile = Main.tile[i, j];
 			glow ??= ModContent.Request<Texture2D>(Texture + "_Glow");
 			Vector2 offScreen = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
-			spriteBatch.Draw(glow.Value, new Vector2(i * 16, j * 16) - Main.screenPosition + offScreen,
-				new Rectangle(tile.TileFrameX, tile.TileFrameY, 16, 16), Color.White);
+			Vector2 position = new Vector2(i * 16, j * 16) - Main.screenPosition + offScreen;
+			spriteBatch.Draw(glow.Value, position, new Rectangle(tile.TileFrameX, tile.TileFrameY, 16, 16), Color.White);
+			// Big lit arrow above the doors of fixed-direction elevators: green up, red down.
+			if (Direction != 0 && tile.TileFrameX % 54 == 18 && tile.TileFrameY % 72 == 0) {
+				Texture2D pixel = Terraria.GameContent.TextureAssets.MagicPixel.Value;
+				Color color = Direction > 0 ? new Color(90, 255, 120) : new Color(255, 90, 90);
+				for (int k = 0; k < 5; k++) {
+					int row = Direction > 0 ? k : 4 - k;
+					spriteBatch.Draw(pixel, new Rectangle((int)position.X + 8 - k - 1, (int)position.Y - 12 + row * 2, k * 2 + 2, 2), color);
+				}
+			}
 		}
+	}
+
+	/// <summary>Elevator that always goes one floor up (from the top floor: down to the lobby).</summary>
+	public class CasinoElevatorUp : CasinoElevator
+	{
+		protected override int Direction => 1;
+	}
+
+	/// <summary>Elevator that always goes one floor down (from the lobby: up to the top floor).</summary>
+	public class CasinoElevatorDown : CasinoElevator
+	{
+		protected override int Direction => -1;
 	}
 
 	/// <summary>

@@ -100,6 +100,7 @@ namespace CasinoWorld.Common.Games
 		private static void Add(CasinoWin win)
 		{
 			Load();
+			bool topToday = Today.Count() < Shown || win.Amount > Today.Min(w => w.Amount);
 			Week.Add(win);
 			AllTime.Add(win);
 			Prune();
@@ -107,6 +108,23 @@ namespace CasinoWorld.Common.Games
 			Save();
 			if (Main.netMode == NetmodeID.Server)
 				Broadcast(-1);
+			if (topToday || IsBigWin(win.Amount))
+				Announce(win);
+		}
+
+		/// <summary>A win worth a chat message on its own: at least ten full jackpot stakes of the casino.</summary>
+		private static bool IsBigWin(long amount)
+			=> SubworldLibrary.SubworldSystem.Current is Content.Subworlds.CasinoSubworld casino && amount >= casino.FullJackpotStake * 10;
+
+		/// <summary>Tells everyone in the casino who won what (chat message, gold).</summary>
+		private static void Announce(CasinoWin win)
+		{
+			var color = new Microsoft.Xna.Framework.Color(255, 215, 90);
+			string key = "Mods.CasinoWorld.UI.Records.Announce";
+			if (Main.netMode == NetmodeID.Server)
+				Terraria.Chat.ChatHelper.BroadcastChatMessage(NetworkText.FromKey(key, win.Player, Coins.Format(win.Amount), GameName(win.Game)), color);
+			else
+				Main.NewText(Language.GetTextValue(key, win.Player, Coins.Format(win.Amount), GameName(win.Game)), color);
 		}
 
 		private static void Prune()
