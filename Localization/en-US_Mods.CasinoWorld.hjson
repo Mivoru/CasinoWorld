@@ -373,6 +373,7 @@ Boss: {
 }
 
 Bestiary: {
+	TownGambler: A smooth talker in a purple suit who moved to town the day the casino opened. He has a system.
 	TheHouse: A slot machine that won so much it woke up. It never pays out, but it does deal.
 	ChipSlime: A poker chip that rolled away from the tables and learned to bite. It still remembers its value.
 	CardSoldier: The house guard of a deck nobody plays with anymore. It marches in suits.
@@ -381,6 +382,22 @@ Bestiary: {
 
 NPCs: {
 	HowToPlay: How to play
+	TownGambler: {
+		DisplayName: Gambler
+		Chat: {
+			0: Feeling lucky? Everybody's feeling lucky until the river card.
+			1: I built my whole life on a system. The system was red, red, black. It did not work.
+			2: That casino of yours? Best thing that ever happened to this town. And to my debts.
+			3: Never bet more than you can afford to lose. I say that to myself every morning.
+			4: I once won a house in a card game. Then I bet the house. Literally.
+			5: You want a tip? Split aces. Always split aces. And never trust a slot machine with teeth.
+			6: The House? Big golden machine, lots of hands. I hear it shows up when you flip a Golden Chip at night.
+			7: Crates, my friend. Blue, purple, pink, red... and if you're very lucky, gold.
+			8: Luck is a skill. A skill I'm still working on.
+			9: Shh. I'm counting cards. Well, I was. Now I've lost count.
+		}
+	}
+
 	TheHouse.DisplayName: The House
 	HouseHand.DisplayName: Croupier Hand
 	ChipSlime.DisplayName: Chip Slime

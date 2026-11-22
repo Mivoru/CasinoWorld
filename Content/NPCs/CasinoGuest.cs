@@ -22,15 +22,15 @@ namespace CasinoWorld.Content.NPCs
 		private const float WalkSpeed = 1.1f;
 		private const int OverheadLines = 10;
 
-		private static readonly int[] Looks = {
-			NPCID.Guide, NPCID.Merchant, NPCID.ArmsDealer, NPCID.Painter, NPCID.Stylist,
-			NPCID.Golfer, NPCID.Nurse, NPCID.PartyGirl, NPCID.Mechanic, NPCID.DD2Bartender,
-		};
+		// Four guest outfits rendered in Blender (Content/NPCs/People/Guest_A..D), 16 frames each:
+		// 0 idle, 1 jump, 2..15 walk.
+		private static readonly string[] Looks = { "Guest_A", "Guest_B", "Guest_C", "Guest_D" };
+		private const int LookFrames = 16;
 
 		protected override int VanillaLook => NPCID.Guide;
 		protected override int ChatLines => 12;
 
-		private int Look => Looks[Math.Clamp((int)NPC.ai[3], 0, Looks.Length - 1)];
+		private string Look => Looks[Math.Clamp((int)NPC.ai[3], 0, Looks.Length - 1)];
 
 		private ref float State => ref NPC.ai[0];
 		private ref float Timer => ref NPC.ai[1];
@@ -118,10 +118,8 @@ namespace CasinoWorld.Content.NPCs
 
 		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
 		{
-			int look = Look;
-			Main.instance.LoadNPC(look);
-			Texture2D texture = TextureAssets.Npc[look].Value;
-			int frames = Main.npcFrameCount[look];
+			Texture2D texture = ModContent.Request<Texture2D>("CasinoWorld/Content/NPCs/People/" + Look).Value;
+			int frames = LookFrames;
 			int frameHeight = texture.Height / frames;
 			int frame = Math.Min((int)NPC.localAI[0], frames - 1);
 			var source = new Rectangle(0, frame * frameHeight, texture.Width, frameHeight);

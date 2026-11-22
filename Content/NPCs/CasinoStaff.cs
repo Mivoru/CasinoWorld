@@ -45,6 +45,7 @@ namespace CasinoWorld.Content.NPCs
 
 	public class RouletteCroupier : CasinoStaff
 	{
+		protected override string CustomTexture => "CasinoWorld/Content/NPCs/People/RouletteCroupier";
 		protected override int VanillaLook => NPCID.Clothier;
 		protected override int ChatLines => 6;
 		protected override string HelpKey => "Mods.CasinoWorld.NPCs.RouletteCroupier.Help";
@@ -52,6 +53,7 @@ namespace CasinoWorld.Content.NPCs
 
 	public class BlackjackDealer : CasinoStaff
 	{
+		protected override string CustomTexture => "CasinoWorld/Content/NPCs/People/BlackjackDealer";
 		protected override int VanillaLook => NPCID.TaxCollector;
 		protected override int ChatLines => 6;
 		protected override string HelpKey => "Mods.CasinoWorld.NPCs.BlackjackDealer.Help";
@@ -63,6 +65,7 @@ namespace CasinoWorld.Content.NPCs
 	/// </summary>
 	public class PrizeCashier : CasinoStaff
 	{
+		protected override string CustomTexture => "CasinoWorld/Content/NPCs/People/PrizeCashier";
 		protected override int VanillaLook => NPCID.Steampunker;
 		protected override int ChatLines => 4;
 
@@ -103,6 +106,7 @@ namespace CasinoWorld.Content.NPCs
 	/// <summary>Runs the bar and sells drinks.</summary>
 	public class Bartender : CasinoStaff
 	{
+		protected override string CustomTexture => "CasinoWorld/Content/NPCs/People/Bartender";
 		protected override int VanillaLook => NPCID.Demolitionist;
 		protected override int ChatLines => 6;
 

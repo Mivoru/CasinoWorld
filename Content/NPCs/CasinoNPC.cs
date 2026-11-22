@@ -19,11 +19,17 @@ namespace CasinoWorld.Content.NPCs
 		/// <summary>Number of lines under Mods.CasinoWorld.NPCs.[Name].Chat in the localization file.</summary>
 		protected abstract int ChatLines { get; }
 
-		public override string Texture => "Terraria/Images/NPC_" + VanillaLook;
+		/// <summary>Own sprite sheet (Content/NPCs/People, rendered in Blender); null falls back to the vanilla look.</summary>
+		protected virtual string CustomTexture => null;
+
+		/// <summary>Frames in the custom sheet.</summary>
+		protected virtual int CustomFrames => 1;
+
+		public override string Texture => CustomTexture ?? "Terraria/Images/NPC_" + VanillaLook;
 
 		public override void SetStaticDefaults()
 		{
-			Main.npcFrameCount[Type] = Main.npcFrameCount[VanillaLook];
+			Main.npcFrameCount[Type] = CustomTexture != null ? CustomFrames : Main.npcFrameCount[VanillaLook];
 			NPCID.Sets.NPCBestiaryDrawOffset[Type] = new NPCID.Sets.NPCBestiaryDrawModifiers { Hide = true };
 			NPCID.Sets.ActsLikeTownNPC[Type] = true;
 			NPCID.Sets.NoTownNPCHappiness[Type] = true;
