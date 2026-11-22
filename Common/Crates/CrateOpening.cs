@@ -36,17 +36,21 @@ namespace CasinoWorld.Common.Crates
 		private float finalOffset;
 		private int lastTickSlot;
 
-		public void Start(CrateKind kind)
+		public CrateStage Stage { get; private set; }
+
+		public void Start(CrateKind kind, Player player)
 		{
 			Kind = kind;
-			(CrateDrop prize, CrateRarity rarity) = CrateLoot.Roll(kind, Main.rand);
+			Stage = CrateLoot.CurrentStage;
+			CratePity pity = player.GetModPlayer<CratePity>();
+			(CrateDrop prize, CrateRarity rarity) = CrateLoot.Roll(kind, Stage, Main.rand, ref pity.SinceRare, ref pity.SinceGold);
 			Prize = prize;
 			PrizeRarity = rarity;
 			PrizeStack = Main.rand.Next(prize.MinStack, prize.MaxStack + 1);
 
 			Strip.Clear();
 			for (int k = 0; k < StripLength; k++)
-				Strip.Add(k == WinnerIndex ? (prize, rarity) : CrateLoot.Roll(kind, Main.rand));
+				Strip.Add(k == WinnerIndex ? (prize, rarity) : CrateLoot.RollFiller(kind, Stage, Main.rand));
 
 			// Stop somewhere inside the winning slot, not always dead centre, for suspense.
 			finalOffset = WinnerIndex * SlotWidth + Main.rand.NextFloat(-0.38f, 0.38f) * SlotWidth;
@@ -89,12 +93,14 @@ namespace CasinoWorld.Common.Crates
 		{
 			Offset = finalOffset;
 			Done = true;
-			Games.Coins.GiveItem(player, new Item(Prize.ItemType, PrizeStack));
+			Games.Coins.GiveItem(player, CrateLoot.MakeItem(Prize, PrizeStack));
 
 			SoundEngine.PlaySound(PrizeRarity >= CrateRarity.Pink ? CasinoSounds.RareReveal : CasinoSounds.SmallWin);
 			if (PrizeRarity == CrateRarity.Gold) {
 				SoundEngine.PlaySound(CasinoSounds.Jackpot);
 				string name = Lang.GetItemNameValue(Prize.ItemType);
+				if (Prize.Golden)
+					name = Language.GetTextValue("Mods.CasinoWorld.Crates.GoldenPrefix") + " " + name;
 				Main.NewText(Language.GetTextValue("Mods.CasinoWorld.UI.Crate.GoldMessage", name), CrateLoot.RarityColors[(int)CrateRarity.Gold]);
 			}
 		}

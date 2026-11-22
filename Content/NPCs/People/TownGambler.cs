@@ -97,12 +97,25 @@ namespace CasinoWorld.Content.NPCs.People
 				shopName = "Shop";
 		}
 
+		private static Item Crate<T>(int silver) where T : ModItem
+			=> new(ModContent.ItemType<T>()) { shopCustomPrice = Item.buyPrice(silver: silver) };
+
+		private static Condition StageIs(global::CasinoWorld.Common.Crates.CrateStage stage)
+			=> new("Mods.CasinoWorld.Crates.StageCondition", () => global::CasinoWorld.Common.Crates.CrateLoot.CurrentStage == stage);
+
 		public override void AddShops()
 		{
 			new NPCShop(Type)
 				.Add<CasinoBlueprint>()
-				.Add(new Item(ModContent.ItemType<LuckyCrate>()) { shopCustomPrice = Item.buyPrice(gold: 3) })
-				.Add(new Item(ModContent.ItemType<HighRollerCrate>()) { shopCustomPrice = Item.buyPrice(gold: 15) }, Condition.Hardmode)
+				// Crate prices follow the game stage (expected value of the contents x 1.25, see tools/crate_ev.py).
+				.Add(Crate<LuckyCrate>(silver: 125), StageIs(global::CasinoWorld.Common.Crates.CrateStage.Early))
+				.Add(Crate<LuckyCrate>(silver: 200), StageIs(global::CasinoWorld.Common.Crates.CrateStage.PostSkeletron))
+				.Add(Crate<LuckyCrate>(silver: 600), StageIs(global::CasinoWorld.Common.Crates.CrateStage.Hardmode))
+				.Add(Crate<LuckyCrate>(silver: 1400), StageIs(global::CasinoWorld.Common.Crates.CrateStage.PostPlantera))
+				.Add(Crate<LuckyCrate>(silver: 4500), StageIs(global::CasinoWorld.Common.Crates.CrateStage.PostMoonLord))
+				.Add(Crate<HighRollerCrate>(silver: 750), StageIs(global::CasinoWorld.Common.Crates.CrateStage.Hardmode))
+				.Add(Crate<HighRollerCrate>(silver: 1600), StageIs(global::CasinoWorld.Common.Crates.CrateStage.PostPlantera))
+				.Add(Crate<HighRollerCrate>(silver: 5000), StageIs(global::CasinoWorld.Common.Crates.CrateStage.PostMoonLord))
 				.Add(new Item(ModContent.ItemType<GoldenChip>()) { shopCustomPrice = Item.buyPrice(gold: 8) }, Condition.DownedSkeletron)
 				.Add(new Item(ItemID.Sunglasses) { shopCustomPrice = Item.buyPrice(gold: 1) })
 				.Add(new Item(ItemID.TopHat) { shopCustomPrice = Item.buyPrice(gold: 1) })

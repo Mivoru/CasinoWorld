@@ -88,7 +88,7 @@ namespace CasinoWorld.Content.NPCs
 		public override void AddShops()
 		{
 			new NPCShop(Type)
-				.Add(Prize(ModContent.ItemType<Items.Crates.LuckyCrate>(), 60))
+				.Add(Prize(ModContent.ItemType<Items.Crates.LuckyCrate>(), 75))
 				.Add(Prize(ModContent.ItemType<Items.Crates.HighRollerCrate>(), 150), Condition.Hardmode)
 				.Add(Prize(ModContent.ItemType<Items.GoldenChip>(), 150), Condition.DownedSkeletron)
 				.Add(Prize(ModContent.ItemType<Items.Mounts.Gamblorghini>(), 200))

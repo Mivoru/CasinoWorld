@@ -61,7 +61,7 @@ namespace CasinoWorld.Common.Crates
 			if (Main.dedServ)
 				return;
 			ui.SetState(state);
-			Opening.Start(kind);
+			Opening.Start(kind, Main.LocalPlayer);
 		}
 
 		public void Close()
@@ -82,7 +82,7 @@ namespace CasinoWorld.Common.Crates
 					item.stack--;
 					if (item.stack <= 0)
 						item.TurnToAir();
-					Opening.Start(Opening.Kind);
+					Opening.Start(Opening.Kind, player);
 					return true;
 				}
 			}
@@ -207,7 +207,7 @@ namespace CasinoWorld.Common.Crates
 			}
 			else {
 				Utils.DrawBorderString(sb, Text("Opening"), new Vector2(a.Center.X, a.Y + 214), Color.White * 0.8f, 0.9f, 0.5f);
-				DrawOdds(sb, new Vector2(a.X + 20, a.Bottom - 46));
+				DrawOdds(sb, new Vector2(a.X + 20, a.Bottom - 46), opening.Kind);
 			}
 		}
 
@@ -254,11 +254,16 @@ namespace CasinoWorld.Common.Crates
 			}
 		}
 
-		private static void DrawOdds(SpriteBatch sb, Vector2 pos)
+		private static void DrawOdds(SpriteBatch sb, Vector2 pos, CrateKind kind)
 		{
+			// Stage and pity counters above the odds row.
+			CratePity pity = Main.LocalPlayer.GetModPlayer<CratePity>();
+			string info = Text("Stage" + CrateLoot.CurrentStage) + "   " + Text("Pity", CrateLoot.PityRare - pity.SinceRare, CrateLoot.PityGold - pity.SinceGold);
+			Utils.DrawBorderString(sb, info, pos - new Vector2(0, 20), Color.White * 0.7f, 0.7f);
+			int[] weights = CrateLoot.Weights(kind);
 			float x = pos.X;
-			for (int k = 0; k < CrateLoot.RarityWeights.Length; k++) {
-				string label = Text("Rarity" + (CrateRarity)k) + " " + CrateLoot.RarityWeights[k] / 10f + "%";
+			for (int k = 0; k < weights.Length; k++) {
+				string label = Text("Rarity" + (CrateRarity)k) + " " + weights[k] / 10f + "%";
 				Color c = CrateLoot.RarityColors[k];
 				CasinoDraw.Fill(sb, new Rectangle((int)x, (int)pos.Y + 4, 10, 10), c);
 				Utils.DrawBorderString(sb, label, new Vector2(x + 14, pos.Y), c, 0.75f);

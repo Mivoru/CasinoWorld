@@ -95,7 +95,8 @@ Items: {
 		Tooltip:
 			'''
 			<right> to open
-			Blue 60%, Purple 25%, Pink 10%, Red 4%, Gold 1%
+			Loot follows your progress in the world
+			Common 60%, Uncommon 25%, Rare 10%, Epic 4%, Legendary 1%
 			'''
 	}
 
@@ -104,7 +105,8 @@ Items: {
 		Tooltip:
 			'''
 			<right> to open
-			Hardmode loot. Blue 60%, Purple 25%, Pink 10%, Red 4%, Gold 1%
+			Loot follows your progress in the world
+			Common 45%, Uncommon 30%, Rare 15%, Epic 8%, Legendary 2%
 			'''
 	}
 
@@ -562,6 +564,12 @@ Coins: {
 	C: "{0}c"
 }
 
+Crates: {
+	GoldenPrefix: Golden
+	GoldenBonus: Golden: +{0}% damage
+	StageCondition: Sold at the current stage of the world
+}
+
 UI: {
 	EnterCasino: Enter
 	ElevatorUp: Elevator: up
@@ -615,6 +623,12 @@ UI: {
 		RarityPink: Rare
 		RarityRed: Epic
 		RarityGold: Legendary
+		StageEarly: Loot: early game
+		StagePostSkeletron: Loot: after Skeletron
+		StageHardmode: Loot: hardmode
+		StagePostPlantera: Loot: after Plantera
+		StagePostMoonLord: Loot: after the Moon Lord
+		Pity: Rare or better in at most {0} | Legendary in at most {1}
 	}
 
 	Slots: {
