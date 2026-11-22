@@ -35,6 +35,9 @@ namespace CasinoWorld.Content.NPCs
 		/// </summary>
 		protected virtual PersonLook Look => null;
 
+		/// <summary>True inside the high rollers casino, where the staff wear black and gold uniforms.</summary>
+		protected static bool HighRollers => SubworldLibrary.SubworldSystem.Current is Subworlds.UndergroundCasino;
+
 		/// <summary>Body pose for this tick (see <see cref="PersonDoll"/>), or -1 for the pose from movement.</summary>
 		protected virtual int BodyPose(int tick) => -1;
 

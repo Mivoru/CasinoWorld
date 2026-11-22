@@ -262,3 +262,23 @@ namespace CasinoWorld.Content.Tiles.Interior
 
 	public class PaintingGoldenDice : CasinoPainting { public override int Width => 5; public override int Height => 4; }
 }
+
+namespace CasinoWorld.Content.Tiles.Interior
+{
+	// Modern furniture for the high rollers casino (render_interior.py).
+	public class LedBarCounter : InteriorFurniture { public override int Width => 4; public override int Height => 3; protected override Color MapColor => new(20, 20, 26); }
+
+	public class ModernBackBar : InteriorFurniture { public override int Width => 8; public override int Height => 6; protected override Color MapColor => new(60, 45, 30); }
+
+	public class LoungeChair : InteriorFurniture { public override int Width => 3; public override int Height => 3; protected override Color MapColor => new(230, 226, 216); }
+
+	public class GlassTable : InteriorFurniture { public override int Width => 3; public override int Height => 3; protected override Color MapColor => new(200, 160, 60); protected override float LightStrength => 1.2f; }
+
+	public class LightColumn : InteriorFurniture { public override int Width => 2; public override int Height => 4; protected override Color MapColor => new(200, 215, 255); protected override float LightStrength => 1.3f; }
+
+	public class RingPendant : InteriorFurniture { public override int Width => 4; public override int Height => 3; protected override Color MapColor => new(255, 210, 120); protected override float LightStrength => 1.8f; }
+
+	public class DiceStatue : InteriorFurniture { public override int Width => 4; public override int Height => 6; protected override Color MapColor => new(230, 180, 60); }
+
+	public class ChampagneTower : InteriorFurniture { public override int Width => 3; public override int Height => 4; protected override Color MapColor => new(255, 220, 120); }
+}

@@ -50,7 +50,11 @@ namespace CasinoWorld.Content.NPCs
 			Hair = 15, SkinVariant = 1, Skin = new(240, 195, 160), HairColor = new(25, 22, 22),
 			Shirt = new(120, 25, 40), UnderShirt = new(235, 232, 225), Pants = new(25, 25, 30), Shoes = new(15, 15, 15),
 		};
-		protected override PersonLook Look => look;
+		private static readonly PersonLook highRollerLook = new() {
+			Hair = 15, SkinVariant = 1, Skin = new(240, 195, 160), HairColor = new(25, 22, 22),
+			Shirt = new(18, 18, 22), UnderShirt = new(230, 190, 80), Pants = new(25, 25, 30), Shoes = new(15, 15, 15),
+		};
+		protected override PersonLook Look => HighRollers ? highRollerLook : look;
 
 		protected override int BodyPose(int tick)
 		{
@@ -71,7 +75,11 @@ namespace CasinoWorld.Content.NPCs
 			Hair = 7, SkinVariant = 4, Skin = new(225, 170, 130), HairColor = new(45, 30, 25),
 			Shirt = new(30, 30, 35), UnderShirt = new(240, 238, 230), Pants = new(25, 25, 30), Shoes = new(15, 15, 15),
 		};
-		protected override PersonLook Look => look;
+		private static readonly PersonLook highRollerLook = new() {
+			Hair = 7, SkinVariant = 4, Skin = new(225, 170, 130), HairColor = new(45, 30, 25),
+			Shirt = new(230, 190, 80), UnderShirt = new(20, 20, 24), Pants = new(25, 25, 30), Shoes = new(15, 15, 15),
+		};
+		protected override PersonLook Look => HighRollers ? highRollerLook : look;
 
 		protected override int BodyPose(int tick)
 		{
@@ -98,7 +106,11 @@ namespace CasinoWorld.Content.NPCs
 			Hair = 9, SkinVariant = 5, Skin = new(250, 210, 180), HairColor = new(230, 195, 110),
 			Shirt = new(185, 35, 45), UnderShirt = new(230, 185, 60), Pants = new(40, 30, 35), Shoes = new(90, 20, 25),
 		};
-		protected override PersonLook Look => look;
+		private static readonly PersonLook highRollerLook = new() {
+			Hair = 9, SkinVariant = 5, Skin = new(250, 210, 180), HairColor = new(230, 195, 110),
+			Shirt = new(20, 20, 24), UnderShirt = new(230, 190, 80), Pants = new(40, 30, 35), Shoes = new(90, 20, 25),
+		};
+		protected override PersonLook Look => HighRollers ? highRollerLook : look;
 
 		protected override int BodyPose(int tick)
 		{
@@ -158,7 +170,11 @@ namespace CasinoWorld.Content.NPCs
 			Hair = 24, SkinVariant = 3, Skin = new(200, 140, 100), HairColor = new(70, 45, 30),
 			Shirt = new(25, 25, 28), UnderShirt = new(240, 238, 230), Pants = new(30, 30, 35), Shoes = new(20, 15, 10),
 		};
-		protected override PersonLook Look => look;
+		private static readonly PersonLook highRollerLook = new() {
+			Hair = 24, SkinVariant = 3, Skin = new(200, 140, 100), HairColor = new(70, 45, 30),
+			Shirt = new(240, 238, 230), UnderShirt = new(20, 20, 24), Pants = new(30, 30, 35), Shoes = new(20, 15, 10),
+		};
+		protected override PersonLook Look => HighRollers ? highRollerLook : look;
 
 		protected override int BodyPose(int tick)
 		{

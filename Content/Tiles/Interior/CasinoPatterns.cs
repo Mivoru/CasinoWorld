@@ -77,6 +77,35 @@ namespace CasinoWorld.Content.Tiles.Interior
 		protected override Color MapColor => new(90, 80, 110);
 	}
 
+	/// <summary>High rollers casino: black marble with gold veins.</summary>
+	public class BlackMarbleWall : PatternWall
+	{
+		protected override string Pattern => "NoirMarble";
+		protected override Color MapColor => new(30, 26, 34);
+	}
+
+	/// <summary>High rollers casino: dark acoustic panels with cyan and magenta LED strips (they glow).</summary>
+	public class LedPanelWall : PatternWall
+	{
+		protected override string Pattern => "LedPanel";
+		protected override Color MapColor => new(30, 34, 50);
+
+		public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
+		{
+			if (i % 2 == 0) {
+				r = 0.25f;
+				g = 0.3f;
+				b = 0.45f;
+			}
+		}
+	}
+
+	public class WalnutSlatWall : PatternWall
+	{
+		protected override string Pattern => "Slats";
+		protected override Color MapColor => new(70, 40, 22);
+	}
+
 	public class AmethystDamaskWall : PatternWall
 	{
 		protected override string Pattern => "Damask";
@@ -134,6 +163,12 @@ namespace CasinoWorld.Content.Tiles.Interior
 	{
 		protected override string Pattern => "MarbleFloor";
 		protected override Color MapColor => new(200, 196, 180);
+	}
+
+	public class BlackWhiteMarbleFloor : PatternTile
+	{
+		protected override string Pattern => "BWMarbleFloor";
+		protected override Color MapColor => new(130, 128, 126);
 	}
 
 	public class EmeraldCarpet : PatternTile

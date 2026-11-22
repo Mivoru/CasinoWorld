@@ -52,9 +52,10 @@ namespace CasinoWorld.Content.Subworlds
 
 		private static Theme MakeTheme(bool hardmode) => hardmode
 			? new Theme {
-				Walls = new[] { (ushort)ModContent.WallType<NoirMarbleWall>(), (ushort)ModContent.WallType<AmethystDamaskWall>(), (ushort)ModContent.WallType<MidnightVelvetWall>() },
-				FloorTiles = new[] { (ushort)ModContent.TileType<MarbleCheckerFloor>(), (ushort)ModContent.TileType<NoirCarpet>(), (ushort)ModContent.TileType<VelvetCarpet>() },
-				Wainscot = (ushort)ModContent.WallType<WalnutWainscotWall>(),
+				// High-end modern: black marble with gold veins, midnight velvet lounge, LED-panel cabaret, walnut slats.
+				Walls = new[] { (ushort)ModContent.WallType<BlackMarbleWall>(), (ushort)ModContent.WallType<MidnightVelvetWall>(), (ushort)ModContent.WallType<LedPanelWall>() },
+				FloorTiles = new[] { (ushort)ModContent.TileType<BlackWhiteMarbleFloor>(), (ushort)ModContent.TileType<NoirCarpet>(), (ushort)ModContent.TileType<BlackWhiteMarbleFloor>() },
+				Wainscot = (ushort)ModContent.WallType<WalnutSlatWall>(),
 			}
 			: new Theme {
 				Walls = new[] { (ushort)ModContent.WallType<LobbyMarbleWall>(), (ushort)ModContent.WallType<EmeraldDamaskWall>(), (ushort)ModContent.WallType<VelvetCurtainWall>() },
@@ -64,8 +65,28 @@ namespace CasinoWorld.Content.Subworlds
 
 		// ------------------------------------------------------------------ building
 
+		/// <summary>True while building the high rollers casino: classic furniture is swapped for modern pieces.</summary>
+		private static bool modern;
+
+		/// <summary>Modern counterpart of a classic piece (same footprint or smaller) in the high rollers casino.</summary>
+		private static int Swap(int type)
+		{
+			if (!modern)
+				return type;
+			if (type == ModContent.TileType<BarCounter>()) return ModContent.TileType<LedBarCounter>();
+			if (type == ModContent.TileType<BarShelf>()) return ModContent.TileType<ModernBackBar>();
+			if (type == ModContent.TileType<VelvetSofa>()) return ModContent.TileType<LoungeChair>();
+			if (type == ModContent.TileType<CocktailTable>()) return ModContent.TileType<GlassTable>();
+			if (type == ModContent.TileType<MarblePilaster>()) return ModContent.TileType<LightColumn>();
+			if (type == ModContent.TileType<CrystalChandelier>()) return ModContent.TileType<RingPendant>();
+			return type;
+		}
+
+		private static int HeightOf(int type) => ((InteriorFurniture)TileLoader.GetTile(type)).Height;
+
 		public static void Build(bool hardmode)
 		{
+			modern = hardmode;
 			Main.worldSurface = 20;
 			Main.rockLayer = 25;
 			Main.spawnTileX = X(5);
@@ -119,14 +140,20 @@ namespace CasinoWorld.Content.Subworlds
 		// ------------------------------------------------------------------ placement helpers
 
 		private static void Floor<T>(int offset, int storey) where T : InteriorFurniture
-			=> InteriorFurniture.PlaceOnFloor<T>(X(offset), Floors[storey]);
+		{
+			int type = Swap(ModContent.TileType<T>());
+			InteriorFurniture.Place(type, X(offset), Floors[storey] - HeightOf(type));
+		}
 
 		/// <summary>Wall-mounted object whose bottom edge is <paramref name="above"/> rows above the floor.</summary>
 		private static void OnWall<T>(int offset, int storey, int above) where T : InteriorFurniture
-			=> InteriorFurniture.Place<T>(X(offset), Floors[storey] - above - ModContent.GetInstance<T>().Height);
+		{
+			int type = Swap(ModContent.TileType<T>());
+			InteriorFurniture.Place(type, X(offset), Floors[storey] - above - HeightOf(type));
+		}
 
 		private static void Hang<T>(int offset, int storey) where T : InteriorFurniture
-			=> InteriorFurniture.Place<T>(X(offset), CeilingOf(storey) + 1);
+			=> InteriorFurniture.Place(Swap(ModContent.TileType<T>()), X(offset), CeilingOf(storey) + 1);
 
 		private static void Vanilla(int type, int offset, int storey, int style = 0)
 			=> WorldGen.PlaceObject(X(offset), Floors[storey] - 1, type, mute: true, style: style);
@@ -134,7 +161,7 @@ namespace CasinoWorld.Content.Subworlds
 		/// <summary>A full-height marble pilaster (stacked 2x4 segments) from the floor to the ceiling.</summary>
 		private static void Pilaster(int offset, int storey)
 		{
-			int type = ModContent.TileType<MarblePilaster>();
+			int type = Swap(ModContent.TileType<MarblePilaster>());
 			for (int y = Floors[storey] - 4; y > CeilingOf(storey); y -= 4)
 				InteriorFurniture.Place(type, X(offset), y);
 		}
@@ -194,8 +221,13 @@ namespace CasinoWorld.Content.Subworlds
 					Vanilla(ModContent.TileType<SlotMachine>(), 98 + k * 3, s);
 			}
 			OnWall<FortuneWheel>(112, s, 3);
-			Floor<CocktailTable>(122, s);
-			Floor<VelvetSofa>(126, s);
+			if (modern) {
+				Floor<DiceStatue>(124, s);   // centrepiece: golden dice sculpture
+			}
+			else {
+				Floor<CocktailTable>(122, s);
+				Floor<VelvetSofa>(126, s);
+			}
 			OnWall<WallSconce>(139, s, 8);
 			OnWall<PaintingWheel>(50, s, 9);
 			OnWall<PaintingVegasNight>(80, s, 7);
@@ -234,7 +266,10 @@ namespace CasinoWorld.Content.Subworlds
 			Vanilla(ModContent.TileType<BlackjackTable>(), 104, s);
 			Vanilla(ModContent.TileType<RouletteTable>(), 113, s);
 			OnWall<WallSconce>(111, s, 9);
-			Floor<CocktailTable>(121, s);
+			if (modern)
+				Floor<ChampagneTower>(121, s);
+			else
+				Floor<CocktailTable>(121, s);
 			Floor<CocktailTable>(125, s);
 			Floor<MarblePlanter>(130, s);
 			OnWall<PaintingRoyalFlush>(13, s, 9);
