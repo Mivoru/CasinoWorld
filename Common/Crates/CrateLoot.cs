@@ -80,6 +80,7 @@ namespace CasinoWorld.Common.Crates
 			int token = ModContent.ItemType<LoyaltyToken>();
 			int clover = ModContent.ItemType<FourLeafClover>(), ace = ModContent.ItemType<AceUpTheSleeve>(), golex = ModContent.ItemType<GolexWatch>();
 			int car = ModContent.ItemType<Gamblorghini>();
+			int ring = ModContent.ItemType<HighRollersRing>(), medallion = ModContent.ItemType<MartingaleMedallion>(), wings = ModContent.ItemType<RoyalFlushWings>();
 			int dice = ModContent.ItemType<LoadedDice>(), deck = ModContent.ItemType<CardDeck>(), roller = ModContent.ItemType<HighRoller>();
 			int lever = ModContent.ItemType<JackpotLever>(), hand = ModContent.ItemType<DealersHand>(), wheel = ModContent.ItemType<WheelOfFortune>();
 			int snake = ModContent.ItemType<SnakeEyes>(), flush = ModContent.ItemType<RoyalFlush>(), cannon = ModContent.ItemType<JackpotCannon>();
@@ -127,7 +128,7 @@ namespace CasinoWorld.Common.Crates
 						new(ItemID.SoulofLight, 3, 6), new(ItemID.SoulofNight, 3, 6), new(ItemID.LifeforcePotion, 2, 2) },
 					new CrateDrop[] { new(token, 150, 220), new(ItemID.GoldCoin, 30, 50), new(ItemID.MythrilBar, 8, 12),
 						new(ItemID.PhilosophersStone), new(ItemID.CrossNecklace), new(ItemID.StarCloak) },
-					With(pinkBase, new CrateDrop(ItemID.TitanGlove)),
+					With(pinkBase, new CrateDrop(ItemID.TitanGlove), new CrateDrop(ring), new CrateDrop(medallion)),
 					Gear(snake, flush, cannon),
 					With(Golden(snake, flush, cannon), new CrateDrop(car), new CrateDrop(ItemID.PlatinumCoin, 2, 3))),
 
@@ -136,18 +137,18 @@ namespace CasinoWorld.Common.Crates
 						new(ItemID.Ectoplasm, 3, 6), new(ItemID.ChlorophyteBar, 3, 5), new(ItemID.EndurancePotion, 2, 2) },
 					new CrateDrop[] { new(token, 300, 400), new(ItemID.PlatinumCoin, 1, 1), new(ItemID.ChlorophyteBar, 10, 15),
 						new(ItemID.SpectreBar, 8, 12), new(ItemID.AvengerEmblem), new(ItemID.ShroomiteBar, 6, 10) },
-					With(pinkBase, new CrateDrop(ItemID.DestroyerEmblem)),
+					With(pinkBase, new CrateDrop(ItemID.DestroyerEmblem), new CrateDrop(ring), new CrateDrop(medallion)),
 					Gear(spades, doubling, revolver),
-					With(Golden(spades, doubling, revolver), new CrateDrop(car), new CrateDrop(ItemID.PlatinumCoin, 3, 5))),
+					With(Golden(spades, doubling, revolver), new CrateDrop(wings), new CrateDrop(car), new CrateDrop(ItemID.PlatinumCoin, 3, 5))),
 
 				[CrateStage.PostMoonLord] = Stage(
 					new CrateDrop[] { new(token, 150, 220), new(ItemID.SuperHealingPotion, 4, 6), new(ItemID.PlatinumCoin, 1, 1),
 						new(ItemID.FragmentSolar, 5, 10), new(ItemID.FragmentNebula, 5, 10), new(ItemID.FragmentStardust, 5, 10) },
 					new CrateDrop[] { new(token, 500, 700), new(ItemID.LunarBar, 6, 10), new(ItemID.PlatinumCoin, 2, 3),
 						new(ItemID.FragmentVortex, 15, 25) },
-					With(pinkBase, new CrateDrop(ItemID.CelestialShell)),
+					With(pinkBase, new CrateDrop(ItemID.CelestialShell), new CrateDrop(ring), new CrateDrop(medallion)),
 					Gear(stardust, meteor, infinity),
-					With(Golden(stardust, meteor, infinity), new CrateDrop(car), new CrateDrop(ItemID.PlatinumCoin, 8, 12))),
+					With(Golden(stardust, meteor, infinity), new CrateDrop(wings), new CrateDrop(car), new CrateDrop(ItemID.PlatinumCoin, 8, 12))),
 			};
 		}
 

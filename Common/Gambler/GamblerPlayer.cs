@@ -54,6 +54,11 @@ namespace CasinoWorld.Common.Gambler
 		public bool HouseEdge;
 		private int houseEdgeCooldown;
 
+		/// <summary>Martingale Medallion: the hit after a bust gets +25 % jackpot chance (up to 75 %).</summary>
+		public bool Martingale;
+		public const float MartingaleBonus = 0.25f;
+		private bool martingaleArmed;
+
 		/// <summary>Copper wagered since the last loyalty token was paid out.</summary>
 		public long TokenProgress;
 
@@ -69,6 +74,7 @@ namespace CasinoWorld.Common.Gambler
 			HouseEdge = false;
 			SpectralSet = false;
 			CelestialSet = false;
+			Martingale = false;
 			if (houseEdgeCooldown > 0)
 				houseEdgeCooldown--;
 		}
@@ -90,8 +96,13 @@ namespace CasinoWorld.Common.Gambler
 			modifiers.DisableCrit();
 			lastHitJackpot = false;
 
+			float jackpotChance = JackpotChance;
+			if (Martingale && martingaleArmed)
+				jackpotChance = Math.Min(jackpotChance + MartingaleBonus, 0.75f);
+			martingaleArmed = false;
+
 			float roll = Main.rand.NextFloat();
-			if (roll < JackpotChance) {
+			if (roll < jackpotChance) {
 				modifiers.SourceDamage *= JackpotMultiplier;
 				lastHitJackpot = true;
 				if (HotStreakSet)
@@ -101,12 +112,13 @@ namespace CasinoWorld.Common.Gambler
 				for (int k = 0; k < 8; k++)
 					Dust.NewDust(target.position, target.width, target.height, DustID.GoldCoin, Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-4f, -1f));
 			}
-			else if (roll < JackpotChance + BustChance && HouseEdge && houseEdgeCooldown <= 0) {
+			else if (roll < jackpotChance + BustChance && HouseEdge && houseEdgeCooldown <= 0) {
 				houseEdgeCooldown = 600;
 				CombatText.NewText(target.Hitbox, new Color(120, 220, 255), Language.GetTextValue("Mods.CasinoWorld.Gambler.Saved"));
 			}
-			else if (roll < JackpotChance + BustChance) {
+			else if (roll < jackpotChance + BustChance) {
 				modifiers.SourceDamage *= BustMultiplier;
+				martingaleArmed = Martingale;
 				CombatText.NewText(target.Hitbox, Color.Gray, Language.GetTextValue("Mods.CasinoWorld.Gambler.Bust"));
 				if (Main.rand.NextBool(3))   // not on every bust, it would get tiring
 					SoundEngine.PlaySound(CasinoSounds.BustProc, target.Center);

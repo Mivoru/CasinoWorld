@@ -90,6 +90,76 @@ Items: {
 			'''
 	}
 
+	ChipChainHook: {
+		DisplayName: Chip Chain
+		Tooltip:
+			'''
+			A chain of gold coins with a chip claw on the end
+			Shoots two hooks
+			'''
+	}
+
+	RoyalFlushWings: {
+		DisplayName: Royal Flush Wings
+		Tooltip:
+			'''
+			Allows flight and slow fall
+			+1 Luck
+			'Ten, jack, queen, king, ace. The house never saw it coming.'
+			'''
+	}
+
+	HighRollersRing: {
+		DisplayName: High Roller's Ring
+		Tooltip:
+			'''
+			+2 Luck
+			8% increased gambler damage
+			'''
+	}
+
+	MartingaleMedallion: {
+		DisplayName: Martingale Medallion
+		Tooltip:
+			'''
+			After a Bust, your next gambler hit has +25% jackpot chance
+			'Double down. It worked last time.'
+			'''
+	}
+
+	DealersVisor: {
+		DisplayName: Dealer's Visor
+		Tooltip:
+			'''
+			+1 Luck
+			2% increased jackpot chance
+			'''
+	}
+
+	WhiteFedora: {
+		DisplayName: White Fedora
+		Tooltip:
+			'''
+			'Only for those who win'
+			'''
+	}
+
+	WhiteTuxedo: {
+		DisplayName: White Tuxedo
+		Tooltip:
+			'''
+			'Spotless. Like your record at the tables.'
+			'''
+	}
+
+	WhiteSpats: {
+		DisplayName: White Spats
+		Tooltip:
+			'''
+			'Click your heels on the marble'
+			'''
+	}
+
 	LuckyCrate: {
 		DisplayName: Lucky Crate
 		Tooltip:
