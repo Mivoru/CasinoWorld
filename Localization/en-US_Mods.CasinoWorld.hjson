@@ -172,8 +172,18 @@ WorldGen: {
 	West: west
 }
 
+Bestiary: {
+	ChipSlime: A poker chip that rolled away from the tables and learned to bite. It still remembers its value.
+	CardSoldier: The house guard of a deck nobody plays with anymore. It marches in suits.
+	SlotMimic: It pays out, eventually. Mostly it pays out teeth.
+}
+
 NPCs: {
 	HowToPlay: How to play
+
+	ChipSlime.DisplayName: Chip Slime
+	CardSoldier.DisplayName: Card Soldier
+	SlotMimic.DisplayName: Slot Mimic
 
 	RouletteCroupier: {
 		DisplayName: Croupier
