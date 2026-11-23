@@ -2,6 +2,11 @@
 # Please read https://github.com/tModLoader/tModLoader/wiki/Localization to learn more about localization and these files.
 
 Items: {
+	GamblersHandbook: {
+		DisplayName: Gambler's Handbook
+		Tooltip: Everything about the casinos, the Gambler class and the bosses
+	}
+
 	ScratchCard: {
 		DisplayName: Scratch Card
 		Tooltip:
@@ -1178,4 +1183,23 @@ Event: {
 	Dawn: The card army scatters at dawn.
 	Bar: "High Stakes Night: {0}%"
 	BarCaptain: "High Stakes Night: defeat the Guard Captain!"
+}
+
+Handbook: {
+	Page0Title: Welcome to Casino World
+	Page0Text: Build the casino with the Casino Blueprint (point at flat ground and use it). Walk up to its door to enter. Inside: roulette, blackjack, slot machines, a bar, a prize counter and a daily Fortune Wheel. After the Wall of Flesh, a second casino opens deep underground: the High Rollers casino, with bigger tables and video slots. The casino doors stay locked while a boss or an invasion is on.
+	Page1Title: The Gambler class
+	Page1Text: Gambler weapons throw cards, dice and chips. They never crit; instead every hit rolls the dice. Jackpot (5% at first): triple damage. Bust (20% at first): half damage. On average it evens out, and Luck from Gambler armour and accessories tips the odds your way: each point gives +1% jackpot and -2% bust.
+	Page2Title: The Pot and All In
+	Page2Text: Your Gambler hits fill the Pot, the meter under your feet. Jackpots fill it fastest, and busts feed it too. It drains when you stop fighting. With a full Pot, press All In (V by default, change it in the controls): a shockwave of cards hits everything around you and for five seconds you get +25% jackpot chance (and +10% bust). Gambler weapons can also get their own reforges: Lucky, Rigged, Loaded, Shady.
+	Page3Title: Table games
+	Page3Text: Roulette: place chips on numbers, splits, corners, colours or dozens, then spin. Blackjack: get closer to 21 than the dealer; the dealer stands on 17 and blackjack pays 3 to 2. Every bet earns loyalty tokens, win or lose. Big wins at full stake can drop a jackpot item.
+	Page4Title: Slots and scratch cards
+	Page4Text: The classic slots pay for three of a kind and pairs on the first two reels. The High Rollers casino has four video slots, each with its own bonus: Gates of the Lunar Gods (tumbles and Moon Lord's orbs), Angler's Bonanza (the Angler collects fish cash), Boreal Wilds (an animal lottery picks the bonus) and Blood Moon Hunter (multiplier wilds and a trophy hunt). Scratch cards from the cashier: three of a kind wins.
+	Page5Title: Tokens, prizes and challenges
+	Page5Text: Loyalty tokens buy prizes at the cashier: crates, the Gamblorghini, accessories, vanity. Casino crates open with a spinning reel of prizes. The cashier also has three daily challenges with token rewards, and the Fortune Wheel gives one free spin a day. The upgrade machine improves Gambler weapons and armour for coins, with a risk.
+	Page6Title: The bosses
+	Page6Text: The Wild Card (after Skeletron): use a Golden Chip at night outside the casinos. A jester of cards with a shell game, dice tricks and an all-in finale. The Pit Boss (after a mechanical boss): use a Vault Key inside the High Rollers casino. He bets on red or black under your feet, rains gold bars, calls security and flips a giant coin: tails, and he is stunned.
+	Page7Title: High Stakes Night
+	Page7Text: In hardmode, after a mechanical boss, some nights the card army raids the surface. Defeat enough of them and the Guard Captain marches out; beat him for crates, tokens and maybe a Vault Key. Dawn ends the raid. The raid can be switched off in the mod settings, as can gambling itself.
 }

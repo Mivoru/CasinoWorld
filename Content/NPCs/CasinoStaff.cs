@@ -144,6 +144,7 @@ namespace CasinoWorld.Content.NPCs
 		public override void AddShops()
 		{
 			new NPCShop(Type)
+				.Add(new Item(ModContent.ItemType<Items.GamblersHandbook>()) { shopCustomPrice = 10 * 100 })
 				.Add(new Item(ModContent.ItemType<Items.ScratchCard>()) { shopCustomPrice = 50 * 100 })
 				.Add(new Item(ModContent.ItemType<Items.PlatinumScratchCard>()) { shopCustomPrice = 5 * 10000 }, Condition.Hardmode)
 				.Add(Prize(ModContent.ItemType<Items.Crates.LuckyCrate>(), 75))

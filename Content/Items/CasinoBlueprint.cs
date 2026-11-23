@@ -94,8 +94,10 @@ namespace CasinoWorld.Content.Items
 	{
 		public override IEnumerable<Item> AddStartingItems(bool mediumCoreDeath)
 		{
-			if (!mediumCoreDeath)
+			if (!mediumCoreDeath) {
 				yield return new Item(ModContent.ItemType<CasinoBlueprint>());
+				yield return new Item(ModContent.ItemType<GamblersHandbook>());
+			}
 		}
 	}
 }
