@@ -17,11 +17,12 @@ Items: {
 			'''
 			Builds the casino where you point
 			Clears the space it is built on
-			Use it again to move the casino
+			One casino per world: use it twice to move the casino here
 			'''
 		Valid: Build the casino here
 		Invalid: Can't build here: needs solid ground, no chests or water
 		Built: The casino is open for business!
+		AlreadyBuilt: "This world already has its casino, {0} feet {1}. Use the blueprint again within 5 seconds to move it here."
 	}
 
 	LoyaltyToken: {
@@ -715,6 +716,9 @@ Crates: {
 }
 
 UI: {
+	ClosedBoss: The casino doors are locked while a boss is on the loose!
+	ClosedEvent: The casino is closed until the invasion is over!
+	NoSummonsInside: The house does not allow that in here.
 	EnterCasino: Enter
 	ElevatorUp: Elevator: up a floor
 	ElevatorDown: Elevator: down a floor

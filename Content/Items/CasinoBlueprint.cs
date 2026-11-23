@@ -47,6 +47,8 @@ namespace CasinoWorld.Content.Items
 			return SurfaceCasinoStructure.CanBuildAt(left, groundY);
 		}
 
+		private static uint moveArmedUntil;
+
 		public override bool? UseItem(Player player)
 		{
 			// UseItem runs once at the start of each use; only the local player builds (sends the request).
@@ -54,6 +56,20 @@ namespace CasinoWorld.Content.Items
 				return true;
 
 			(int left, int groundY) = SiteAtMouse();
+			if (!CasinoTravel.CanEnter(out string reason)) {
+				Main.NewText(Language.GetTextValue(reason), new Color(255, 120, 120));
+				return true;
+			}
+			if (CasinoWorldSystem.HasSurfaceCasino && Main.GameUpdateCount > moveArmedUntil) {
+				// One casino per world: warn first, a second use moves it.
+				moveArmedUntil = Main.GameUpdateCount + 300;
+				Point at = CasinoWorldSystem.SurfaceCasinoPosition;
+				int dx = (at.X - (int)(player.Center.X / 16)) * 2;
+				Main.NewText(Language.GetTextValue("Mods.CasinoWorld.Items.CasinoBlueprint.AlreadyBuilt", System.Math.Abs(dx),
+					Language.GetTextValue(dx >= 0 ? "Mods.CasinoWorld.WorldGen.East" : "Mods.CasinoWorld.WorldGen.West")), new Color(255, 200, 90));
+				return true;
+			}
+			moveArmedUntil = 0;
 			if (Main.netMode == NetmodeID.SinglePlayer) {
 				SurfaceCasinoStructure.Build(left, groundY);
 				Main.NewText(Language.GetTextValue("Mods.CasinoWorld.Items.CasinoBlueprint.Built"), new Color(255, 215, 60));

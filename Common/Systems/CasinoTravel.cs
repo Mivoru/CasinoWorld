@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework;
 using SubworldLibrary;
 using CasinoWorld.Common;
 using Terraria;
+using Terraria.ID;
+using Terraria.Localization;
 
 namespace CasinoWorld.Common.Systems
 {
@@ -18,11 +20,37 @@ namespace CasinoWorld.Common.Systems
 
 		public static bool InCasino => SubworldSystem.Current is CasinoSubworld;
 
+		/// <summary>
+		/// The doors stay shut while a boss is alive or an invasion or event is running: the casino is not a
+		/// place to hide from a fight (and the fight would stall in the main world meanwhile).
+		/// </summary>
+		public static bool CanEnter(out string reasonKey)
+		{
+			reasonKey = null;
+			foreach (NPC npc in Main.ActiveNPCs) {
+				if (npc.boss || npc.type is NPCID.EaterofWorldsHead or NPCID.EaterofWorldsBody or NPCID.EaterofWorldsTail) {
+					reasonKey = "Mods.CasinoWorld.UI.ClosedBoss";
+					return false;
+				}
+			}
+			if (Main.invasionType != InvasionID.None || Main.pumpkinMoon || Main.snowMoon || Main.eclipse
+				|| Terraria.GameContent.Events.DD2Event.Ongoing) {
+				reasonKey = "Mods.CasinoWorld.UI.ClosedEvent";
+				return false;
+			}
+			return true;
+		}
+
 		/// <summary>Enters the given casino and remembers where to come back to.</summary>
 		public static void Enter<T>() where T : CasinoSubworld
 		{
 			if (InCasino)
 				return;
+			if (!CanEnter(out string reason)) {
+				Main.NewText(Language.GetTextValue(reason), new Color(255, 120, 120));
+				Terraria.Audio.SoundEngine.PlaySound(SoundID.DoorClosed);
+				return;
+			}
 
 			returnPosition = Main.LocalPlayer.position;
 			returnWorldId = Main.worldID;
