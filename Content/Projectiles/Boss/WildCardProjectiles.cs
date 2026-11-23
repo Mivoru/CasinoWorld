@@ -440,4 +440,33 @@ namespace CasinoWorld.Content.Projectiles.Boss
 			return false;
 		}
 	}
+
+	/// <summary>Harmless card from The Wild Card's death burst: spins, falls and fades.</summary>
+	public class DeathCard : WildCardProjectile
+	{
+		public override string Texture => "CasinoWorld/Content/NPCs/Boss/WildCard_Card";
+
+		public override void SetDefaults()
+		{
+			base.SetDefaults();
+			Projectile.hostile = false;
+			Projectile.width = Projectile.height = 16;
+			Projectile.timeLeft = 150;
+		}
+
+		public override void AI()
+		{
+			Projectile.velocity *= 0.97f;
+			Projectile.velocity.Y += 0.12f;
+			Projectile.rotation += Projectile.velocity.X * 0.05f + 0.05f;
+			if (Projectile.timeLeft < 40)
+				Projectile.alpha += 6;
+		}
+
+		public override bool PreDraw(ref Color lightColor)
+		{
+			DrawCentered(TextureAssets.Projectile[Type].Value, null, Color.White * (1f - Projectile.alpha / 255f), Projectile.rotation);
+			return false;
+		}
+	}
 }

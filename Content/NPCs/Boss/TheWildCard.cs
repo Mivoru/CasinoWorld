@@ -540,6 +540,10 @@ namespace CasinoWorld.Content.NPCs.Boss
 					Dust.NewDustPerfect(NPC.Center, DustID.Confetti + Main.rand.Next(4), Main.rand.NextVector2Circular(10, 10), 0, default, 1.4f);
 				for (int k = 0; k < 20; k++)
 					Dust.NewDustPerfect(NPC.Center, DustID.GoldCoin, Main.rand.NextVector2Circular(7, 7), 0, default, 1.2f);
+				// The jester bursts into his deck: harmless cards spin away in every direction.
+				if (Main.netMode != NetmodeID.MultiplayerClient)
+					for (int k = 0; k < 24; k++)
+						Projectile.NewProjectile(NPC.GetSource_Death(), NPC.Center, Main.rand.NextVector2CircularEdge(1, 1) * Main.rand.NextFloat(4, 11), ModContent.ProjectileType<DeathCard>(), 0, 0f, Main.myPlayer);
 			}
 		}
 
@@ -588,11 +592,17 @@ namespace CasinoWorld.Content.NPCs.Boss
 
 		// ------------------------------------------------------------------ drawing
 
-		private static Asset<Texture2D> headTex, headGlow, torsoTex, armTex, cardTex, pickupCard;
+		private static Asset<Texture2D> headTex, hatTex, bellTex, mouthTex, eyeTex, torsoTex, armTex, gloveTex, cardTex, cracksTex, pickupCard;
 
 		public override void Unload()
 		{
-			headTex = headGlow = torsoTex = armTex = cardTex = pickupCard = null;
+			headTex = hatTex = bellTex = mouthTex = eyeTex = torsoTex = armTex = gloveTex = cardTex = cracksTex = pickupCard = null;
+		}
+
+		private static Texture2D Tex(ref Asset<Texture2D> asset, string name)
+		{
+			asset ??= ModContent.Request<Texture2D>("CasinoWorld/Content/NPCs/Boss/" + name);
+			return asset.Value;
 		}
 
 		private float Bob => (float)Math.Sin(Main.GlobalTimeWrappedHourly * 3f + NPC.whoAmI) * 4f;
@@ -602,20 +612,49 @@ namespace CasinoWorld.Content.NPCs.Boss
 
 		private Color PhaseColor => Phase == 1 ? new Color(255, 200, 70) : Phase == 2 ? new Color(200, 90, 255) : new Color(255, 60, 60);
 
+		/// <summary>Laughs (open mouth) during the intro, All In, while stunned-recovering and after a phase change.</summary>
+		private bool Laughing => CurrentState is State.Intro or State.Spiral || transitionFlash > 0;
+
+		private int lastPhase = 1;
+		private int transitionFlash;
+
+		public override void FindFrame(int frameHeight)
+		{
+			// Phase changes: a flash, a burst of cards and a laugh (visual only, every client).
+			if (Phase != lastPhase && !NPC.IsABestiaryIconDummy) {
+				lastPhase = Phase;
+				transitionFlash = 60;
+				if (!Main.dedServ) {
+					SoundEngine.PlaySound(CasinoSounds.HouseLaugh with { Pitch = Phase == 3 ? -0.3f : 0.1f }, NPC.Center);
+					for (int k = 0; k < 40; k++)
+						Dust.NewDustPerfect(NPC.Center, Phase == 3 ? DustID.RedTorch : DustID.PurpleTorch, Main.rand.NextVector2Circular(9, 9), 0, default, 2f).noGravity = true;
+					Main.instance.CameraModifiers.Add(new PunchCameraModifier(NPC.Center, Vector2.UnitY, 6f, 8f, 25, 1200f, "WildCardPhase"));
+				}
+			}
+			if (transitionFlash > 0)
+				transitionFlash--;
+		}
+
 		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
 		{
 			if (NPC.alpha >= 255)
 				return false;
-			headTex ??= ModContent.Request<Texture2D>("CasinoWorld/Content/NPCs/Boss/WildCard_Head");
-			headGlow ??= ModContent.Request<Texture2D>("CasinoWorld/Content/NPCs/Boss/WildCard_Head_Glow");
-			torsoTex ??= ModContent.Request<Texture2D>("CasinoWorld/Content/NPCs/Boss/WildCard_Torso");
-			armTex ??= ModContent.Request<Texture2D>("CasinoWorld/Content/NPCs/Boss/WildCard_Arm");
-			cardTex ??= ModContent.Request<Texture2D>("CasinoWorld/Content/NPCs/Boss/WildCard_Card");
 			pickupCard ??= ModContent.Request<Texture2D>("CasinoWorld/Content/Projectiles/Boss/PickupCard");
-
 			float fade = 1f - NPC.alpha / 255f;
-			Color light = NPC.IsABestiaryIconDummy ? Color.White : Color.Lerp(drawColor, Color.White, 0.35f) * fade;
+			Color light = NPC.IsABestiaryIconDummy ? Color.White : Color.Lerp(drawColor, Color.White, 0.4f) * fade;
 			float t = Main.GlobalTimeWrappedHourly;
+
+			// Intro: the body assembles from cards spiralling in.
+			float assemble = CurrentState == State.Intro ? MathHelper.Clamp(Timer / 80f, 0f, 1f) : 1f;
+			if (assemble < 1f) {
+				Texture2D card = Tex(ref cardTex, "WildCard_Card");
+				for (int k = 0; k < 14; k++) {
+					float a = k / 14f * MathHelper.TwoPi + t * 4f;
+					float r = (1f - assemble) * 260f + 20f;
+					spriteBatch.Draw(card, NPC.Center - screenPos + a.ToRotationVector2() * r, null, Color.White * (1f - assemble * 0.6f), a * 2f, card.Size() / 2f, 1f, SpriteEffects.None, 0f);
+				}
+				light *= assemble;
+			}
 
 			// Afterimages while dashing.
 			if (CurrentState == State.Dash) {
@@ -626,6 +665,13 @@ namespace CasinoWorld.Content.NPCs.Boss
 					DrawBody(spriteBatch, old - screenPos, PhaseColor * (0.35f * (1f - k / (float)NPC.oldPos.Length)) * fade, t, true);
 				}
 			}
+			// Phase aura: a soft pulsing glow behind the body.
+			if (!NPC.IsABestiaryIconDummy) {
+				Texture2D head = Tex(ref headTex, "WildCard_Head");
+				Color aura = PhaseColor * (0.25f + 0.15f * (float)Math.Sin(t * 4f) + transitionFlash / 120f) * fade;
+				aura.A = 0;
+				spriteBatch.Draw(head, NPC.Center - screenPos + new Vector2(0, -20 + Bob), null, aura, 0f, head.Size() / 2f, 2.4f + transitionFlash / 60f, SpriteEffects.None, 0f);
+			}
 			DrawBody(spriteBatch, NPC.Center - screenPos, light, t, false);
 			return false;
 		}
@@ -634,61 +680,89 @@ namespace CasinoWorld.Content.NPCs.Boss
 		{
 			center.Y += Bob;
 			bool stunned = CurrentState == State.Stunned;
-			float spin = CurrentState == State.Spiral ? t * 9f : 0f;
-			float tilt = stunned ? (float)Math.Sin(t * 5f) * 0.25f : NPC.velocity.X * 0.02f;
+			float spin = CurrentState == State.Spiral ? (float)Math.Sin(t * 9f) * 0.5f : 0f;
+			float tilt = stunned ? (float)Math.Sin(t * 5f) * 0.25f : NPC.velocity.X * 0.02f + spin;
+			int facing = NPC.spriteDirection;
 
 			// Tail: nine cards waving behind the body, each a little smaller.
-			Texture2D card = cardTex.Value;
+			Texture2D card = Tex(ref cardTex, "WildCard_Card");
 			for (int k = 8; k >= 0; k--) {
-				float wave = (float)Math.Sin(t * 4f - k * 0.6f) * (6f + k * 1.6f) - NPC.velocity.X * k * 0.9f;
-				Vector2 p = center + new Vector2(wave, 34f + k * 11f);
-				float rot = (float)Math.Sin(t * 4f - k * 0.6f + 0.8f) * 0.35f + spin * 0.1f;
-				float scale = 1f - k * 0.055f;
-				sb.Draw(card, p, null, color, rot, card.Size() / 2f, scale, SpriteEffects.None, 0f);
+				float wave = (float)Math.Sin(t * 4f - k * 0.6f) * (5f + k * 1.6f) - NPC.velocity.X * k * 0.9f;
+				Vector2 p = center + new Vector2(wave, 36f + k * 10f);
+				float rot = (float)Math.Sin(t * 4f - k * 0.6f + 0.8f) * 0.35f;
+				sb.Draw(card, p, null, color, rot, card.Size() / 2f, 1f - k * 0.05f, SpriteEffects.None, 0f);
 			}
 
-			// Arms: swing with the attacks (raised when dealing/throwing, flailing when stunned).
-			Texture2D arm = armTex.Value;
+			// Arms with gloves: raised to throw, flailing when stunned, open hands at rest.
+			Texture2D arm = Tex(ref armTex, "WildCard_Arm"), glove = Tex(ref gloveTex, "WildCard_Glove");
 			for (int side = -1; side <= 1; side += 2) {
 				float raise = CurrentState switch {
-					State.Deal or State.DiceRoll or State.DiceAttack => -1.6f,
-					State.Spiral => -2.4f,
-					State.Pickup => -2.8f,
-					_ => -0.25f,
+					State.Deal or State.DiceRoll or State.DiceAttack => side == facing ? -1.9f : -0.5f,
+					State.Spiral => -2.6f,
+					State.Pickup => -2.9f,
+					State.Intro => -2.2f + (float)Math.Sin(t * 6f + side) * 0.3f,
+					_ => -0.3f,
 				};
 				if (stunned)
-					raise = (float)Math.Sin(t * 8f + side) * 0.6f;
-				float swing = side * (raise + (float)Math.Sin(t * 2.5f + side) * 0.12f) + spin;
-				Vector2 shoulder = center + new Vector2(side * 22f, -14f).RotatedBy(tilt + spin);
-				sb.Draw(arm, shoulder, null, color, swing, new Vector2(arm.Width / 2f, 4f), 1f, side < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
-				// A fan of cards in the throwing hand.
-				if (!ghost && CurrentState is State.Deal && side == NPC.direction) {
-					Vector2 hand = shoulder + new Vector2(0, arm.Height - 8f).RotatedBy(swing);
+					raise = (float)Math.Sin(t * 8f + side) * 0.7f;
+				float swing = side * (raise + (float)Math.Sin(t * 2.5f + side) * 0.12f) + tilt;
+				Vector2 shoulder = center + new Vector2(side * 24f, -12f).RotatedBy(tilt);
+				sb.Draw(arm, shoulder, null, color, swing, new Vector2(arm.Width / 2f, 4f), 1f, SpriteEffects.None, 0f);
+				Vector2 hand = shoulder + new Vector2(0, arm.Height - 4f).RotatedBy(swing);
+				bool holding = CurrentState is State.Deal or State.DiceRoll && side == facing;
+				var frame = new Rectangle(holding ? glove.Width / 2 : 0, 0, glove.Width / 2, glove.Height);
+				// A fan of cards in the dealing hand.
+				if (!ghost && CurrentState == State.Deal && side == facing) {
 					Texture2D pc = pickupCard.Value;
-					for (int c = -1; c <= 1; c++)
-						sb.Draw(pc, hand, null, color, swing + c * 0.3f, new Vector2(pc.Width / 2f, pc.Height), 0.9f, SpriteEffects.None, 0f);
+					for (int c = -2; c <= 2; c++)
+						sb.Draw(pc, hand, null, color, swing + c * 0.22f + MathHelper.Pi, new Vector2(pc.Width / 2f, pc.Height), 1f, SpriteEffects.None, 0f);
 				}
+				sb.Draw(glove, hand, frame, color, swing, new Vector2(glove.Width / 4f, 6f), 1f, side < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
 			}
 
-			// Torso and head.
-			Texture2D torso = torsoTex.Value, head = headTex.Value;
-			sb.Draw(torso, center + new Vector2(0, 4f), null, color, tilt + spin, torso.Size() / 2f, 1f, SpriteEffects.None, 0f);
-			Vector2 headPos = center + new Vector2(0, -44f).RotatedBy(tilt + spin);
-			SpriteEffects flip = NPC.spriteDirection < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-			float headTilt = tilt * 1.4f + (float)Math.Sin(t * 1.7f) * 0.05f;
+			// Torso.
+			Texture2D torso = Tex(ref torsoTex, "WildCard_Torso");
+			sb.Draw(torso, center + new Vector2(0, 6f), null, color, tilt, torso.Size() / 2f, 1f, SpriteEffects.None, 0f);
+
+			// Head: mask, eyes (blink, phase colour), mouth (grin or laugh), cracks in phase 3, hat with swinging bells.
+			Texture2D head = Tex(ref headTex, "WildCard_Head");
+			float headTilt = tilt * 1.4f + (float)Math.Sin(t * 1.7f) * 0.06f + (stunned ? (float)Math.Sin(t * 9f) * 0.15f : 0f);
+			Vector2 headPos = center + new Vector2(0, -42f).RotatedBy(tilt);
+			SpriteEffects flip = facing < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 			sb.Draw(head, headPos, null, color, headTilt, head.Size() / 2f, 1f, flip, 0f);
-			if (!ghost) {
-				sb.Draw(headGlow.Value, headPos, null, Color.White * (1f - NPC.alpha / 255f), headTilt, head.Size() / 2f, 1f, flip, 0f);
-				// Glowing eyes in the phase colour (gold, purple, red), drawn over the mask.
-				Texture2D pixel = TextureAssets.MagicPixel.Value;
-				for (int side = -1; side <= 1; side += 2) {
-					Vector2 eye = headPos + new Vector2(side * 12f, 6f).RotatedBy(headTilt);
-					float pulse = 0.75f + 0.25f * (float)Math.Sin(t * 6f + side);
-					Color c = PhaseColor * pulse * (1f - NPC.alpha / 255f);
-					c.A = 0;
-					sb.Draw(pixel, new Rectangle((int)eye.X - 5, (int)eye.Y - 2, 10, 4), c);
-					sb.Draw(pixel, new Rectangle((int)eye.X - 3, (int)eye.Y - 3, 6, 6), c * 0.6f);
-				}
+			if (ghost)
+				return;
+			float fade = 1f - NPC.alpha / 255f;
+
+			Texture2D eye = Tex(ref eyeTex, "WildCard_Eye");
+			bool blink = !stunned && (t * 0.7f + NPC.whoAmI) % 3.2f < 0.12f;
+			var eyeFrame = new Rectangle(blink || stunned ? eye.Width / 2 : 0, 0, eye.Width / 2, eye.Height);
+			Color eyeColor = PhaseColor * fade;
+			eyeColor.A = 0;
+			for (int side = -1; side <= 1; side += 2) {
+				Vector2 e = headPos + new Vector2(side * 10f, -2f).RotatedBy(headTilt);
+				sb.Draw(eye, e, eyeFrame, eyeColor, headTilt + side * 0.15f, new Vector2(eye.Width / 4f, eye.Height / 2f), 1f, SpriteEffects.None, 0f);
+				sb.Draw(eye, e, eyeFrame, eyeColor * 0.5f, headTilt, new Vector2(eye.Width / 4f, eye.Height / 2f), 1.6f, SpriteEffects.None, 0f);
+			}
+			Texture2D mouth = Tex(ref mouthTex, "WildCard_Mouth");
+			var mouthFrame = new Rectangle(Laughing ? mouth.Width / 2 : 0, 0, mouth.Width / 2, mouth.Height);
+			float jaw = Laughing ? Math.Abs((float)Math.Sin(t * 14f)) * 2f : 0f;
+			sb.Draw(mouth, headPos + new Vector2(0, 14f + jaw).RotatedBy(headTilt), mouthFrame, Color.White * fade, headTilt, new Vector2(mouth.Width / 4f, mouth.Height / 2f), 1f, SpriteEffects.None, 0f);
+			if (Phase == 3) {
+				Color crack = new Color(255, 80, 60) * (0.7f + 0.3f * (float)Math.Sin(t * 10f)) * fade;
+				crack.A = 0;
+				Texture2D cracks = Tex(ref cracksTex, "WildCard_Cracks");
+				sb.Draw(cracks, headPos, null, crack, headTilt, cracks.Size() / 2f, 1f, flip, 0f);
+			}
+
+			Texture2D hat = Tex(ref hatTex, "WildCard_Hat"), bell = Tex(ref bellTex, "WildCard_Bell");
+			Vector2 hatPos = headPos + new Vector2(0, -30f).RotatedBy(headTilt);
+			sb.Draw(hat, hatPos, null, color, headTilt, hat.Size() / 2f + new Vector2(0, 4f), 1f, SpriteEffects.None, 0f);
+			Vector2[] tips = { new(-36f, -12f), new(0f, -32f), new(36f, -12f) };
+			for (int k = 0; k < 3; k++) {
+				float swingBell = (float)Math.Sin(t * 5f + k * 1.3f) * 0.6f - NPC.velocity.X * 0.05f;
+				Vector2 p = hatPos + tips[k].RotatedBy(headTilt) + new Vector2((float)Math.Sin(swingBell) * 5f, Math.Abs((float)Math.Cos(swingBell)) * 4f);
+				sb.Draw(bell, p, null, color, swingBell, bell.Size() / 2f, 1f, SpriteEffects.None, 0f);
 			}
 		}
 	}
