@@ -69,7 +69,7 @@ namespace CasinoWorld.Common.Games.VideoSlots
 
 		private Rectangle Area => GetDimensions().ToRectangle();
 
-		private Rectangle Stage => new(Area.X + 18, Area.Y + 16, 520, 112);
+		private Rectangle Stage => new(Area.X + 18, Area.Y + 36, 520, 94);
 
 		private int Cell => Round.Machine == null ? 80 : Math.Min(84, Math.Min(520 / Round.Machine.Reels, 330 / Round.Machine.Rows));
 
@@ -221,17 +221,41 @@ namespace CasinoWorld.Common.Games.VideoSlots
 						float tw = 0.4f + 0.6f * (float)Math.Abs(Math.Sin(t * 1.5f + k * 1.7f));
 						CasinoDraw.Fill(sb, new Rectangle(s.X + (k * 137) % s.Width, s.Y + (k * 59) % s.Height, 2, 2), Color.White * tw);
 					}
+					DrawMoonLordBack(sb, round, t);
 					break;
-				case "Angler":
-					for (int x = 0; x < s.Width; x += 4) {
-						int wave = (int)(Math.Sin(t * 2 + x * 0.05f) * 3);
-						CasinoDraw.Fill(sb, new Rectangle(s.X + x, s.Y + 70 + wave, 4, s.Height - 70 - wave), new Color(20, 70, 130));
-						CasinoDraw.Fill(sb, new Rectangle(s.X + x, s.Y + 70 + wave, 4, 2), new Color(200, 240, 255) * 0.7f);
+				case "Angler": {
+					// Sun low over the bay, a distant island, layered water with glints.
+					FillCircle(sb, new Vector2(s.Right - 90, s.Y + 44), 22, new Color(255, 230, 150));
+					FillCircle(sb, new Vector2(s.Right - 90, s.Y + 44), 28, new Color(255, 200, 120) * 0.3f);
+					for (int x = 0; x < 140; x += 4) {
+						int h = (int)(14 * Math.Sin(x / 140f * Math.PI)) + (x % 12 == 0 ? 2 : 0);
+						CasinoDraw.Fill(sb, new Rectangle(s.X + 300 + x, s.Y + 58 - h, 4, h), new Color(60, 110, 110));
 					}
-					CasinoDraw.Fill(sb, new Rectangle(s.X, s.Y + 62, 120, 8), new Color(110, 70, 40));     // pier
-					for (int x = 10; x < 120; x += 36)
-						CasinoDraw.Fill(sb, new Rectangle(s.X + x, s.Y + 70, 6, s.Height - 70), new Color(80, 50, 30));
+					int sea = s.Y + 58;
+					for (int y = sea; y < s.Bottom; y += 3) {
+						float d = (y - sea) / (float)(s.Bottom - sea);
+						CasinoDraw.Fill(sb, new Rectangle(s.X, y, s.Width, 3), Color.Lerp(new Color(60, 140, 200), new Color(16, 50, 100), d));
+					}
+					for (int k = 0; k < 24; k++) {
+						float x = (k * 97 + t * (8 + k % 3 * 4)) % s.Width;
+						int y = sea + 4 + (k * 13) % (s.Bottom - sea - 6);
+						CasinoDraw.Fill(sb, new Rectangle(s.X + (int)x, y, 6 + k % 3 * 3, 1), new Color(220, 245, 255) * (0.35f + 0.3f * (float)Math.Sin(t * 3 + k)));
+					}
+					// Sun path on the water.
+					for (int y = sea + 2; y < s.Bottom; y += 4)
+						CasinoDraw.Fill(sb, new Rectangle(s.Right - 100 + (int)(Math.Sin(t * 2 + y) * 4), y, 20, 1), new Color(255, 230, 160) * 0.5f);
+					// Pier: planks with grain, posts into the water.
+					for (int x = 0; x < 150; x += 10) {
+						CasinoDraw.Fill(sb, new Rectangle(s.X + x, sea - 6, 9, 7), new Color(150, 100, 60));
+						CasinoDraw.Fill(sb, new Rectangle(s.X + x, sea - 6, 9, 2), new Color(190, 140, 90));
+						CasinoDraw.Fill(sb, new Rectangle(s.X + x + 9, sea - 6, 1, 7), new Color(80, 50, 30));
+					}
+					foreach (int x in new[] { 8, 70, 138 }) {
+						CasinoDraw.Fill(sb, new Rectangle(s.X + x, sea + 1, 7, s.Bottom - sea - 1), new Color(100, 66, 40));
+						CasinoDraw.Fill(sb, new Rectangle(s.X + x, sea + 1, 2, s.Bottom - sea - 1), new Color(140, 96, 60));
+					}
 					break;
+				}
 				case "Boreal":
 					for (int band = 0; band < 3; band++) {
 						Color c = band == 1 ? new Color(160, 80, 220) : new Color(60, 230, 160);
@@ -262,7 +286,7 @@ namespace CasinoWorld.Common.Games.VideoSlots
 					break;
 			}
 
-			Utils.DrawBorderString(sb, Text("Title" + key), new Vector2(s.X + 10, s.Y + 6), accent, 0.95f);
+			Utils.DrawBorderString(sb, Text("Title" + key), new Vector2(s.Center.X, Area.Y + 22), accent, 1f, 0.5f, 0.5f);
 			if (key == "Boreal")
 				DrawAnimals(sb, round, s, t);
 		}
@@ -288,34 +312,70 @@ namespace CasinoWorld.Common.Games.VideoSlots
 		// Moon Lord: raises his hands, opens his forehead eye and fires one deathray per new orb.
 		private const int BeamStart = 16, BeamGap = 10, BeamLife = 18;
 
-		private Vector2 MoonEye => new(Stage.Center.X, Stage.Y + 24);
+		private float MoonBob => (float)Math.Sin(Main.GlobalTimeWrappedHourly * 1.6f) * 3;
+
+		private Vector2 MoonHeadTop => new(Stage.Center.X, Stage.Y - 4 + MoonBob);
+
+		private Vector2 MoonEye => MoonHeadTop + new Vector2(0, 27);
+
+		/// <summary>How far the hands are raised (0..1) and whether the eyes are open, for the current step.</summary>
+		private void MoonPose(VideoSlotRound round, out float raise, out bool eyeOpen, out bool revealing, out SlotStep step, out int tick)
+		{
+			revealing = ActiveStep(round, out step, out tick) && step.Fx.Count > 0 && step.Kind is StepKind.Land or StepKind.Tumble;
+			bool multiplying = round.Phase == VideoPhase.Steps && step?.Kind == StepKind.Multiply;
+			raise = revealing ? MathHelper.Clamp(tick / 12f, 0, 1) : multiplying ? 1f : 0f;
+			if (revealing && tick > BeamStart + BeamGap * step.Fx.Count + BeamLife)
+				raise = MathHelper.Clamp(1 - (tick - (BeamStart + BeamGap * step.Fx.Count + BeamLife)) / 10f, 0, 1);
+			eyeOpen = revealing && tick > 8 && raise > 0.2f || multiplying;
+		}
+
+		private Vector2 MoonHand(int side, float raise, float t)
+			=> new(Stage.Center.X + side * (150 - raise * 30), Stage.Y + 74 - raise * 46 + (float)Math.Sin(t * 2 + side) * 3);
+
+		private void DrawMoonLordBack(SpriteBatch sb, VideoSlotRound round, float t)
+		{
+			Texture2D head = mlHead.Value;
+			MoonPose(round, out float raise, out bool eyeOpen, out _, out _, out _);
+			// Arms from the shoulders (hidden behind the reels) up to the hands.
+			for (int side = -1; side <= 1; side += 2) {
+				Vector2 shoulder = MoonHeadTop + new Vector2(side * 50, 108);
+				Vector2 wrist = MoonHand(side, raise, t) + new Vector2(0, 30);
+				Vector2 elbow = (shoulder + wrist) / 2 + new Vector2(side * 30, 10);
+				Line(sb, shoulder, elbow, new Color(90, 78, 60), 18);
+				Line(sb, elbow, wrist, new Color(90, 78, 60), 15);
+				Line(sb, shoulder, elbow, new Color(164, 146, 112), 13);
+				Line(sb, elbow, wrist, new Color(164, 146, 112), 10);
+				Line(sb, shoulder + new Vector2(0, -4), elbow + new Vector2(0, -4), new Color(196, 178, 140), 3);
+			}
+			var frame = new Rectangle(eyeOpen ? head.Width / 2 : 0, 0, head.Width / 2, head.Height);
+			// Soft glow behind the bust when he is active.
+			if (raise > 0) {
+				Color glow = new Color(90, 220, 200) * (0.25f * raise);
+				glow.A = 0;
+				FillCircle(sb, MoonHeadTop + new Vector2(0, 40), 70, glow);
+			}
+			sb.Draw(head, MoonHeadTop, frame, Color.White, 0f, new Vector2(head.Width / 4f, 0), 1f, SpriteEffects.None, 0f);
+		}
 
 		private void DrawMoonLord(SpriteBatch sb, VideoSlotRound round, float t)
 		{
-			Texture2D head = mlHead.Value, hand = mlHand.Value;
-			bool revealing = ActiveStep(round, out SlotStep step, out int tick) && step.Fx.Count > 0 && step.Kind is StepKind.Land or StepKind.Tumble;
-			bool multiplying = round.Phase == VideoPhase.Steps && step?.Kind == StepKind.Multiply;
-			float raise = revealing ? MathHelper.Clamp(tick / 12f, 0, 1) : multiplying ? 1f : 0f;
-			if (revealing && tick > BeamStart + BeamGap * step.Fx.Count + BeamLife)
-				raise = MathHelper.Clamp(1 - (tick - (BeamStart + BeamGap * step.Fx.Count + BeamLife)) / 10f, 0, 1);
-			bool eyeOpen = revealing && tick > 8 && raise > 0.2f || multiplying;
-			float bob = (float)Math.Sin(t * 1.6f) * 3;
-			Vector2 headPos = new(Stage.Center.X, Stage.Y + 8 + bob);
-			var hf = new Rectangle(eyeOpen ? head.Width / 2 : 0, 0, head.Width / 2, head.Height);
+			Texture2D hand = mlHand.Value;
+			MoonPose(round, out float raise, out bool eyeOpen, out bool revealing, out SlotStep step, out int tick);
 			for (int side = -1; side <= 1; side += 2) {
-				Vector2 shoulder = headPos + new Vector2(side * 26, 52);
-				Vector2 handPos = shoulder + new Vector2(side * (70 - raise * 10), 20 - raise * 62 + (float)Math.Sin(t * 2 + side) * 3);
-				DrawArm(sb, shoulder, handPos);
 				var hfr = new Rectangle(eyeOpen ? hand.Width / 2 : 0, 0, hand.Width / 2, hand.Height);
-				sb.Draw(hand, handPos, hfr, Color.White, side * (0.3f - raise * 0.25f), new Vector2(hand.Width / 4f, hand.Height * 0.7f), 1f, side < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
+				float tilt = side * (0.25f - raise * 0.2f);
+				sb.Draw(hand, MoonHand(side, raise, t), hfr, Color.White, tilt, new Vector2(hand.Width / 4f, hand.Height * 0.55f), 0.9f, side < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
+				if (eyeOpen) {
+					Color palm = new Color(120, 240, 230) * (0.4f + 0.2f * (float)Math.Sin(t * 10 + side));
+					palm.A = 0;
+					FillCircle(sb, MoonHand(side, raise, t) + new Vector2(0, 2), 10, palm);
+				}
 			}
-			sb.Draw(head, headPos, hf, Color.White, 0f, new Vector2(head.Width / 4f, 0), 1f, SpriteEffects.None, 0f);
 			if (eyeOpen) {
 				Color glow = new Color(120, 230, 255) * (0.5f + 0.3f * (float)Math.Sin(t * 12));
 				glow.A = 0;
-				FillCircle(sb, MoonEye + new Vector2(0, bob), 9, glow);
+				FillCircle(sb, MoonEye, 9, glow);
 			}
-
 			if (!revealing)
 				return;
 			for (int k = 0; k < step.Fx.Count; k++) {
@@ -324,19 +384,10 @@ namespace CasinoWorld.Common.Games.VideoSlots
 					continue;
 				float life = (tick - start) / (float)BeamLife;
 				Vector2 target = CellRect(step.Fx[k].Reel, step.Fx[k].Row).Center.ToVector2();
-				Beam(sb, MoonEye + new Vector2(0, bob), target, 1f - Math.Abs(life * 2 - 1));
+				Beam(sb, MoonEye, target, 1f - Math.Abs(life * 2 - 1));
 				if (tick >= start + 6 && Once(100 + k))
 					Burst(target, new Color(140, 240, 255), 12, false);
 			}
-		}
-
-		private static void DrawArm(SpriteBatch sb, Vector2 from, Vector2 to)
-		{
-			Vector2 mid = (from + to) / 2 + new Vector2(0, 14);
-			Line(sb, from, mid, new Color(104, 120, 120), 8);
-			Line(sb, mid, to, new Color(104, 120, 120), 7);
-			Line(sb, from, mid, new Color(150, 172, 162), 4);
-			Line(sb, mid, to, new Color(150, 172, 162), 3);
 		}
 
 		private static void Beam(SpriteBatch sb, Vector2 from, Vector2 to, float strength)
@@ -350,8 +401,10 @@ namespace CasinoWorld.Common.Games.VideoSlots
 			FillCircle(sb, to, 16 * strength + 4, outer);
 		}
 
-		// The Angler sits on the pier; in a collect he casts his line to every fish in turn.
-		private Vector2 RodTip => new(Stage.X + 92, Stage.Y + 22);
+		// The Angler stands on the pier; in a collect he casts his line to every fish in turn.
+		private Vector2 AnglerFeet => new(Stage.X + 64, Stage.Y + 52);
+
+		private Vector2 RodTip => AnglerFeet + new Vector2(64, -64);
 
 		private void DrawAngler(SpriteBatch sb, VideoSlotRound round, float t)
 		{
@@ -359,8 +412,13 @@ namespace CasinoWorld.Common.Games.VideoSlots
 			Texture2D tex = TextureAssets.Npc[NPCID.Angler].Value;
 			int frames = Main.npcFrameCount[NPCID.Angler];
 			var frame = new Rectangle(0, 0, tex.Width, tex.Height / Math.Max(1, frames));
-			sb.Draw(tex, new Vector2(Stage.X + 60, Stage.Y + 64), frame, Color.White, 0f, new Vector2(frame.Width / 2f, frame.Height), 1.4f, SpriteEffects.FlipHorizontally, 0f);
-			Line(sb, new Vector2(Stage.X + 66, Stage.Y + 46), RodTip, new Color(120, 80, 40), 3);
+			sb.Draw(tex, AnglerFeet, frame, Color.White, 0f, new Vector2(frame.Width / 2f, frame.Height - 4), 1.2f, SpriteEffects.FlipHorizontally, 0f);
+			// Golden rod held out over the water.
+			Main.instance.LoadItem(ItemID.GoldenFishingRod);
+			Texture2D rod = TextureAssets.Item[ItemID.GoldenFishingRod].Value;
+			Vector2 grip = AnglerFeet + new Vector2(10, -26);
+			float angle = (RodTip - grip).ToRotation();
+			sb.Draw(rod, grip, null, Color.White, angle + MathHelper.PiOver4, new Vector2(0, rod.Height), (RodTip - grip).Length() / (rod.Width * 1.41f), SpriteEffects.None, 0f);
 			if (ActiveStep(round, out SlotStep step, out int tick) && step.Kind == StepKind.Collect) {
 				for (int k = 0; k < step.Fx.Count; k++) {
 					int start = 8 + 16 * k;
@@ -377,9 +435,10 @@ namespace CasinoWorld.Common.Games.VideoSlots
 				}
 			}
 			else {
-				Vector2 bob = new(Stage.X + 150, Stage.Y + 72 + (float)Math.Sin(t * 3) * 2);
+				Vector2 bob = new(RodTip.X + 60, Stage.Y + 60 + (float)Math.Sin(t * 3) * 2);
 				Line(sb, RodTip, bob, Color.White * 0.6f, 1);
-				CasinoDraw.Fill(sb, new Rectangle((int)bob.X - 2, (int)bob.Y - 2, 4, 4), Color.Red);
+				CasinoDraw.Fill(sb, new Rectangle((int)bob.X - 3, (int)bob.Y - 4, 6, 4), Color.Red);
+				CasinoDraw.Fill(sb, new Rectangle((int)bob.X - 3, (int)bob.Y, 6, 3), Color.White);
 			}
 		}
 
