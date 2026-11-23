@@ -95,8 +95,10 @@ namespace CasinoWorld.Common.Games
 
 		public void Close()
 		{
-			if (Rolling)
+			if (Rolling) {
 				Settle();
+				Timer = RollTicks;
+			}
 			Bets.Clear();
 			ui?.SetState(null);
 		}

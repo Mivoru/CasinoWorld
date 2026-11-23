@@ -141,7 +141,7 @@ namespace CasinoWorld.Common.Games
 
 		// ------------------------------------------------------------------ storage
 
-		public static void Load()
+		public static new void Load()
 		{
 			try {
 				Week.Clear();

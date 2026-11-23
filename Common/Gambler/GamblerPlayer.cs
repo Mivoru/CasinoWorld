@@ -82,6 +82,9 @@ namespace CasinoWorld.Common.Gambler
 			CelestialSet = false;
 			Martingale = false;
 			PrefixJackpot = Content.Prefixes.GamblerPrefix.JackpotOf(Player.HeldItem);
+			// Gambler hits never crit, so crit from vanilla reforges (Keen, Zealous, Godly...) becomes half as much jackpot chance.
+			if (Player.HeldItem.CountsAsClass<GamblerDamageClass>())
+				PrefixJackpot += Player.HeldItem.crit * 0.005f;
 			if (houseEdgeCooldown > 0)
 				houseEdgeCooldown--;
 		}

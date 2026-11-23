@@ -48,7 +48,24 @@ namespace CasinoWorld.Common.Systems
 		{
 			Active = CaptainSpawned = false;
 			Kills = 0;
-			wasDay = true;
+		}
+
+		public override void OnWorldLoad() => wasDay = Main.dayTime;
+
+		public override void SaveWorldData(Terraria.ModLoader.IO.TagCompound tag)
+		{
+			if (!Active)
+				return;
+			tag["hsnActive"] = true;
+			tag["hsnKills"] = Kills;
+			tag["hsnCaptain"] = CaptainSpawned;
+		}
+
+		public override void LoadWorldData(Terraria.ModLoader.IO.TagCompound tag)
+		{
+			Active = tag.ContainsKey("hsnActive");
+			Kills = tag.ContainsKey("hsnKills") ? tag.GetInt("hsnKills") : 0;
+			CaptainSpawned = tag.ContainsKey("hsnCaptain") && tag.GetBool("hsnCaptain");
 		}
 
 		private static void Announce(string key, Color color)

@@ -63,8 +63,8 @@ namespace CasinoWorld.Content.NPCs.Boss
 			NPC.damage = 70;
 			NPC.defense = 26;
 			NPC.lifeMax = BaseLife;
-			NPC.HitSound = SoundID.NPCHit4;
-			NPC.DeathSound = CasinoSounds.BossBreak;
+			NPC.HitSound = SoundID.NPCHit1;
+			NPC.DeathSound = SoundID.NPCDeath1;
 			NPC.knockBackResist = 0f;
 			NPC.noGravity = true;
 			NPC.noTileCollide = true;
@@ -264,6 +264,8 @@ namespace CasinoWorld.Content.NPCs.Boss
 				Say("Mods.CasinoWorld.Boss.PitBoss.Bets", new Color(255, 220, 120));
 				float floor = FloorBelow(Target.Center);
 				int winning = Main.rand.Next(2);
+				Argument = winning;
+				NPC.netUpdate = true;
 				const int ZoneWidth = 6 * 16;
 				float offset = Main.rand.Next(2) * ZoneWidth;
 				for (int k = -7; k <= 7; k++) {
@@ -272,8 +274,14 @@ namespace CasinoWorld.Content.NPCs.Boss
 					Shoot(new Vector2(x, floor), Vector2.Zero, ModContent.ProjectileType<BetZone>(), ZoneDamage, color, winning, BetTelegraph);
 				}
 			}
-			if ((int)(Timer % cycle) == BetTelegraph - BetReveal)
+			if ((int)(Timer % cycle) == BetTelegraph - BetReveal && Timer % 1f < Speed) {
+				// The ball lands: call the colour out loud.
 				SoundEngine.PlaySound(CasinoSounds.RouletteBallDrop, NPC.Center);
+				bool red = Argument == 0;
+				if (!Main.dedServ)
+					CombatText.NewText(NPC.Hitbox, red ? new Color(255, 80, 80) : new Color(200, 200, 220), Language.GetTextValue(red ? "Mods.CasinoWorld.Boss.PitBoss.Red" : "Mods.CasinoWorld.Boss.PitBoss.Black"), true);
+				CasinoFx.Ring(NPC.Center + new Vector2(0, 58), red ? new Color(255, 70, 70) : new Color(150, 150, 180), 16, 5f, 1.2f);
+			}
 			if (Timer > rounds * cycle + 20)
 				SetState(State.Hover);
 		}
@@ -503,6 +511,12 @@ namespace CasinoWorld.Content.NPCs.Boss
 				transitionFlash--;
 		}
 
+		private static void Sleeve(SpriteBatch sb, Vector2 a, Vector2 b, Color c, float width)
+		{
+			Vector2 d = b - a;
+			sb.Draw(Terraria.GameContent.TextureAssets.MagicPixel.Value, a, new Rectangle(0, 0, 1, 1), c, d.ToRotation(), new Vector2(0, 0.5f), new Vector2(d.Length(), width), SpriteEffects.None, 0f);
+		}
+
 		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
 		{
 			handTex ??= ModContent.Request<Texture2D>("CasinoWorld/Content/NPCs/Boss/PitBoss_Hand");
@@ -544,7 +558,7 @@ namespace CasinoWorld.Content.NPCs.Boss
 			}
 			spriteBatch.Draw(wheel, center + new Vector2(0, 58), wFrame, light, 0f, wFrame.Size() / 2f, 1f, SpriteEffects.None, 0f);
 
-			// Body.
+			// Body (drawn after the sleeves start so the shoulders cover them).
 			SpriteEffects flip = NPC.spriteDirection < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 			spriteBatch.Draw(body, center, NPC.frame, light, tilt, NPC.frame.Size() / 2f, 1f, flip, 0f);
 
@@ -558,9 +572,18 @@ namespace CasinoWorld.Content.NPCs.Boss
 				};
 				if (stunned)
 					lift = (float)Math.Sin(t * 8 + side) * 12f;
-				Vector2 at = center + new Vector2(side * 58f, 8f + lift + (float)Math.Sin(t * 3f + side) * 4f);
+				Vector2 at = center + new Vector2(side * 62f, 8f + lift + (float)Math.Sin(t * 3f + side) * 4f);
+				// Pinstripe sleeve from the shoulder to the cuff.
+				Vector2 shoulder = center + new Vector2(side * 30f, 6f);
+				Vector2 elbow = (shoulder + at) / 2f + new Vector2(side * 8f, 10f);
+				Color dark = new Color(24, 26, 46).MultiplyRGB(light), cloth = new Color(52, 58, 96).MultiplyRGB(light), hi = new Color(84, 92, 140).MultiplyRGB(light);
+				Sleeve(spriteBatch, shoulder, elbow, dark, 20f);
+				Sleeve(spriteBatch, elbow, at, dark, 17f);
+				Sleeve(spriteBatch, shoulder, elbow, cloth, 15f);
+				Sleeve(spriteBatch, elbow, at, cloth, 12f);
+				Sleeve(spriteBatch, shoulder + new Vector2(0, -4), elbow + new Vector2(0, -4), hi, 3f);
 				var hFrame = new Rectangle(fist ? hand.Width / 2 : 0, 0, hand.Width / 2, hand.Height);
-				spriteBatch.Draw(hand, at, hFrame, light, side * 0.2f, hFrame.Size() / 2f, 1f, side < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
+				spriteBatch.Draw(hand, at, hFrame, light, side * 0.2f, hFrame.Size() / 2f, 1.3f, side < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
 			}
 
 			// Phase aura.

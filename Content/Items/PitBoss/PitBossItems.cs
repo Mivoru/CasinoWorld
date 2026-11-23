@@ -243,6 +243,7 @@ namespace CasinoWorld.Content.Items.PitBoss
 			Item.shoot = ModContent.ProjectileType<RakeChip>();
 			Item.shootSpeed = 11f;
 			Item.UseSound = CasinoSounds.ChipStack;
+			Item.noUseGraphic = false;
 			Item.width = Item.height = 40;
 			Item.value = Item.sellPrice(gold: 6);
 			Item.rare = ItemRarityID.Pink;
@@ -270,6 +271,7 @@ namespace CasinoWorld.Content.Items.PitBoss
 			Item.shoot = ModContent.ProjectileType<RevolverChip>();
 			Item.shootSpeed = 14f;
 			Item.UseSound = SoundID.Item36;
+			Item.noUseGraphic = false;
 			Item.width = 50;
 			Item.height = 22;
 			Item.value = Item.sellPrice(gold: 6);
@@ -280,8 +282,12 @@ namespace CasinoWorld.Content.Items.PitBoss
 
 		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
 		{
+			Vector2 muzzle = position + velocity.SafeNormalize(Vector2.UnitX) * 44f;
+			CasinoFx.Sparks(muzzle, new Color(255, 220, 120), 8, 3f, 1f);
+			for (int k = 0; k < 4; k++)
+				Dust.NewDustPerfect(muzzle, DustID.Smoke, velocity * 0.15f + Main.rand.NextVector2Circular(1, 1), 120, default, 1f).noGravity = true;
 			for (int k = 0; k < 5; k++)
-				Projectile.NewProjectile(source, position, velocity.RotatedByRandom(0.22f) * Main.rand.NextFloat(0.85f, 1.1f), type, damage, knockback, player.whoAmI);
+				Projectile.NewProjectile(source, muzzle, velocity.RotatedByRandom(0.22f) * Main.rand.NextFloat(0.85f, 1.1f), type, damage, knockback, player.whoAmI);
 			return false;
 		}
 	}

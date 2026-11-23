@@ -37,6 +37,8 @@ namespace CasinoWorld.Common.Games
 			bonusPaid = false;
 			var rng = new Random((int)(Today * 31 + Player.name.GetHashCode()));
 			var pool = new System.Collections.Generic.List<Challenge>((Challenge[])Enum.GetValues(typeof(Challenge)));
+			if (!Main.hardMode)
+				pool.Remove(Challenge.VideoBonus);   // video slots are in the hardmode casino
 			for (int k = 0; k < 3; k++) {
 				int pick = rng.Next(pool.Count);
 				today[k] = pool[pick];

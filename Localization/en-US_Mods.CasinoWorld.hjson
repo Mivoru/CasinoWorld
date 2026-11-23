@@ -512,6 +512,7 @@ Buffs: {
 }
 
 Gambler: {
+	TooltipOdds: "{0}% jackpot chance, {1}% bust chance"
 	AllInReady: "ALL IN! [{0}]"
 	Jackpot: JACKPOT!
 	Bust: bust
@@ -581,6 +582,8 @@ Boss: {
 		Security: SECURITY!
 		Double: Double or nothing!
 		Tails: TAILS!
+		Red: RED!
+		Black: BLACK!
 		Phase2: DOUBLE OR NOTHING!
 		Phase3: BANKRUPT!
 		Title: THE PIT BOSS
