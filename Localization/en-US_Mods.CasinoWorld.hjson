@@ -2,6 +2,24 @@
 # Please read https://github.com/tModLoader/tModLoader/wiki/Localization to learn more about localization and these files.
 
 Items: {
+	ScratchCard: {
+		DisplayName: Scratch Card
+		Tooltip:
+			'''
+			Scratch off nine fields: three of a kind wins
+			Prizes from x1 up to x100 the card price
+			'''
+	}
+
+	PlatinumScratchCard: {
+		DisplayName: Platinum Scratch Card
+		Tooltip:
+			'''
+			Scratch off nine fields: three of a kind wins
+			Prizes from x1 up to x100 the card price
+			'''
+	}
+
 	LuckyPenny: {
 		DisplayName: Lucky Penny
 		Tooltip: Heads: the coin splits in two on its first hit
@@ -844,6 +862,14 @@ Crates: {
 }
 
 UI: {
+	Scratch: {
+		Title: SCRATCH CARD
+		Rule: "Hold the mouse over a field to scratch. Three of a kind wins! Card: {0}"
+		RevealAll: Reveal all
+		Close: Collect
+		Won: "Three of a kind! You win {0}!"
+		Lost: No luck this time.
+	}
 	GamblingDisabled: Gambling is turned off on this world (mod settings).
 	ClosedBoss: The casino doors are locked while a boss is on the loose!
 	ClosedEvent: The casino is closed until the invasion is over!
