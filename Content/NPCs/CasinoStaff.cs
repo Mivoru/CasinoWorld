@@ -195,12 +195,15 @@ namespace CasinoWorld.Content.NPCs
 		public override void SetChatButtons(ref string button, ref string button2)
 		{
 			button = Language.GetTextValue("LegacyInterface.28"); // "Shop"
+			button2 = Language.GetTextValue("Mods.CasinoWorld.NPCs.Bartender.DiceButton");
 		}
 
 		public override void OnChatButtonClicked(bool firstButton, ref string shopName)
 		{
 			if (firstButton)
 				shopName = "Shop";
+			else
+				ModContent.GetInstance<Common.Games.SicBoSystem>().Open();
 		}
 
 		public override void AddShops()

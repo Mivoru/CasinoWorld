@@ -794,6 +794,7 @@ NPCs: {
 
 	Bartender: {
 		DisplayName: Bartender
+		DiceButton: Play dice
 
 		Chat: {
 			0: Drinks are on the house! Kidding. Drinks are on you.
@@ -870,6 +871,21 @@ Crates: {
 }
 
 UI: {
+	Dice: {
+		Title: Sic Bo
+		Rules: "Small 4-10 / Big 11-17 and Odd / Even pay 1:1 (triples lose). A number pays 1:1, 2:1, 3:1 per die. Any triple pays 30:1."
+		Hint: Place chips on a bet (right click removes one), then roll.
+		Small: SMALL 4-10
+		Big: BIG 11-17
+		Odd: ODD
+		Even: EVEN
+		Triple: ANY TRIPLE  30:1
+		Roll: ROLL
+		Repeat: REPEAT
+		Bet: "Bet: {0} / max {1}"
+		Win: "{0} {1} {2}! You win {3}!"
+		Lose: "{0} {1} {2}. No luck."
+	}
 	Scratch: {
 		Title: SCRATCH CARD
 		Rule: "Hold the mouse over a field to scratch. Three of a kind wins! Card: {0}"
