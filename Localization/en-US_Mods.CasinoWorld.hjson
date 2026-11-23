@@ -2,6 +2,46 @@
 # Please read https://github.com/tModLoader/tModLoader/wiki/Localization to learn more about localization and these files.
 
 Items: {
+
+	ChipSlimeBanner: {
+		DisplayName: Chip Slime Banner
+		Tooltip: "{$CommonItemTooltip.BannerBonus}{$Mods.CasinoWorld.NPCs.ChipSlime.DisplayName}"
+	}
+
+	CardSoldierBanner: {
+		DisplayName: Card Soldier Banner
+		Tooltip: "{$CommonItemTooltip.BannerBonus}{$Mods.CasinoWorld.NPCs.CardSoldier.DisplayName}"
+	}
+
+	SlotMimicBanner: {
+		DisplayName: Slot Mimic Banner
+		Tooltip: "{$CommonItemTooltip.BannerBonus}{$Mods.CasinoWorld.NPCs.SlotMimic.DisplayName}"
+	}
+
+	LuckyBatBanner: {
+		DisplayName: Lucky Bat Banner
+		Tooltip: "{$CommonItemTooltip.BannerBonus}{$Mods.CasinoWorld.NPCs.LuckyBat.DisplayName}"
+	}
+
+	RoyalGuardBanner: {
+		DisplayName: Royal Guard Banner
+		Tooltip: "{$CommonItemTooltip.BannerBonus}{$Mods.CasinoWorld.NPCs.RoyalGuard.DisplayName}"
+	}
+
+	RouletteWraithBanner: {
+		DisplayName: Roulette Wraith Banner
+		Tooltip: "{$CommonItemTooltip.BannerBonus}{$Mods.CasinoWorld.NPCs.RouletteWraith.DisplayName}"
+	}
+
+	LoanSharkBanner: {
+		DisplayName: Loan Shark Banner
+		Tooltip: "{$CommonItemTooltip.BannerBonus}{$Mods.CasinoWorld.NPCs.LoanShark.DisplayName}"
+	}
+
+	BrokeGamblerBanner: {
+		DisplayName: Broke Gambler Banner
+		Tooltip: "{$CommonItemTooltip.BannerBonus}{$Mods.CasinoWorld.NPCs.BrokeGambler.DisplayName}"
+	}
 	CasinoDoorItem: {
 		DisplayName: Casino Door
 		Tooltip:

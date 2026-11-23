@@ -29,6 +29,8 @@ namespace CasinoWorld.Content.NPCs.Enemies
 
 		public override void SetDefaults()
 		{
+			Banner = Type;
+			BannerItem = ModContent.ItemType<Items.Banners.ChipSlimeBanner>();
 			NPC.width = 28;
 			NPC.height = 28;
 			NPC.aiStyle = NPCAIStyleID.Slime;
@@ -139,6 +141,8 @@ namespace CasinoWorld.Content.NPCs.Enemies
 
 		public override void SetDefaults()
 		{
+			Banner = Type;
+			BannerItem = ModContent.ItemType<Items.Banners.CardSoldierBanner>();
 			NPC.width = 24;
 			NPC.height = 44;
 			NPC.aiStyle = NPCAIStyleID.Fighter;
@@ -224,6 +228,8 @@ namespace CasinoWorld.Content.NPCs.Enemies
 
 		public override void SetDefaults()
 		{
+			Banner = Type;
+			BannerItem = ModContent.ItemType<Items.Banners.SlotMimicBanner>();
 			NPC.width = 40;
 			NPC.height = 44;
 			NPC.aiStyle = NPCAIStyleID.Mimic;

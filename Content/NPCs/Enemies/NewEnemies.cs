@@ -37,13 +37,14 @@ namespace CasinoWorld.Content.NPCs.Enemies
 		public override void SetDefaults()
 		{
 			NPC.CloneDefaults(NPCID.Zombie);
+			Banner = Type;
+			BannerItem = ModContent.ItemType<Items.Banners.BrokeGamblerBanner>();
 			NPC.lifeMax = 55;
 			NPC.damage = 16;
 			NPC.defense = 6;
 			NPC.value = Item.buyPrice(silver: 3);
 			AIType = NPCID.Zombie;
 			AnimationType = NPCID.Zombie;
-			Banner = 0;
 		}
 
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -107,6 +108,8 @@ namespace CasinoWorld.Content.NPCs.Enemies
 
 		public override void SetDefaults()
 		{
+			Banner = Type;
+			BannerItem = ModContent.ItemType<Items.Banners.LuckyBatBanner>();
 			NPC.width = 26;
 			NPC.height = 18;
 			NPC.aiStyle = NPCAIStyleID.Bat;
@@ -172,6 +175,8 @@ namespace CasinoWorld.Content.NPCs.Enemies
 
 		public override void SetDefaults()
 		{
+			Banner = Type;
+			BannerItem = ModContent.ItemType<Items.Banners.RoyalGuardBanner>();
 			NPC.width = 30;
 			NPC.height = 52;
 			NPC.aiStyle = NPCAIStyleID.Fighter;
@@ -270,6 +275,8 @@ namespace CasinoWorld.Content.NPCs.Enemies
 	{
 		public override void SetDefaults()
 		{
+			Banner = Type;
+			BannerItem = ModContent.ItemType<Items.Banners.RouletteWraithBanner>();
 			NPC.width = 36;
 			NPC.height = 44;
 			NPC.aiStyle = NPCAIStyleID.HoveringFighter;
@@ -381,6 +388,8 @@ namespace CasinoWorld.Content.NPCs.Enemies
 
 		public override void SetDefaults()
 		{
+			Banner = Type;
+			BannerItem = ModContent.ItemType<Items.Banners.LoanSharkBanner>();
 			NPC.width = 56;
 			NPC.height = 24;
 			NPC.aiStyle = NPCAIStyleID.Piranha;
