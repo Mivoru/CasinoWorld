@@ -30,6 +30,8 @@ namespace CasinoWorld.Common.Gambler
 		public static ModKeybind AllInKey { get; private set; }
 
 		public float Pot;
+		/// <summary>Pot gain multiplier from equipment, reset every tick.</summary>
+		public float GainMultiplier = 1f;
 		private int sinceHit;
 		private bool announcedFull;
 
@@ -49,7 +51,7 @@ namespace CasinoWorld.Common.Gambler
 		{
 			if (AllInActive)
 				return;
-			Pot = Math.Min(Max, Pot + (jackpot ? 3f : bust ? 2f : 1f));
+			Pot = Math.Min(Max, Pot + (jackpot ? 3f : bust ? 2f : 1f) * GainMultiplier);
 			sinceHit = 0;
 		}
 
@@ -81,6 +83,8 @@ namespace CasinoWorld.Common.Gambler
 		}
 
 		public override void OnRespawn() => Pot = 0;
+
+		public override void ResetEffects() => GainMultiplier = 1f;
 	}
 
 	/// <summary>Draws the Pot meter under the local player while a gambler weapon is held or the pot is not empty.</summary>

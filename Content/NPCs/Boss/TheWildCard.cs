@@ -850,32 +850,35 @@ namespace CasinoWorld.Content.NPCs.Boss
 	public class CasinoDowned : ModSystem
 	{
 		public static bool DownedWildCard;
+		public static bool DownedPitBoss;
 
-		public override void ClearWorld() => DownedWildCard = false;
+		public override void ClearWorld() => DownedWildCard = DownedPitBoss = false;
 
 		public override void SaveWorldData(Terraria.ModLoader.IO.TagCompound tag)
 		{
 			if (DownedWildCard)
 				tag["downedWildCard"] = true;
+			if (DownedPitBoss)
+				tag["downedPitBoss"] = true;
 		}
 
 		// Worlds that beat the old boss (The House) keep their progress.
 		public override void LoadWorldData(Terraria.ModLoader.IO.TagCompound tag)
-			=> DownedWildCard = tag.ContainsKey("downedWildCard") || tag.ContainsKey("downedTheHouse");
-
-		public override void NetSend(BinaryWriter writer) => writer.Write(DownedWildCard);
-
-		public override void NetReceive(BinaryReader reader) => DownedWildCard = reader.ReadBoolean();
-
-		public override void PostSetupContent()
 		{
-			// Boss Checklist entry (between Skeletron 5.0 and the Wall of Flesh 6.0).
-			if (!ModLoader.TryGetMod("BossChecklist", out Mod checklist))
-				return;
-			checklist.Call("LogBoss", Mod, nameof(TheWildCard), 5.5f, () => DownedWildCard, ModContent.NPCType<TheWildCard>(),
-				new System.Collections.Generic.Dictionary<string, object> {
-					["spawnItems"] = ModContent.ItemType<GoldenChip>(),
-				});
+			DownedWildCard = tag.ContainsKey("downedWildCard") || tag.ContainsKey("downedTheHouse");
+			DownedPitBoss = tag.ContainsKey("downedPitBoss");
+		}
+
+		public override void NetSend(BinaryWriter writer)
+		{
+			writer.Write(DownedWildCard);
+			writer.Write(DownedPitBoss);
+		}
+
+		public override void NetReceive(BinaryReader reader)
+		{
+			DownedWildCard = reader.ReadBoolean();
+			DownedPitBoss = reader.ReadBoolean();
 		}
 	}
 }

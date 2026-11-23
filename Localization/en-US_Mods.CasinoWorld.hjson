@@ -2,6 +2,59 @@
 # Please read https://github.com/tModLoader/tModLoader/wiki/Localization to learn more about localization and these files.
 
 Items: {
+	VaultKey: {
+		DisplayName: Vault Key
+		Tooltip:
+			'''
+			Opens the vault of the High Rollers casino
+			Summons The Pit Boss (use inside the High Rollers casino)
+			'''
+	}
+
+	PitBossBag: {
+		DisplayName: Treasure Bag (The Pit Boss)
+		Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+	}
+
+	InsiderInfo: {
+		DisplayName: Insider Info
+		Tooltip:
+			'''
+			6% increased jackpot chance
+			The Pot fills 30% faster
+			'''
+	}
+
+	PitBossMask: {
+		DisplayName: Pit Boss Mask
+		Tooltip: ""
+	}
+
+	PitBossTrophy: {
+		DisplayName: The Pit Boss Trophy
+		Tooltip: ""
+	}
+
+	PitBossRelicItem: {
+		DisplayName: The Pit Boss Relic
+		Tooltip: ""
+	}
+
+	CroupiersRake: {
+		DisplayName: Croupier's Rake
+		Tooltip: Sweeps out three chips that roll along the floor
+	}
+
+	BankBreaker: {
+		DisplayName: Bank Breaker
+		Tooltip: Blasts a spread of five chips
+	}
+
+	VaultBuster: {
+		DisplayName: Vault Buster
+		Tooltip: Lobs a gold bar that bursts into a shower of coins
+	}
+
 	GamblerEmblem: {
 		DisplayName: Gambler Emblem
 		Tooltip: 15% increased gambler damage
@@ -488,6 +541,19 @@ Upgrade: {
 }
 
 Boss: {
+	PitBoss: {
+		Intro: The vault doors swing open... The Pit Boss wants a word.
+		Leave: The Pit Boss cashes out and disappears into the vault.
+		Bets: PLACE YOUR BETS! Red or black?
+		Security: SECURITY!
+		Double: Double or nothing!
+		Tails: TAILS!
+		Phase2: DOUBLE OR NOTHING!
+		Phase3: BANKRUPT!
+		Title: THE PIT BOSS
+		Subtitle: Keeper of the Vault
+	}
+
 	WildCard: {
 		Intro: The Wild Card shuffles into the night... Pick a card, any card!
 		Leave: The show is over. The Wild Card vanishes in a puff of cards.
@@ -501,6 +567,7 @@ Boss: {
 }
 
 Bestiary: {
+	ThePitBoss: He runs the floor of the High Rollers casino from a flying roulette wheel. Nobody leaves his table up, not for long.
 	BrokeGambler: He bet the house, then the horse, then his own heartbeat. He still swears the next spin is the one.
 	LuckyBat: A cave bat that stole a gold coin from a careless miner and refuses to let go.
 	RoyalGuard: The knight of spades guards the deepest card tables. Its shield is a giant playing card.
@@ -628,6 +695,7 @@ NPCs: {
 	}
 
 	TheWildCard.DisplayName: The Wild Card
+	ThePitBoss.DisplayName: The Pit Boss
 	ChipSlime.DisplayName: Chip Slime
 	CardSoldier.DisplayName: Card Soldier
 	SlotMimic.DisplayName: Slot Mimic
@@ -956,6 +1024,14 @@ UI: {
 }
 
 Projectiles: {
+	BouncingChip.DisplayName: Chip
+	BetZone.DisplayName: Winning Number
+	GoldBarDrop.DisplayName: Gold Bar
+	GiantCoin.DisplayName: Double or Nothing
+	CoinShockwave.DisplayName: Shockwave
+	RakeChip.DisplayName: Chip
+	VaultBar.DisplayName: Gold Bar
+	CoinShrapnel.DisplayName: Coin
 	AllInBurst.DisplayName: All In
 	HighRollerChip.DisplayName: High Roller Chip
 	LoadedDie.DisplayName: Loaded Die
@@ -1019,6 +1095,7 @@ Configs: {
 }
 
 BossChecklist: {
+	PitBossSpawn: Use a [i:CasinoWorld/VaultKey] inside the High Rollers casino after defeating a mechanical boss.
 	WildCardSpawn: Use a [i:CasinoWorld/GoldenChip] at night outside the casinos. Crafted from Loyalty Tokens and gold or platinum bars.
 }
 

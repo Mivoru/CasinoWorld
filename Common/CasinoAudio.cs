@@ -71,5 +71,7 @@ namespace CasinoWorld.Common
 		public static int HighRollers => MusicLoader.GetMusicSlot(ModContent.GetInstance<CasinoWorld>(), "Assets/Music/HighRollers");
 		public static int TheHouse => MusicLoader.GetMusicSlot(ModContent.GetInstance<CasinoWorld>(), "Assets/Music/TheHouse");
 		public static int TheHouseWheel => MusicLoader.GetMusicSlot(ModContent.GetInstance<CasinoWorld>(), "Assets/Music/TheHouseWheel");
+		public static int PitBoss => MusicLoader.GetMusicSlot(ModContent.GetInstance<CasinoWorld>(), "Assets/Music/PitBoss");
+		public static int PitBossTwo => MusicLoader.GetMusicSlot(ModContent.GetInstance<CasinoWorld>(), "Assets/Music/PitBossTwo");
 	}
 }
