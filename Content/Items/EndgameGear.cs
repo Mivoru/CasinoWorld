@@ -1,3 +1,4 @@
+using CasinoWorld.Common;
 using CasinoWorld.Common.Gambler;
 using CasinoWorld.Common.Upgrades;
 using CasinoWorld.Content.Projectiles;
@@ -26,6 +27,7 @@ namespace CasinoWorld.Content.Items.Weapons
 			Item.knockBack = 3f;
 			Item.useTime = Item.useAnimation = 24;
 			Item.shoot = ModContent.ProjectileType<SpectralCard>();
+			Item.UseSound = CasinoSounds.CardThrow with { Pitch = -0.2f };
 			Item.shootSpeed = 13f;
 			Item.width = 30;
 			Item.height = 38;
@@ -44,6 +46,7 @@ namespace CasinoWorld.Content.Items.Weapons
 			Item.knockBack = 4f;
 			Item.useTime = Item.useAnimation = 28;
 			Item.shoot = ModContent.ProjectileType<DoublingDie>();
+			Item.UseSound = CasinoSounds.DiceThrow;
 			Item.shootSpeed = 11f;
 			Item.width = 34;
 			Item.height = 32;
@@ -94,6 +97,7 @@ namespace CasinoWorld.Content.Items.Weapons
 			Item.knockBack = 3f;
 			Item.useTime = Item.useAnimation = 16;
 			Item.shoot = ModContent.ProjectileType<GalaxyCard>();
+			Item.UseSound = CasinoSounds.CardThrow with { Pitch = 0.3f };
 			Item.shootSpeed = 15f;
 			Item.width = 36;
 			Item.height = 34;

@@ -114,16 +114,24 @@ namespace CasinoWorld.Common.Gambler
 					Player.AddBuff(ModContent.BuffType<Content.Buffs.HotStreak>(), Content.Buffs.HotStreak.Duration);
 				CombatText.NewText(target.Hitbox, new Color(255, 215, 60), Language.GetTextValue("Mods.CasinoWorld.Gambler.Jackpot"), dramatic: true);
 				SoundEngine.PlaySound(CasinoSounds.JackpotProc, target.Center);
-				for (int k = 0; k < 8; k++)
-					Dust.NewDust(target.position, target.width, target.height, DustID.GoldCoin, Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-4f, -1f));
+				for (int k = 0; k < 10; k++)
+					Dust.NewDust(target.position, target.width, target.height, DustID.GoldCoin, Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-5f, -1f));
+				Effects.CasinoFx.Ring(target.Center, new Color(255, 220, 90), 14, 4.5f, 1.3f);
+				Effects.CasinoFx.Ring(target.Center, new Color(255, 250, 220), 8, 2.5f, 1f);
+				Lighting.AddLight(target.Center, 1.2f, 0.9f, 0.3f);
 			}
 			else if (roll < jackpotChance + BustChance && HouseEdge && houseEdgeCooldown <= 0) {
 				houseEdgeCooldown = 600;
 				CombatText.NewText(target.Hitbox, new Color(120, 220, 255), Language.GetTextValue("Mods.CasinoWorld.Gambler.Saved"));
+				Effects.CasinoFx.Ring(target.Center, new Color(120, 220, 255), 10, 3f);
 			}
 			else if (roll < jackpotChance + BustChance) {
 				modifiers.SourceDamage *= BustMultiplier;
 				CombatText.NewText(target.Hitbox, Color.Gray, Language.GetTextValue("Mods.CasinoWorld.Gambler.Bust"));
+				for (int k = 0; k < 4; k++) {
+					Dust d = Dust.NewDustDirect(target.position, target.width, target.height, DustID.Smoke, 0, -1f, 150, default, 0.9f);
+					d.noGravity = true;
+				}
 				if (Main.rand.NextBool(3))   // not on every bust, it would get tiring
 					SoundEngine.PlaySound(CasinoSounds.BustProc, target.Center);
 			}

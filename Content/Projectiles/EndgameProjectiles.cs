@@ -1,4 +1,6 @@
 using System;
+using CasinoWorld.Common;
+using CasinoWorld.Common.Effects;
 using CasinoWorld.Common.Gambler;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -15,6 +17,16 @@ namespace CasinoWorld.Content.Projectiles
 	{
 		protected virtual Color Tint => Color.White;
 		protected virtual float DrawScale => 1f;
+		protected virtual Color TrailColor => Tint;
+		protected virtual Color GlowColor => Color.Transparent;
+
+		public override void SetStaticDefaults() => CasinoFx.EnableTrail(Type, 10);
+
+		public override bool OnTileCollide(Vector2 oldVelocity)
+		{
+			Collision.HitTiles(Projectile.position, oldVelocity, Projectile.width, Projectile.height);
+			return true;
+		}
 
 		public override void SetDefaults()
 		{
@@ -49,8 +61,7 @@ namespace CasinoWorld.Content.Projectiles
 
 		public override bool PreDraw(ref Color lightColor)
 		{
-			Texture2D tex = TextureAssets.Projectile[Type].Value;
-			Main.EntitySpriteDraw(tex, Projectile.Center - Main.screenPosition, null, Tint * Projectile.Opacity, Projectile.rotation, tex.Size() / 2f, DrawScale, SpriteEffects.None);
+			CasinoFx.Draw(Projectile, TrailColor, GlowColor, DrawScale, Tint);
 			return false;
 		}
 	}
@@ -61,6 +72,14 @@ namespace CasinoWorld.Content.Projectiles
 		public override string Texture => "CasinoWorld/Content/Projectiles/RoyalCard";
 		protected override Color Tint => new Color(150, 255, 255, 180);
 		protected override float DrawScale => 1.4f;
+		protected override Color GlowColor => new(120, 255, 255);
+
+		public override void OnKill(int timeLeft)
+		{
+			CasinoFx.CardImpact(Projectile.Center, Projectile.velocity, new Color(120, 255, 255));
+			for (int k = 0; k < 10; k++)
+				Dust.NewDustPerfect(Projectile.Center, DustID.DungeonSpirit, Main.rand.NextVector2Circular(3, 3), 100, default, 1.1f).noGravity = true;
+		}
 
 		public override void SetDefaults()
 		{
@@ -88,6 +107,15 @@ namespace CasinoWorld.Content.Projectiles
 	{
 		public override string Texture => "CasinoWorld/Content/Projectiles/LoadedDie";
 		protected override Color Tint => new(140, 255, 160);
+		protected override Color GlowColor => new(90, 255, 120);
+
+		public override bool OnTileCollide(Vector2 oldVelocity)
+		{
+			CasinoFx.DieImpact(Projectile.Center, new Color(140, 255, 160));
+			return base.OnTileCollide(oldVelocity);
+		}
+
+		public override void OnKill(int timeLeft) => CasinoFx.Sparks(Projectile.Center, new Color(140, 255, 160), 8, 3f);
 
 		public override void SetDefaults()
 		{
@@ -107,6 +135,7 @@ namespace CasinoWorld.Content.Projectiles
 		{
 			if (Projectile.ai[0] != 0f || Projectile.owner != Main.myPlayer)
 				return;
+			CasinoFx.Ring(Projectile.Center, new Color(160, 255, 170), 12, 3.5f);
 			for (int side = -1; side <= 1; side += 2)
 				Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, new Vector2(side * 4f, -6f), Type, Projectile.damage / 2, Projectile.knockBack, Projectile.owner, 1f);
 		}
@@ -118,6 +147,18 @@ namespace CasinoWorld.Content.Projectiles
 		public override string Texture => "CasinoWorld/Content/Projectiles/HighRollerChip";
 		protected override Color Tint => Projectile.ai[0] == 1f ? new Color(255, 220, 90) : Color.White;
 		protected override float DrawScale => Projectile.ai[0] == 1f ? 1.4f : 0.9f;
+		protected override Color TrailColor => Projectile.ai[0] == 1f ? new Color(255, 220, 90) : new Color(255, 240, 200);
+		protected override Color GlowColor => Projectile.ai[0] == 1f ? new Color(255, 200, 60) : Color.Transparent;
+
+		public override void OnKill(int timeLeft)
+		{
+			if (Projectile.ai[0] == 1f) {
+				CasinoFx.Explosion(Projectile.Center, 60, new Color(255, 210, 80), new Color(255, 250, 200), 1.5f);
+				SoundEngine.PlaySound(CasinoSounds.JackpotProc with { Volume = 0.6f }, Projectile.Center);
+			}
+			else
+				CasinoFx.ChipImpact(Projectile.Center, new Color(255, 230, 160));
+		}
 
 		public override void SetDefaults()
 		{
@@ -141,6 +182,13 @@ namespace CasinoWorld.Content.Projectiles
 		public override string Texture => "CasinoWorld/Content/Projectiles/RoyalCard";
 		protected override Color Tint => Projectile.ai[0] == 1f ? new Color(200, 160, 255, 200) : new Color(170, 120, 255);
 		protected override float DrawScale => Projectile.ai[0] == 1f ? 0.9f : 1.5f;
+		protected override Color GlowColor => new(170, 110, 255);
+
+		public override void OnKill(int timeLeft)
+		{
+			CasinoFx.CardImpact(Projectile.Center, Projectile.velocity, new Color(190, 140, 255), Projectile.ai[0] == 0f);
+			CasinoFx.Sparks(Projectile.Center, new Color(255, 240, 200), 5, 3f, 0.8f);
+		}
 
 		public override void SetDefaults()
 		{
@@ -164,6 +212,7 @@ namespace CasinoWorld.Content.Projectiles
 		{
 			if (Projectile.ai[0] != 0f || Projectile.owner != Main.myPlayer)
 				return;
+			CasinoFx.Ring(Projectile.Center, new Color(200, 150, 255), 16, 5f, 1.2f);
 			for (int k = 0; k < 3; k++)
 				Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Main.rand.NextVector2CircularEdge(9f, 9f),
 					Type, (int)(Projectile.damage * 0.35f), 1f, Projectile.owner, 1f);
@@ -176,6 +225,8 @@ namespace CasinoWorld.Content.Projectiles
 		public override string Texture => "CasinoWorld/Content/Projectiles/ExplodingDie";
 		protected override Color Tint => new(255, 190, 120);
 		protected override float DrawScale => 1.8f;
+		protected override Color TrailColor => new(255, 140, 50);
+		protected override Color GlowColor => new(255, 120, 40);
 
 		public override void SetDefaults()
 		{
@@ -218,8 +269,10 @@ namespace CasinoWorld.Content.Projectiles
 		public override void OnKill(int timeLeft)
 		{
 			SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
-			for (int k = 0; k < 40; k++)
-				Dust.NewDust(Projectile.Center - new Vector2(70), 140, 140, k % 3 == 0 ? DustID.SolarFlare : DustID.Torch, 0, 0, 0, default, 1.8f);
+			SoundEngine.PlaySound(CasinoSounds.ChipExplode, Projectile.Center);
+			CasinoFx.Explosion(Projectile.Center, 160, new Color(255, 150, 50), new Color(255, 240, 180), 5f);
+			for (int k = 0; k < 20; k++)
+				Dust.NewDust(Projectile.Center - new Vector2(70), 140, 140, DustID.SolarFlare, 0, 0, 0, default, 1.6f);
 		}
 	}
 
@@ -243,16 +296,30 @@ namespace CasinoWorld.Content.Projectiles
 			modifiers.SourceDamage *= Multipliers[Math.Clamp((int)Projectile.ai[0], 0, 6)];
 		}
 
+		private Color SymbolColor => (int)Projectile.ai[0] switch {
+			0 => new Color(255, 60, 70), 1 => new Color(255, 240, 80), 2 => new Color(255, 200, 70), 3 => new Color(90, 230, 110),
+			4 => new Color(220, 220, 230), 5 => new Color(255, 70, 70), _ => new Color(120, 220, 255),
+		};
+
 		public override void AI()
 		{
 			Projectile.rotation = Projectile.velocity.X * 0.03f;
-			Lighting.AddLight(Projectile.Center, 0.5f, 0.3f, 0.5f);
+			Lighting.AddLight(Projectile.Center, SymbolColor.ToVector3() * 0.5f);
+			if (Main.rand.NextBool(3))
+				CasinoFx.Spark(Projectile.Center, -Projectile.velocity * 0.1f, SymbolColor, 0.7f);
+		}
+
+		public override void OnKill(int timeLeft)
+		{
+			CasinoFx.Ring(Projectile.Center, SymbolColor, 12, 3f);
+			SoundEngine.PlaySound(CasinoSounds.ReelStop with { Volume = 0.4f, Pitch = 0.3f }, Projectile.Center);
 		}
 
 		public override bool PreDraw(ref Color lightColor)
 		{
 			Texture2D tex = TextureAssets.Projectile[Type].Value;
 			int symbol = Math.Clamp((int)Projectile.ai[0], 0, 6);
+			CasinoFx.Trail(Projectile, tex, new Rectangle(symbol * 64, 0, 64, 64), SymbolColor, 0.38f);
 			Main.EntitySpriteDraw(tex, Projectile.Center - Main.screenPosition, new Rectangle(symbol * 64, 0, 64, 64), Color.White, Projectile.rotation, new Vector2(32), 0.38f, SpriteEffects.None);
 			return false;
 		}

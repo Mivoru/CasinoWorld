@@ -1,4 +1,5 @@
 using CasinoWorld.Common;
+using CasinoWorld.Common.Effects;
 using CasinoWorld.Common.Gambler;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -16,6 +17,16 @@ namespace CasinoWorld.Content.Projectiles
 
 		private ref float Bounces => ref Projectile.ai[0];
 
+		public override void SetStaticDefaults() => CasinoFx.EnableTrail(Type, 6);
+
+		public override bool PreDraw(ref Color lightColor)
+		{
+			// The fuse glows faster as the die is about to blow.
+			float urgency = Projectile.timeLeft < 60 ? (float)System.Math.Abs(System.Math.Sin(Projectile.timeLeft * 0.4f)) : 0.3f;
+			CasinoFx.Draw(Projectile, new Color(255, 140, 60), new Color(255, 120, 40) * urgency);
+			return false;
+		}
+
 		public override void SetDefaults()
 		{
 			Projectile.width = 12;
@@ -32,8 +43,9 @@ namespace CasinoWorld.Content.Projectiles
 		{
 			Projectile.velocity.Y = System.Math.Min(Projectile.velocity.Y + 0.3f, 12f);
 			Projectile.rotation += Projectile.velocity.X * 0.06f;
-			if (Main.rand.NextBool(3))
-				Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Torch, Scale: 0.8f);
+			if (Main.rand.NextBool(2))
+				CasinoFx.Spark(Projectile.Center + new Vector2(0, -6).RotatedBy(Projectile.rotation), new Vector2(0, -1f), new Color(255, 170, 60), 0.6f);
+			Lighting.AddLight(Projectile.Center, 0.4f, 0.2f, 0.05f);
 
 			// In the last few ticks, grow into the explosion so it damages everything around.
 			if (Projectile.timeLeft == 3 && Projectile.owner == Main.myPlayer) {
@@ -54,6 +66,7 @@ namespace CasinoWorld.Content.Projectiles
 			}
 
 			SoundEngine.PlaySound(CasinoSounds.DiceBounce, Projectile.Center);
+			CasinoFx.Sparks(Projectile.Center, new Color(255, 170, 60), 4, 2f, 0.8f);
 			if (Projectile.velocity.X != oldVelocity.X)
 				Projectile.velocity.X = -oldVelocity.X * 0.8f;
 			if (Projectile.velocity.Y != oldVelocity.Y)
@@ -65,13 +78,7 @@ namespace CasinoWorld.Content.Projectiles
 		{
 			SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.6f }, Projectile.Center);
 			SoundEngine.PlaySound(CasinoSounds.ChipExplode, Projectile.Center);
-			for (int k = 0; k < 25; k++) {
-				Dust dust = Dust.NewDustDirect(Projectile.Center - new Vector2(30), 60, 60, DustID.Torch, Scale: 1.6f);
-				dust.noGravity = true;
-				dust.velocity *= 3f;
-			}
-			for (int k = 0; k < 10; k++)
-				Dust.NewDust(Projectile.Center - new Vector2(30), 60, 60, DustID.Smoke, Scale: 1.3f);
+			CasinoFx.Explosion(Projectile.Center, ExplosionSize, new Color(255, 170, 60), new Color(255, 240, 200), 2.5f);
 		}
 	}
 
@@ -80,6 +87,14 @@ namespace CasinoWorld.Content.Projectiles
 	{
 		private const float HomingRange = 16 * 30;
 		private const float TurnRate = 0.08f;
+
+		public override void SetStaticDefaults() => CasinoFx.EnableTrail(Type, 10);
+
+		public override bool PreDraw(ref Color lightColor)
+		{
+			CasinoFx.Draw(Projectile, new Color(255, 210, 80), new Color(255, 200, 80));
+			return false;
+		}
 
 		public override void SetDefaults()
 		{
@@ -115,14 +130,17 @@ namespace CasinoWorld.Content.Projectiles
 				Vector2 wanted = Projectile.DirectionTo(target.Center) * speed;
 				Projectile.velocity = Vector2.Lerp(Projectile.velocity, wanted, TurnRate);
 			}
-			if (Main.rand.NextBool(4))
-				Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.GoldCoin, Scale: 0.6f);
+			if (Main.rand.NextBool(3))
+				CasinoFx.Spark(Projectile.Center, -Projectile.velocity * 0.1f, new Color(255, 210, 80), 0.6f);
+			Lighting.AddLight(Projectile.Center, 0.35f, 0.28f, 0.08f);
 		}
 
 		public override void OnKill(int timeLeft)
 		{
-			for (int k = 0; k < 4; k++)
-				Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.GoldCoin, Scale: 0.8f);
+			if (timeLeft > 0)
+				Collision.HitTiles(Projectile.position, Projectile.velocity, Projectile.width, Projectile.height);
+			CasinoFx.CardImpact(Projectile.Center, Projectile.velocity, new Color(255, 200, 70));
+			CasinoFx.Sparks(Projectile.Center, new Color(255, 230, 140), 6, 3f);
 		}
 	}
 
@@ -133,6 +151,26 @@ namespace CasinoWorld.Content.Projectiles
 		private const int MaxRicochets = 2;
 
 		private ref float Ricochets => ref Projectile.ai[0];
+
+		public override void SetStaticDefaults() => CasinoFx.EnableTrail(Type, 10);
+
+		public override bool PreDraw(ref Color lightColor)
+		{
+			CasinoFx.Draw(Projectile, new Color(190, 110, 255), new Color(180, 90, 255));
+			return false;
+		}
+
+		public override void OnKill(int timeLeft)
+		{
+			CasinoFx.ChipImpact(Projectile.Center, new Color(200, 120, 255));
+			CasinoFx.Ring(Projectile.Center, new Color(255, 220, 120), 12, 4f, 1.1f);
+		}
+
+		public override bool OnTileCollide(Vector2 oldVelocity)
+		{
+			Collision.HitTiles(Projectile.position, oldVelocity, Projectile.width, Projectile.height);
+			return true;
+		}
 
 		public override void SetDefaults()
 		{
@@ -149,8 +187,9 @@ namespace CasinoWorld.Content.Projectiles
 		public override void AI()
 		{
 			Projectile.rotation += 0.35f * Projectile.direction;
-			if (Main.rand.NextBool(3))
-				Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.PurpleTorch, Scale: 0.9f);
+			if (Main.rand.NextBool(2))
+				CasinoFx.Spark(Projectile.Center, -Projectile.velocity * 0.1f, new Color(190, 110, 255), 0.7f);
+			Lighting.AddLight(Projectile.Center, 0.3f, 0.15f, 0.45f);
 		}
 
 		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
@@ -174,7 +213,9 @@ namespace CasinoWorld.Content.Projectiles
 			if (next != null) {
 				Projectile.velocity = Projectile.DirectionTo(next.Center) * Projectile.velocity.Length();
 				Projectile.netUpdate = true;
-				SoundEngine.PlaySound(SoundID.Item10 with { Pitch = 0.3f }, Projectile.Center);
+				SoundEngine.PlaySound(CasinoSounds.ChipFlick with { Pitch = 0.3f }, Projectile.Center);
+				for (int k = 0; k < 8; k++)   // arc of sparks towards the next target
+					CasinoFx.Spark(Vector2.Lerp(Projectile.Center, next.Center, k / 8f), Main.rand.NextVector2Circular(1, 1), new Color(220, 150, 255), 0.8f);
 			}
 		}
 	}

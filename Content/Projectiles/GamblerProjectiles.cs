@@ -1,4 +1,5 @@
 using CasinoWorld.Common;
+using CasinoWorld.Common.Effects;
 using CasinoWorld.Common.Gambler;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -14,6 +15,14 @@ namespace CasinoWorld.Content.Projectiles
 		private const int MaxBounces = 3;
 
 		private ref float Bounces => ref Projectile.ai[0];
+
+		public override void SetStaticDefaults() => CasinoFx.EnableTrail(Type, 6);
+
+		public override bool PreDraw(ref Color lightColor)
+		{
+			CasinoFx.Draw(Projectile, new Color(255, 240, 220), Color.Transparent);
+			return false;
+		}
 
 		public override void SetDefaults()
 		{
@@ -39,6 +48,8 @@ namespace CasinoWorld.Content.Projectiles
 				return true;
 
 			SoundEngine.PlaySound(CasinoSounds.DiceBounce, Projectile.Center);
+			CasinoFx.Sparks(Projectile.Center, new Color(255, 230, 200), 3, 1.5f, 0.7f);
+			Collision.HitTiles(Projectile.position, oldVelocity, Projectile.width, Projectile.height);
 			if (Projectile.velocity.X != oldVelocity.X)
 				Projectile.velocity.X = -oldVelocity.X * 0.8f;
 			if (Projectile.velocity.Y != oldVelocity.Y)
@@ -46,16 +57,20 @@ namespace CasinoWorld.Content.Projectiles
 			return false;
 		}
 
-		public override void OnKill(int timeLeft)
-		{
-			for (int k = 0; k < 5; k++)
-				Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Smoke);
-		}
+		public override void OnKill(int timeLeft) => CasinoFx.DieImpact(Projectile.Center, new Color(255, 230, 200));
 	}
 
 	/// <summary>Fast straight card, slightly affected by gravity late in flight.</summary>
 	public class ThrownCard : ModProjectile
 	{
+		public override void SetStaticDefaults() => CasinoFx.EnableTrail(Type, 7);
+
+		public override bool PreDraw(ref Color lightColor)
+		{
+			CasinoFx.Draw(Projectile, new Color(255, 120, 120), Color.Transparent);
+			return false;
+		}
+
 		public override void SetDefaults()
 		{
 			Projectile.width = 10;
@@ -76,8 +91,9 @@ namespace CasinoWorld.Content.Projectiles
 
 		public override void OnKill(int timeLeft)
 		{
-			for (int k = 0; k < 3; k++)
-				Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Cloud, Scale: 0.6f);
+			if (timeLeft > 0)
+				Collision.HitTiles(Projectile.position, Projectile.velocity, Projectile.width, Projectile.height);
+			CasinoFx.CardImpact(Projectile.Center, Projectile.velocity, new Color(220, 40, 50));
 		}
 	}
 
@@ -87,6 +103,22 @@ namespace CasinoWorld.Content.Projectiles
 		private const float RicochetRange = 16 * 25;
 
 		private ref float Ricocheted => ref Projectile.ai[0];
+
+		public override void SetStaticDefaults() => CasinoFx.EnableTrail(Type, 8);
+
+		public override bool PreDraw(ref Color lightColor)
+		{
+			CasinoFx.Draw(Projectile, new Color(255, 210, 90), new Color(255, 200, 80));
+			return false;
+		}
+
+		public override void OnKill(int timeLeft) => CasinoFx.ChipImpact(Projectile.Center, new Color(255, 210, 90));
+
+		public override bool OnTileCollide(Vector2 oldVelocity)
+		{
+			Collision.HitTiles(Projectile.position, oldVelocity, Projectile.width, Projectile.height);
+			return true;
+		}
 
 		public override void SetDefaults()
 		{
@@ -104,7 +136,8 @@ namespace CasinoWorld.Content.Projectiles
 		{
 			Projectile.rotation += 0.4f * Projectile.direction;
 			if (Main.rand.NextBool(4))
-				Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.GoldCoin, Scale: 0.7f);
+				CasinoFx.Spark(Projectile.Center, -Projectile.velocity * 0.1f, new Color(255, 210, 90), 0.6f);
+			Lighting.AddLight(Projectile.Center, 0.3f, 0.24f, 0.08f);
 		}
 
 		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
@@ -128,7 +161,8 @@ namespace CasinoWorld.Content.Projectiles
 			if (next != null) {
 				Projectile.velocity = Projectile.DirectionTo(next.Center) * Projectile.velocity.Length();
 				Projectile.netUpdate = true;
-				SoundEngine.PlaySound(SoundID.Item10 with { Pitch = 0.5f }, Projectile.Center);
+				SoundEngine.PlaySound(CasinoSounds.ChipFlick with { Pitch = 0.5f }, Projectile.Center);
+				CasinoFx.Ring(Projectile.Center, new Color(255, 220, 120), 10, 3f);
 			}
 		}
 	}

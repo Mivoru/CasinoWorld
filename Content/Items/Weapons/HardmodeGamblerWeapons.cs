@@ -1,3 +1,4 @@
+using CasinoWorld.Common;
 using CasinoWorld.Content.Projectiles;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -20,6 +21,7 @@ namespace CasinoWorld.Content.Items.Weapons
 			Item.knockBack = 5f;
 			Item.useTime = Item.useAnimation = 24;
 			Item.shoot = ModContent.ProjectileType<ExplodingDie>();
+			Item.UseSound = CasinoSounds.DiceThrow;
 			Item.shootSpeed = 10f;
 			Item.value = Item.sellPrice(gold: 5);
 			Item.rare = ItemRarityID.Pink;
@@ -39,6 +41,7 @@ namespace CasinoWorld.Content.Items.Weapons
 			Item.knockBack = 2f;
 			Item.useTime = Item.useAnimation = 24;
 			Item.shoot = ModContent.ProjectileType<RoyalCard>();
+			Item.UseSound = CasinoSounds.CardThrow with { Pitch = 0.2f };
 			Item.shootSpeed = 12f;
 			Item.value = Item.sellPrice(gold: 5);
 			Item.rare = ItemRarityID.Pink;

@@ -1,3 +1,4 @@
+using CasinoWorld.Common;
 using CasinoWorld.Common.Gambler;
 using CasinoWorld.Content.Projectiles;
 using Microsoft.Xna.Framework;
@@ -38,6 +39,7 @@ namespace CasinoWorld.Content.Items.Weapons
 			Item.knockBack = 4f;
 			Item.useTime = Item.useAnimation = 24;
 			Item.shoot = ModContent.ProjectileType<LoadedDie>();
+			Item.UseSound = CasinoSounds.DiceThrow;
 			Item.shootSpeed = 9f;
 			Item.value = Item.sellPrice(gold: 1);
 			Item.rare = ItemRarityID.Green;
@@ -57,6 +59,7 @@ namespace CasinoWorld.Content.Items.Weapons
 			Item.knockBack = 1.5f;
 			Item.useTime = Item.useAnimation = 20;
 			Item.shoot = ModContent.ProjectileType<ThrownCard>();
+			Item.UseSound = CasinoSounds.CardThrow;
 			Item.shootSpeed = 12f;
 			Item.value = Item.sellPrice(gold: 1);
 			Item.rare = ItemRarityID.Green;
@@ -85,7 +88,7 @@ namespace CasinoWorld.Content.Items.Weapons
 			Item.shootSpeed = 13f;
 			Item.value = Item.sellPrice(gold: 1, silver: 50);
 			Item.rare = ItemRarityID.Orange;
-			Item.UseSound = SoundID.Item7;
+			Item.UseSound = CasinoSounds.ChipFlick;
 		}
 	}
 }

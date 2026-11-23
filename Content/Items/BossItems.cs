@@ -146,6 +146,15 @@ namespace CasinoWorld.Content.Items.Weapons
 					break;
 			}
 			SoundEngine.PlaySound(SoundID.CoinPickup, target.Center);
+			SoundEngine.PlaySound(Common.CasinoSounds.LeverPull with { Volume = 0.6f }, target.Center);
+			Common.Effects.CasinoFx.Ring(target.Center, new Color(255, 220, 90), 12, 4f, 1.2f);
+			CombatText.NewText(target.Hitbox, new Color(255, 215, 60), "7 7 7");
+		}
+
+		public override void MeleeEffects(Player player, Rectangle hitbox)
+		{
+			if (Main.rand.NextBool(3))
+				Common.Effects.CasinoFx.Spark(hitbox.Center.ToVector2() + Main.rand.NextVector2Circular(hitbox.Width / 2f, hitbox.Height / 2f), Vector2.Zero, new Color(255, 210, 90), 0.8f);
 		}
 	}
 
@@ -162,6 +171,7 @@ namespace CasinoWorld.Content.Items.Weapons
 			Item.useTime = Item.useAnimation = 10;
 			Item.shoot = ModContent.ProjectileType<ThrownCard>();
 			Item.shootSpeed = 14f;
+			Item.UseSound = Common.CasinoSounds.CardThrow;
 			Item.width = 32;
 			Item.height = 34;
 			Item.value = Item.sellPrice(gold: 3);
@@ -225,6 +235,20 @@ namespace CasinoWorld.Content.Projectiles
 {
 	public class WheelOfFortuneDisc : ModProjectile
 	{
+		public override void SetStaticDefaults() => Common.Effects.CasinoFx.EnableTrail(Type, 8);
+
+		public override bool PreDraw(ref Color lightColor)
+		{
+			Common.Effects.CasinoFx.Draw(Projectile, new Color(255, 80, 80), new Color(255, 200, 80) * 0.5f);
+			return false;
+		}
+
+		public override void AI()
+		{
+			if (Main.rand.NextBool(3))
+				Common.Effects.CasinoFx.Spark(Projectile.Center + Main.rand.NextVector2Circular(10, 10), Vector2.Zero, Main.rand.NextBool() ? new Color(255, 70, 70) : new Color(200, 200, 210), 0.7f);
+		}
+
 		public override void SetDefaults()
 		{
 			Projectile.CloneDefaults(ProjectileID.WoodenBoomerang);
@@ -238,6 +262,7 @@ namespace CasinoWorld.Content.Projectiles
 			bool red = Main.rand.NextBool();
 			for (int k = 0; k < 18; k++)
 				Dust.NewDust(Projectile.Center - new Vector2(24), 48, 48, red ? DustID.RedTorch : DustID.Smoke, Main.rand.NextFloat(-4, 4), Main.rand.NextFloat(-4, 4), 0, default, 1.4f);
+			Common.Effects.CasinoFx.Explosion(Projectile.Center, 80, red ? new Color(255, 70, 70) : new Color(120, 120, 140), new Color(255, 220, 120), 1.5f);
 			SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.5f }, Projectile.Center);
 			if (Projectile.owner != Main.myPlayer)
 				return;
