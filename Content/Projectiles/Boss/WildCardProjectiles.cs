@@ -1,5 +1,7 @@
 using System;
 using CasinoWorld.Common;
+using CasinoWorld.Common.Effects;
+using Terraria.Graphics.CameraModifiers;
 using CasinoWorld.Content.NPCs.Boss;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -14,6 +16,31 @@ namespace CasinoWorld.Content.Projectiles.Boss
 	/// <summary>Base for The Wild Card's hostile projectiles.</summary>
 	public abstract class WildCardProjectile : ModProjectile
 	{
+		/// <summary>Trail and glow colours; Transparent = none. Every hostile shot gets a readable trail and glow.</summary>
+		protected virtual Color TrailColor => Color.Transparent;
+		protected virtual Color GlowColor => Color.Transparent;
+		protected virtual Color ImpactColor => new(200, 120, 255);
+
+		public override void SetStaticDefaults() => CasinoFx.EnableTrail(Type, 10);
+
+		public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
+		{
+			if (Projectile.hostile)
+				CasinoFx.Sparks(Projectile.Center, ImpactColor, 3, 2f, 0.8f);
+		}
+
+		public override void OnKill(int timeLeft)
+		{
+			if (Projectile.hostile)
+				CasinoFx.Sparks(Projectile.Center, ImpactColor, 6, 2.5f, 0.9f);
+		}
+
+		public override bool PreDraw(ref Color lightColor)
+		{
+			CasinoFx.Draw(Projectile, TrailColor, GlowColor);
+			return false;
+		}
+
 		public override void SetDefaults()
 		{
 			Projectile.hostile = true;
@@ -35,6 +62,8 @@ namespace CasinoWorld.Content.Projectiles.Boss
 	public class DealtCard : WildCardProjectile
 	{
 		public override string Texture => "CasinoWorld/Content/Projectiles/Boss/PickupCard";
+		protected override Color TrailColor => new(200, 120, 255);
+		protected override Color GlowColor => new(170, 90, 255);
 
 		public override void SetDefaults()
 		{
@@ -47,13 +76,10 @@ namespace CasinoWorld.Content.Projectiles.Boss
 		{
 			Projectile.velocity *= 1.012f;
 			Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+			Lighting.AddLight(Projectile.Center, 0.3f, 0.15f, 0.45f);
 		}
 
-		public override bool PreDraw(ref Color lightColor)
-		{
-			DrawCentered(TextureAssets.Projectile[Type].Value, null, Color.White, Projectile.rotation);
-			return false;
-		}
+		public override void OnKill(int timeLeft) => CasinoFx.CardImpact(Projectile.Center, Projectile.velocity, new Color(170, 90, 255), false);
 	}
 
 	/// <summary>
@@ -149,6 +175,9 @@ namespace CasinoWorld.Content.Projectiles.Boss
 			Projectile.timeLeft = 200;
 		}
 
+		protected override Color TrailColor => new(190, 100, 255);
+		protected override Color GlowColor => new(160, 80, 255);
+
 		public override void AI()
 		{
 			Projectile.velocity *= 1.02f;
@@ -167,7 +196,17 @@ namespace CasinoWorld.Content.Projectiles.Boss
 			Projectile.timeLeft = 260;
 		}
 
+		protected override Color TrailColor => new(255, 90, 90);
+		protected override Color ImpactColor => new(255, 90, 90);
+
 		public override bool CanHitPlayer(Player target) => Projectile.localAI[0] >= Projectile.ai[0];
+
+		public override bool OnTileCollide(Vector2 oldVelocity)
+		{
+			Collision.HitTiles(Projectile.position, oldVelocity, Projectile.width, Projectile.height);
+			CasinoFx.CardImpact(Projectile.Center, oldVelocity, new Color(255, 90, 90), Main.rand.NextBool(3));
+			return true;
+		}
 
 		public override void AI()
 		{
@@ -180,6 +219,8 @@ namespace CasinoWorld.Content.Projectiles.Boss
 				SoundEngine.PlaySound(CasinoSounds.CardThrow with { Volume = 0.4f, Pitch = 0.3f }, Projectile.Center);
 			Projectile.velocity.Y = Math.Min(Projectile.velocity.Y + 0.9f, 15f);
 			Projectile.rotation += 0.3f;
+			// Only collide once it has dropped past where it was dealt, so cards above ceilings still fall in.
+			Projectile.tileCollide = Projectile.localAI[0] > Projectile.ai[0] + 30;
 		}
 
 		public override bool PreDraw(ref Color lightColor)
@@ -190,8 +231,11 @@ namespace CasinoWorld.Content.Projectiles.Boss
 				Color line = new Color(255, 60, 60) * (0.25f + 0.35f * p);
 				line.A = 0;
 				Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle((int)(Projectile.Center.X - Main.screenPosition.X) - 1, (int)(Projectile.Center.Y - Main.screenPosition.Y), 3, 1000), line);
+				Color star = new Color(255, 120, 120) * (0.5f + 0.5f * (float)Math.Sin(Projectile.localAI[0] * 0.5f));
+				star.A = 0;
+				Main.EntitySpriteDraw(TextureAssets.Projectile[Type].Value, Projectile.Center - Main.screenPosition, null, star, 0f, TextureAssets.Projectile[Type].Value.Size() / 2f, 1.6f + p * 0.6f, SpriteEffects.None);
 			}
-			DrawCentered(TextureAssets.Projectile[Type].Value, null, Color.White, Projectile.rotation);
+			CasinoFx.Draw(Projectile, TrailColor, Color.Transparent);
 			return false;
 		}
 	}
@@ -243,6 +287,7 @@ namespace CasinoWorld.Content.Projectiles.Boss
 		{
 			if (Math.Abs(oldVelocity.Y) > 2f) {
 				SoundEngine.PlaySound(CasinoSounds.DiceBounce, Projectile.Center);
+				CasinoFx.DieImpact(Projectile.Bottom, new Color(255, 240, 200), false);
 				Projectile.velocity.Y = -oldVelocity.Y * 0.45f;
 				Projectile.velocity.X *= 0.7f;
 			}
@@ -251,8 +296,10 @@ namespace CasinoWorld.Content.Projectiles.Boss
 				if (!Settled) {
 					Projectile.localAI[0] = 1;
 					Projectile.rotation = 0f;
-					if (!Main.dedServ)
-						CombatText.NewText(Projectile.Hitbox, Color.White, ((int)Projectile.ai[0]).ToString());
+					if (!Main.dedServ) {
+						CombatText.NewText(Projectile.Hitbox, Color.White, ((int)Projectile.ai[0]).ToString(), true);
+						CasinoFx.Ring(Projectile.Center, new Color(255, 240, 200), 10, 2.5f);
+					}
 				}
 			}
 			return false;
@@ -288,6 +335,8 @@ namespace CasinoWorld.Content.Projectiles.Boss
 			if (++Projectile.localAI[0] > 4)
 				return true;
 			SoundEngine.PlaySound(CasinoSounds.DiceBounce, Projectile.Center);
+			CasinoFx.DieImpact(Projectile.Bottom, new Color(200, 120, 255), false);
+			Collision.HitTiles(Projectile.position, oldVelocity, Projectile.width, Projectile.height);
 			if (Projectile.velocity.X != oldVelocity.X)
 				Projectile.velocity.X = -oldVelocity.X;
 			if (Projectile.velocity.Y != oldVelocity.Y)
@@ -297,6 +346,8 @@ namespace CasinoWorld.Content.Projectiles.Boss
 
 		public override bool PreDraw(ref Color lightColor)
 		{
+			Texture2D tex = TextureAssets.Projectile[Type].Value;
+			CasinoFx.Trail(Projectile, tex, new Rectangle((Face(false) - 1) * 32, 0, 32, 32), new Color(200, 120, 255), DrawScale);
 			DrawDie(false, Color.White);
 			return false;
 		}
@@ -323,8 +374,14 @@ namespace CasinoWorld.Content.Projectiles.Boss
 			Projectile.velocity.X = Projectile.localAI[0] * 7.5f;
 			Projectile.velocity.Y = Math.Min(Projectile.velocity.Y + 0.5f, 14f);
 			Projectile.rotation += Projectile.velocity.X * 0.02f;
-			if ((int)Projectile.localAI[1] % 14 == 0)
+			if ((int)Projectile.localAI[1] % 14 == 0) {
 				SoundEngine.PlaySound(CasinoSounds.DiceBounce with { Pitch = -0.6f, Volume = 0.8f }, Projectile.Center);
+				if (!Main.dedServ && Projectile.velocity.Y == 0f) {
+					Main.instance.CameraModifiers.Add(new PunchCameraModifier(Projectile.Center, Vector2.UnitY, 3f, 6f, 10, 900f, "Boxcar"));
+					for (int k = 0; k < 8; k++)
+						Dust.NewDustPerfect(Projectile.Bottom + new Vector2(Main.rand.NextFloat(-30, 30), 0), DustID.Smoke, new Vector2(-Projectile.velocity.X * 0.1f, -1.5f), 120, default, 1.4f);
+				}
+			}
 		}
 
 		public override bool OnTileCollide(Vector2 oldVelocity)
@@ -342,7 +399,9 @@ namespace CasinoWorld.Content.Projectiles.Boss
 
 		public override bool PreDraw(ref Color lightColor)
 		{
-			DrawDie(false, Lighting.GetColor(Projectile.Center.ToTileCoordinates()) * 1.2f);
+			Texture2D tex = TextureAssets.Projectile[Type].Value;
+			CasinoFx.Trail(Projectile, tex, new Rectangle((Face(false) - 1) * 32, 0, 32, 32), new Color(255, 80, 80), DrawScale);
+			DrawDie(false, Color.Lerp(Lighting.GetColor(Projectile.Center.ToTileCoordinates()), Color.White, 0.5f));
 			return false;
 		}
 	}
@@ -373,6 +432,9 @@ namespace CasinoWorld.Content.Projectiles.Boss
 			Projectile.rotation = Projectile.velocity.ToRotation();
 			if (Projectile.timeLeft < 30)
 				Projectile.alpha += 8;
+			Lighting.AddLight(Projectile.Center, 0.5f, 0.15f, 0.15f);
+			if (Main.rand.NextBool(3))
+				CasinoFx.Spark(Projectile.Center, -Projectile.velocity * 0.15f, new Color(255, 80, 80), 0.7f);
 		}
 
 		public override bool PreDraw(ref Color lightColor)
@@ -387,6 +449,9 @@ namespace CasinoWorld.Content.Projectiles.Boss
 				float s = 1f - k * 0.03f;
 				Main.EntitySpriteDraw(tex, Projectile.oldPos[k] + Projectile.Size / 2f - Main.screenPosition, body, Color.White * fade, Projectile.oldRot[k], new Vector2(10), s, SpriteEffects.None);
 			}
+			Color eye = new Color(255, 60, 60) * fade;
+			eye.A = 0;
+			DrawCentered(tex, head, eye * 0.6f, Projectile.rotation, 1.3f);
 			DrawCentered(tex, head, Color.White * fade, Projectile.rotation);
 			return false;
 		}
@@ -413,7 +478,13 @@ namespace CasinoWorld.Content.Projectiles.Boss
 			}
 			Projectile.rotation = (float)Math.Sin(Projectile.ai[1] * 0.2f) * 0.3f;
 			Lighting.AddLight(Projectile.Center, 0.8f, 0.2f, 0.2f);
+			if (Projectile.ai[1] == 40)
+				CasinoFx.Ring(Projectile.Center, new Color(255, 80, 80), 8, 2f);
 		}
+
+		protected override Color TrailColor => new(255, 90, 90);
+		protected override Color GlowColor => new(255, 60, 60);
+		protected override Color ImpactColor => new(255, 90, 90);
 	}
 
 	/// <summary>All In barrage chip: red (ai[0] 0) or black (1).</summary>
@@ -428,15 +499,20 @@ namespace CasinoWorld.Content.Projectiles.Boss
 			Projectile.timeLeft = 240;
 		}
 
+		protected override Color ImpactColor => Projectile.ai[0] == 0 ? new Color(255, 80, 80) : new Color(160, 160, 200);
+
 		public override void AI()
 		{
 			Projectile.rotation += 0.2f;
+			Lighting.AddLight(Projectile.Center, Projectile.ai[0] == 0 ? new Vector3(0.4f, 0.1f, 0.1f) : new Vector3(0.15f, 0.15f, 0.25f));
 		}
 
 		public override bool PreDraw(ref Color lightColor)
 		{
 			Color tint = Projectile.ai[0] == 0 ? Color.White : new Color(70, 70, 90);
-			DrawCentered(TextureAssets.Projectile[Type].Value, new Rectangle(20, 0, 20, 20), tint, Projectile.rotation, 0.85f);
+			Texture2D tex = TextureAssets.Projectile[Type].Value;
+			CasinoFx.Trail(Projectile, tex, new Rectangle(20, 0, 20, 20), Projectile.ai[0] == 0 ? new Color(255, 70, 70) : new Color(140, 140, 190), 0.85f);
+			DrawCentered(tex, new Rectangle(20, 0, 20, 20), tint, Projectile.rotation, 0.85f);
 			return false;
 		}
 	}

@@ -442,6 +442,10 @@ Boss: {
 		Leave: The show is over. The Wild Card vanishes in a puff of cards.
 		AllIn: ALL IN! The Wild Card bets everything!
 		Roll: "{0} + {1} = {2}!"
+		Doubles: DOUBLES! Again!
+		Found: You found me!
+		Title: THE WILD CARD
+		Subtitle: Jester of Fortune
 	}
 }
 
