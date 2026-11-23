@@ -174,7 +174,7 @@ namespace CasinoWorld.Common.Games.Slots
 			Utils.DrawBorderString(sb, Text("Money", Coins.Format(Coins.Count(Main.LocalPlayer))), new Vector2(a.X + 34, a.Bottom - 56), Color.White, 0.8f);
 			Utils.DrawBorderString(sb, Text("Bet", Coins.Format(chips[round.BetIndex])), new Vector2(a.X + 260, a.Bottom - 56), Color.White, 0.8f);
 			string message = string.IsNullOrEmpty(round.Message) ? Text("Hint") : round.Message;
-			Utils.DrawBorderString(sb, message, new Vector2(a.X + 34, a.Bottom - 32), round.MessageColor, 0.9f);
+			CasinoDraw.Fit(sb, message, new Vector2(a.X + 34, a.Bottom - 32), round.MessageColor, 0.9f, a.Width - 68);
 		}
 
 		private static void DrawMarquee(SpriteBatch sb, Rectangle r)

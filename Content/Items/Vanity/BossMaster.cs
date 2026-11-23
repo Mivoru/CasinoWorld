@@ -210,7 +210,7 @@ namespace CasinoWorld.Content.Tiles
 
 		private Asset<Texture2D> relicTexture;
 
-		public override string Texture => "CasinoWorld/Content/Tiles/WildCardRelicPedestal";
+		public override string Texture => "Terraria/Images/Tiles_" + TileID.MasterTrophyBase;
 
 		public override void Load()
 		{

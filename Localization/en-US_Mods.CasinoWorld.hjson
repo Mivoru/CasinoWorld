@@ -22,7 +22,7 @@ Items: {
 		Valid: Build the casino here
 		Invalid: Can't build here: needs solid ground, no chests or water
 		Built: The casino is open for business!
-		AlreadyBuilt: "This world already has its casino, {0} feet {1}. Use the blueprint again within 5 seconds to move it here."
+		AlreadyBuilt: This world already has its casino, {0} feet {1}. Use the blueprint again within 5 seconds to move it here.
 	}
 
 	LoyaltyToken: {
@@ -816,8 +816,8 @@ UI: {
 		FreeSpinsLeft: Free spins: {0} / {1}
 		BonusSoFar: Bonus so far: {0}
 		TotalMult: Total multiplier: x{0}
-		Anglers: "Anglers: {0} / 4   collect x{1}"
-		Trophies: "Wilds: {0} / 3   upgrades {1} / 4"
+		Anglers: Anglers: {0} / 4   collect x{1}
+		Trophies: Wilds: {0} / 3   upgrades {1} / 4
 		Collected: COLLECTED {0}
 		Upgrade: TROPHY! Symbol removed
 		Lottery: The northern lights choose your bonus...

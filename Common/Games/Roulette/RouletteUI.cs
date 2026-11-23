@@ -274,14 +274,14 @@ namespace CasinoWorld.Common.Games.Roulette
 			for (int i = 0; i < RouletteRules.Pockets; i++) {
 				int num = RouletteRules.WheelOrder[i];
 				float a = round.WheelAngle + i * step;
-				Vector2 p = center + 84f * new Vector2((float)Math.Cos(a), (float)Math.Sin(a));
+				Vector2 p = center + 79f * new Vector2((float)Math.Cos(a), (float)Math.Sin(a));
 				Color nc = num == 0 ? new Color(120, 255, 140) : RouletteRules.IsRed(num) ? new Color(255, 120, 120) : Color.White;
-				Utils.DrawBorderString(sb, num.ToString(), p + new Vector2(0, 2), nc, 0.42f, 0.5f, 0.5f);
+				Utils.DrawBorderString(sb, num.ToString(), p + new Vector2(0, 2), nc, 0.4f, 0.5f, 0.5f);
 			}
 
 			if (round.Phase == RoulettePhase.ShowingResult && round.Result >= 0) {
 				float a = round.WheelAngle + RouletteRules.WheelIndexOf(round.Result) * step;
-				Vector2 p = center + 69f * new Vector2((float)Math.Cos(a), (float)Math.Sin(a));
+				Vector2 p = center + 65f * new Vector2((float)Math.Cos(a), (float)Math.Sin(a));
 				float pulse = 0.5f + 0.5f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 8f);
 				Fill(sb, new Rectangle((int)p.X - 8, (int)p.Y - 8, 16, 16), Gold * (0.35f + 0.35f * pulse));
 			}
@@ -291,7 +291,7 @@ namespace CasinoWorld.Common.Games.Roulette
 				// The ball rattles over the frets while it drops into the pocket band.
 				float drop = round.BallDrop;
 				float bounce = drop > 0.05f && drop < 0.95f ? Math.Abs((float)Math.Sin(drop * 38f)) * 4f * (1f - drop) : 0f;
-				float radius = MathHelper.Lerp(80f, 69f, drop) + bounce;
+				float radius = MathHelper.Lerp(74f, 65f, drop) + bounce;
 				Vector2 ball = center + radius * new Vector2((float)Math.Cos(round.BallAngle), (float)Math.Sin(round.BallAngle));
 				Texture2D tex = ballTexture.Value;
 				sb.Draw(tex, ball + new Vector2(2, 3), null, Color.Black * 0.4f, 0f, tex.Size() / 2f, 1f, SpriteEffects.None, 0f);
@@ -354,7 +354,7 @@ namespace CasinoWorld.Common.Games.Roulette
 			Utils.DrawBorderString(sb, Text("Bet") + " " + Coins.Format(round.TotalBet) + "  /  " + Text("Max") + " " + Coins.Format(MaxBet),
 				new Vector2(x + 200, y), Color.White, 0.8f);
 			if (!string.IsNullOrEmpty(round.Message))
-				Utils.DrawBorderString(sb, round.Message, new Vector2(x, y + 22), round.MessageColor, 0.85f);
+				CasinoDraw.Fit(sb, round.Message, new Vector2(x, y + 22), round.MessageColor, 0.85f, a.Right - 20 - x);
 		}
 
 		private static void Fill(SpriteBatch sb, Rectangle rect, Color color) => CasinoDraw.Fill(sb, rect, color);

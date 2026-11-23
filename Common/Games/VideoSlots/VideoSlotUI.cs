@@ -166,7 +166,7 @@ namespace CasinoWorld.Common.Games.VideoSlots
 			long money = Games.Coins.Count(Main.LocalPlayer);
 			Utils.DrawBorderString(sb, Language.GetTextValue("Mods.CasinoWorld.UI.Slots.Money", Games.Coins.Format(money)), new Vector2(a.X + 24, a.Bottom - 50), Color.White, 0.85f);
 			Utils.DrawBorderString(sb, Text("Bet", Games.Coins.Format(Chips[Math.Clamp(round.BetIndex, 0, Chips.Length - 1)])), new Vector2(a.X + 300, a.Bottom - 50), Color.White, 0.85f);
-			Utils.DrawBorderString(sb, round.Message, new Vector2(a.X + 24, a.Bottom - 28), round.MessageColor, 0.85f);
+			CasinoDraw.Fit(sb, round.Message, new Vector2(a.X + 24, a.Bottom - 28), round.MessageColor, 0.85f, a.Width - 48);
 		}
 
 		/// <summary>Spawns particles when a new step or phase begins (UI side only).</summary>
@@ -736,7 +736,7 @@ namespace CasinoWorld.Common.Games.VideoSlots
 				else {
 					float pulse = 1.4f + 0.12f * (float)Math.Sin(t * 8);
 					Utils.DrawBorderString(sb, Text("FreeSpins", spins), new Vector2(g.Center.X, g.Center.Y - 30), accent, pulse, 0.5f, 0.5f);
-					Utils.DrawBorderString(sb, Text("Feature" + key), new Vector2(g.Center.X, g.Center.Y + 24), Color.White, 0.75f, 0.5f, 0.5f);
+					CasinoDraw.Wrapped(sb, Text("Feature" + key), new Vector2(g.Center.X, g.Center.Y + 14), Color.White, 0.75f, g.Width - 30, 0.5f);
 				}
 			}
 			else if (round.Phase == VideoPhase.Outro) {
@@ -792,7 +792,7 @@ namespace CasinoWorld.Common.Games.VideoSlots
 				Utils.DrawBorderString(sb, Text("Animal" + k), new Vector2(card.Center.X, card.Bottom - 22), on ? Color.White : Color.Gray, 0.7f, 0.5f, 0.5f);
 			}
 			if (tick >= SpinEnd) {
-				Utils.DrawBorderString(sb, Text("AnimalFeature" + chosen, round.Machine.FreeSpinsLeft), new Vector2(g.Center.X, g.Bottom - 40), Color.White, 0.75f, 0.5f, 0.5f);
+				CasinoDraw.Wrapped(sb, Text("AnimalFeature" + chosen, round.Machine.FreeSpinsLeft), new Vector2(g.Center.X, g.Bottom - 52), Color.White, 0.75f, g.Width - 30, 0.5f);
 				if (Once(501))
 					for (int k = 0; k < 30; k++)
 						Burst(new Vector2(g.Center.X - 2 * (cw + 8) + chosen * (cw + 8) + 4 + cw / 2, g.Y + 100), new Color(200, 240, 255), 1, false);
@@ -806,7 +806,7 @@ namespace CasinoWorld.Common.Games.VideoSlots
 			CasinoDraw.Fill(sb, r, Color.Black * 0.45f);
 			SlotMachine m = round.Machine;
 			float y = r.Y + 8;
-			if (round.InBonusRun || m.InBonus) {
+			if (round.InBonusRun) {
 				CasinoDraw.Fill(sb, new Rectangle(r.X + 4, (int)y - 2, r.Width - 8, 24), accent * (0.5f + 0.2f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 6)));
 				Utils.DrawBorderString(sb, Text("FreeSpinsLeft", m.FreeSpinsLeft, m.FreeSpinsTotal), new Vector2(r.Center.X, y + 12), Color.White, 0.85f, 0.5f, 0.5f);
 				y += 28;
@@ -846,20 +846,19 @@ namespace CasinoWorld.Common.Games.VideoSlots
 
 			Utils.DrawBorderString(sb, Language.GetTextValue("Mods.CasinoWorld.UI.Slots.Pays"), new Vector2(r.X + 10, y), accent, 0.85f);
 			y += 20;
-			Utils.DrawBorderString(sb, Text("PayType" + key), new Vector2(r.X + 10, y), Color.LightGray, 0.55f);
-			y += 18;
+			y += CasinoDraw.Wrapped(sb, Text("PayType" + key), new Vector2(r.X + 10, y), Color.LightGray, 0.55f, r.Width - 20) + 4;
 			int[] all = SlotThemes.Icons(key);
 			foreach (PayRow row in m.PayTable()) {
 				if (y > r.Bottom - 70)
 					break;
 				DrawIcon(sb, all[row.Symbol], new Vector2(r.X + 20, y + 10), 22f, Color.White);
-				Utils.DrawBorderString(sb, row.Pays, new Vector2(r.X + 38, y + 3), row.Symbol == m.Wild ? Color.Gold : Color.White, 0.6f);
+				CasinoDraw.Fit(sb, row.Pays, new Vector2(r.X + 38, y + 3), row.Symbol == m.Wild ? Color.Gold : Color.White, 0.6f, r.Width - 46);
 				y += 23;
 			}
 			DrawIcon(sb, all[m.Scatter], new Vector2(r.X + 20, y + 10), 22f, Color.White);
-			Utils.DrawBorderString(sb, Text("ScatterRule" + key), new Vector2(r.X + 38, y + 3), accent, 0.55f);
+			CasinoDraw.Fit(sb, Text("ScatterRule" + key), new Vector2(r.X + 38, y + 3), accent, 0.55f, r.Width - 46);
 			y += 26;
-			Utils.DrawBorderString(sb, Text("Feature" + key), new Vector2(r.X + 10, y), accent * 0.9f, 0.52f);
+			CasinoDraw.Wrapped(sb, Text("Feature" + key), new Vector2(r.X + 10, y), accent * 0.9f, 0.55f, r.Width - 20);
 		}
 
 		// ------------------------------------------------------------------ particles and helpers

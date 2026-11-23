@@ -27,9 +27,23 @@ namespace CasinoWorld.Common.Players
 		/// <summary>Has entered the high rollers casino at least once (until then, a reminder on joining).</summary>
 		public bool VisitedUnderground;
 
+		private int revealTimer = -1;
+
+		/// <summary>The casinos are small and fully built: show all of them on the map and minimap.</summary>
+		private static void RevealCasinoMap()
+		{
+			for (int x = 0; x < Main.maxTilesX; x++)
+				for (int y = 0; y < Main.maxTilesY; y++)
+					if (WorldGen.InWorld(x, y))
+						Main.Map.Update(x, y, 255);
+			Main.refreshMap = true;
+		}
+
 		public override void OnEnterWorld()
 		{
 			restoreTimer = RestoreDelay;
+			if (CasinoTravel.InCasino)
+				revealTimer = 180;
 
 			if (!receivedBlueprint && !CasinoTravel.InCasino) {
 				receivedBlueprint = true;
@@ -57,6 +71,12 @@ namespace CasinoWorld.Common.Players
 
 		public override void PostUpdate()
 		{
+			// Twice: once soon after entering, once more when all tile sections have arrived in multiplayer.
+			if (Player.whoAmI == Main.myPlayer && revealTimer >= 0 && --revealTimer % 150 == 0) {
+				RevealCasinoMap();
+				if (revealTimer <= 0)
+					revealTimer = -1;
+			}
 			if (Player.whoAmI != Main.myPlayer)
 				return;
 

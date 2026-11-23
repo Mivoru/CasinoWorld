@@ -198,7 +198,7 @@ namespace CasinoWorld.Common.Games.Blackjack
 					BlackjackPhase.PlayerTurn => Text("HintPlay"),
 					_ => "",
 				};
-			Utils.DrawBorderString(sb, message, new Vector2(a.Center.X, a.Bottom - 22), round.MessageColor, 0.9f, 0.5f, 0.5f);
+			CasinoDraw.Fit(sb, message, new Vector2(a.Center.X, a.Bottom - 22), round.MessageColor, 0.9f, a.Width - 40, 0.5f, 0.5f);
 		}
 
 		/// <summary>The printed arc and rules text on the felt.</summary>

@@ -71,10 +71,12 @@ namespace CasinoWorld.Common.Effects
 			Vector2 center = new(Main.screenWidth / 2f, Main.screenHeight * 0.28f);
 			// Thin gold bars that grow out from the middle.
 			float bar = Math.Min(1f, age / 40f) * 260f;
-			sb.Draw(TextureAssets.MagicPixel.Value, new Rectangle((int)(center.X - bar), (int)center.Y + 24, (int)(bar * 2), 2), titleColor * alpha);
-			sb.Draw(TextureAssets.MagicPixel.Value, new Rectangle((int)(center.X - bar * 0.7f), (int)center.Y - 30, (int)(bar * 1.4f), 1), titleColor * (alpha * 0.6f));
-			Utils.DrawBorderStringBig(sb, title, center + new Vector2(-slide, -8), titleColor * alpha, 1f, 0.5f, 0.5f);
-			Utils.DrawBorderString(sb, subtitle, center + new Vector2(slide, 40), Color.White * alpha, 1.1f, 0.5f, 0.5f);
+			Vector2 size = Terraria.GameContent.FontAssets.DeathText.Value.MeasureString(title);
+			float top = center.Y - size.Y / 2f - 10f, bottom = center.Y + size.Y / 2f + 38f;
+			sb.Draw(TextureAssets.MagicPixel.Value, new Rectangle((int)(center.X - bar * 0.7f), (int)top, (int)(bar * 1.4f), 1), titleColor * (alpha * 0.6f));
+			sb.Draw(TextureAssets.MagicPixel.Value, new Rectangle((int)(center.X - bar), (int)bottom, (int)(bar * 2), 2), titleColor * alpha);
+			Utils.DrawBorderStringBig(sb, title, center + new Vector2(-slide, 0), titleColor * alpha, 1f, 0.5f, 0.5f);
+			Utils.DrawBorderString(sb, subtitle, new Vector2(center.X + slide, center.Y + size.Y / 2f + 16f), Color.White * alpha, 1.1f, 0.5f, 0.5f);
 		}
 	}
 }

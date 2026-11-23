@@ -35,6 +35,32 @@ namespace CasinoWorld.Common.Games
 
 		public static void Fill(SpriteBatch sb, Rectangle rect, Color color) => sb.Draw(TextureAssets.MagicPixel.Value, rect, color);
 
+		/// <summary>One line of text, scaled down if needed so it never runs past maxWidth.</summary>
+		public static void Fit(SpriteBatch sb, string text, Vector2 pos, Color color, float scale, float maxWidth, float anchorX = 0f, float anchorY = 0f)
+		{
+			if (string.IsNullOrEmpty(text))
+				return;
+			float width = FontAssets.MouseText.Value.MeasureString(text).X * scale;
+			if (width > maxWidth)
+				scale *= maxWidth / width;
+			Utils.DrawBorderString(sb, text, pos, color, scale, anchorX, anchorY);
+		}
+
+		/// <summary>Word-wrapped text inside maxWidth; returns the height used.</summary>
+		public static float Wrapped(SpriteBatch sb, string text, Vector2 pos, Color color, float scale, float maxWidth, float anchorX = 0f)
+		{
+			if (string.IsNullOrEmpty(text))
+				return 0f;
+			string[] lines = Utils.WordwrapString(text, FontAssets.MouseText.Value, (int)(maxWidth / scale), 8, out int count);
+			float lineHeight = 22f * scale;
+			for (int k = 0; k <= count && k < lines.Length; k++) {
+				if (string.IsNullOrEmpty(lines[k]))
+					continue;
+				Utils.DrawBorderString(sb, lines[k].Trim(), pos + new Vector2(0, k * lineHeight), color, scale, anchorX, 0f);
+			}
+			return (count + 1) * lineHeight;
+		}
+
 		public static Rectangle Shrink(Rectangle r, int by) => new(r.X + by, r.Y + by, r.Width - by * 2, r.Height - by * 2);
 
 		private static Asset<Texture2D> felt;
