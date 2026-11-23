@@ -125,12 +125,15 @@ namespace CasinoWorld.Content.NPCs
 		public override void SetChatButtons(ref string button, ref string button2)
 		{
 			button = Language.GetTextValue("Mods.CasinoWorld.NPCs.PrizeCashier.Prizes");
+			button2 = Language.GetTextValue("Mods.CasinoWorld.NPCs.PrizeCashier.ChallengesButton");
 		}
 
 		public override void OnChatButtonClicked(bool firstButton, ref string shopName)
 		{
 			if (firstButton)
 				shopName = "Shop";
+			else
+				Main.npcChatText = Main.LocalPlayer.GetModPlayer<Common.Games.DailyChallenges>().Describe();
 		}
 
 		private static Item Prize(int itemType, int tokens) => new(itemType) {

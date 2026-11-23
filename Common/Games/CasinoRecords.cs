@@ -75,6 +75,11 @@ namespace CasinoWorld.Common.Games
 		{
 			if (netWin <= 0 || player.whoAmI != Main.myPlayer)
 				return;
+			DailyChallenges.Count(player, game switch {
+				CasinoGame.Blackjack => Challenge.BlackjackWins,
+				CasinoGame.Roulette => Challenge.RouletteWins,
+				_ => Challenge.SlotWins,
+			});
 			if (Main.netMode == NetmodeID.MultiplayerClient) {
 				ModPacket packet = ModContent.GetInstance<CasinoWorld>().GetPacket();
 				packet.Write((byte)Net.CasinoMessage.ReportWin);

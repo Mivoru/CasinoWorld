@@ -126,6 +126,7 @@ namespace CasinoWorld.Common.Gambler
 					Player.AddBuff(ModContent.BuffType<Content.Buffs.HotStreak>(), Content.Buffs.HotStreak.Duration);
 				CombatText.NewText(target.Hitbox, new Color(255, 215, 60), Language.GetTextValue("Mods.CasinoWorld.Gambler.Jackpot"), dramatic: true);
 				SoundEngine.PlaySound(CasinoSounds.JackpotProc, target.Center);
+				Games.DailyChallenges.Count(Player, Games.Challenge.Jackpots);
 				for (int k = 0; k < 10; k++)
 					Dust.NewDust(target.position, target.width, target.height, DustID.GoldCoin, Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-5f, -1f));
 				Effects.CasinoFx.Ring(target.Center, new Color(255, 220, 90), 14, 4.5f, 1.3f);

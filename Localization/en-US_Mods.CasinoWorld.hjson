@@ -775,6 +775,7 @@ NPCs: {
 	PrizeCashier: {
 		DisplayName: Cashier
 		Prizes: Prizes
+		ChallengesButton: Daily challenges
 
 		Chat: {
 			0: Every bet earns loyalty tokens, win or lose. The house is generous like that.
@@ -1149,4 +1150,21 @@ Prefixes: {
 	Shady.DisplayName: Shady
 	Cursed.DisplayName: Cursed
 	Unlucky.DisplayName: Unlucky
+}
+
+Challenges: {
+	Header: "Today's challenges (new ones every day):"
+	BlackjackWins: Win {0} rounds of blackjack
+	RouletteWins: Win {0} times at roulette
+	SlotWins: Win {0} times at the slots or scratch cards
+	Wagers: Place {0} bets
+	Jackpots: Land {0} Gambler jackpots in combat
+	CasinoKills: Defeat {0} casino enemies
+	VideoBonus: Trigger a video slot bonus
+	Crates: Open {0} casino crates
+	Tokens: tokens
+	Done: "Challenge complete: {0}! +{1} loyalty tokens"
+	AllDone: All of today's challenges done! The house throws in a crate.
+	Bonus: Finish all three for a free crate.
+	BonusClaimed: All done for today. Come back tomorrow!
 }

@@ -47,6 +47,7 @@ namespace CasinoWorld.Common.Games
 			}
 			if (!Coins.TryTake(player, amount))
 				return false;
+			DailyChallenges.Count(player, Challenge.Wagers);
 
 			int tokens = 1;
 			if (SubworldSystem.Current is CasinoSubworld casino && amount >= casino.FullJackpotStake)

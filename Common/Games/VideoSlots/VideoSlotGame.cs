@@ -289,6 +289,7 @@ namespace CasinoWorld.Common.Games.VideoSlots
 			}
 
 			if (Result.BonusStarted) {
+				DailyChallenges.Count(player, Challenge.VideoBonus);
 				inBonusRun = true;
 				BonusTotal = 0;
 				Message = Language.GetTextValue("Mods.CasinoWorld.UI.VideoSlots.Bonus", Result.FreeSpinsAwarded);

@@ -39,8 +39,10 @@ namespace CasinoWorld.Content.Items.Crates
 
 		public override void RightClick(Player player)
 		{
-			if (player.whoAmI == Main.myPlayer)
+			if (player.whoAmI == Main.myPlayer) {
 				ModContent.GetInstance<CrateSystem>().Open(Kind);
+				Common.Games.DailyChallenges.Count(player, Common.Games.Challenge.Crates);
+			}
 		}
 	}
 
