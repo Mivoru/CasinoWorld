@@ -2,7 +2,6 @@
 # Please read https://github.com/tModLoader/tModLoader/wiki/Localization to learn more about localization and these files.
 
 Items: {
-
 	ChipSlimeBanner: {
 		DisplayName: Chip Slime Banner
 		Tooltip: "{$CommonItemTooltip.BannerBonus}{$Mods.CasinoWorld.NPCs.ChipSlime.DisplayName}"
@@ -42,6 +41,7 @@ Items: {
 		DisplayName: Broke Gambler Banner
 		Tooltip: "{$CommonItemTooltip.BannerBonus}{$Mods.CasinoWorld.NPCs.BrokeGambler.DisplayName}"
 	}
+
 	CasinoDoorItem: {
 		DisplayName: Casino Door
 		Tooltip:

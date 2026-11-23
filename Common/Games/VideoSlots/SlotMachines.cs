@@ -79,6 +79,9 @@ namespace CasinoWorld.Common.Games.VideoSlots
 		/// <summary>Scatters needed to start the bonus.</summary>
 		public virtual int ScattersNeeded => 3;
 
+		/// <summary>Scatters needed to retrigger during free spins; 0 = scatters do nothing in the bonus.</summary>
+		public virtual int ScattersNeededInBonus => 3;
+
 		/// <summary>Scales every pay; tuned with tools/slotsim to the target return.</summary>
 		public double PayScale = 1.0;
 
@@ -123,9 +126,12 @@ namespace CasinoWorld.Common.Games.VideoSlots
 		/// <summary>First reel after which the scatters on screen are one short of the trigger (-1 if never).</summary>
 		protected int Tease(SlotCell[,] grid)
 		{
+			int need = InBonus ? ScattersNeededInBonus : ScattersNeeded;
+			if (need <= 0)
+				return -1;
 			int seen = 0;
 			for (int reel = 0; reel < Reels; reel++) {
-				if (seen >= ScattersNeeded - 1)
+				if (seen >= need - 1)
 					return reel;
 				for (int row = 0; row < Rows; row++)
 					if (grid[reel, row].Symbol == Scatter)
@@ -192,6 +198,15 @@ namespace CasinoWorld.Common.Games.VideoSlots
 				}
 				if (symbol < 0 && count >= 3)
 					symbol = Wild;
+				// W W W A B: three wilds may pay more than four A's.
+				int wildRun = 0;
+				while (wildRun < Reels && grid[wildRun, lines[l][wildRun]].Symbol == Wild)
+					wildRun++;
+				if (symbol >= 0 && symbol != Wild && wildRun >= 3 && pays[Wild] != null
+					&& (count < 3 || pays[symbol] == null || pays[Wild][wildRun - 3] > pays[symbol][count - 3])) {
+					symbol = Wild;
+					count = wildRun;
+				}
 				if (symbol < 0 || count < 3 || pays[symbol] == null)
 					continue;
 				double pay = pays[symbol][count - 3];
@@ -386,13 +401,14 @@ namespace CasinoWorld.Common.Games.VideoSlots
 		public override int SymbolCount => 10;
 		public override int Scatter => 9;
 		public override int Wild => 8;
+		public override int ScattersNeededInBonus => 0;   // retriggers come from collecting Anglers
 		public int WildsCollected => wildsCollected;
 
 		private SlotCell Roll(bool bonus)
 		{
 			var c = new SlotCell { Symbol = Pick(bonus ? BonusWeights : BaseWeights) };
 			if (c.Symbol == Fish)
-				c.Value = FishValues[Pick(FishWeights)];
+				c.Value = (int)Scale(FishValues[Pick(FishWeights)]);
 			return c;
 		}
 
@@ -444,12 +460,12 @@ namespace CasinoWorld.Common.Games.VideoSlots
 					step.Fx.AddRange(fish);
 					step.Targets.AddRange(anglers);
 					step.Multiplier = BonusMultiplier;
-					step.Win = Scale(cash * anglers.Count * BonusMultiplier);
+					step.Win = cash * anglers.Count * BonusMultiplier;
 					total += step.Win;
 				}
 				int before = wildsCollected / 4;
 				wildsCollected += anglers.Count;
-				if (wildsCollected / 4 > before && BonusMultiplier < 10) {
+				for (int level = before; level < wildsCollected / 4 && BonusMultiplier < 10; level++) {
 					BonusMultiplier = BonusMultiplier == 1 ? 2 : BonusMultiplier == 2 ? 3 : 10;
 					AddSpins(result, 10);
 				}
