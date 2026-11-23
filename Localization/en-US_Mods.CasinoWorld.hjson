@@ -179,7 +179,11 @@ Items: {
 
 	MiniSlotItem: {
 		DisplayName: Lucky Coin Slot
-		Tooltip: Summons a Mini Slot that follows you around
+		Tooltip:
+			'''
+			Summons a Mini Slot that follows you around
+			Now and then it spins its reels; a 777 grants you a random helpful buff
+			'''
 	}
 
 	WildCardMask: {
@@ -362,7 +366,7 @@ DamageClasses.GamblerDamageClass.DisplayName: gambler damage
 Buffs: {
 	MiniSlotBuff: {
 		DisplayName: Mini Slot
-		Description: A tiny slot machine is following you. It never pays out.
+		Description: A tiny slot machine is following you. Sometimes it hits 777
 	}
 
 	HotStreak: {
@@ -439,7 +443,6 @@ Boss: {
 		AllIn: ALL IN! The Wild Card bets everything!
 		Roll: "{0} + {1} = {2}!"
 	}
-
 }
 
 Bestiary: {
@@ -482,6 +485,7 @@ NPCs: {
 
 	BrokeGambler: {
 		DisplayName: Broke Gambler
+
 		Moan: {
 			0: Just... one... more... spin...
 			1: Red... it was supposed to be red...
@@ -790,12 +794,12 @@ UI: {
 
 	VideoSlots: {
 		Hint: 10 lines. Three scatters anywhere start the free spins!
-		Bonus: "FREE SPINS! {0} spins coming up!"
-		Retrigger: "+{0} free spins!"
+		Bonus: FREE SPINS! {0} spins coming up!
+		Retrigger: +{0} free spins!
 		Nothing: No win this time.
-		BonusTotal: "Bonus over: you won {0}!"
-		FreeSpinsLeft: "Free spins left: {0}"
-		Bet: "Bet per spin: {0}"
+		BonusTotal: Bonus over: you won {0}!
+		FreeSpinsLeft: Free spins left: {0}
+		Bet: Bet per spin: {0}
 		Wild: WILD
 		Scatter: BONUS
 		PaysNote: 3 / 4 / 5 in a row, per line (bet / 10)
@@ -888,4 +892,14 @@ Projectiles: {
 	SpectralCard.DisplayName: Spectral Card
 	SymbolShot.DisplayName: Symbol Shot
 	ChipChainHookProjectile.DisplayName: Chip Chain Hook Projectile
+	AllInChip.DisplayName: All In Chip
+	BouncingDie.DisplayName: Bouncing Die
+	BoxcarDie.DisplayName: Boxcar Die
+	ChipSnake.DisplayName: Chip Snake
+	DealtCard.DisplayName: Dealt Card
+	DeathCard.DisplayName: Death Card
+	PickupCard.DisplayName: Pickup Card
+	RollingDie.DisplayName: Rolling Die
+	ShellCard.DisplayName: Shell Card
+	SpadeShot.DisplayName: Spade Shot
 }

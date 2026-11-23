@@ -6,9 +6,9 @@ namespace CasinoWorld.Common.Games.Slots
 
 	/// <summary>
 	/// Three independent reels with weighted symbols (32 stops each).
-	/// Return to player is 100.53 % (slightly in the player's favour, chosen so the slots are fun and
-	/// a little profitable without printing money): a net win on 13.7 % of spins and at least the
-	/// bet back on 37.1 %. Pays: three of a kind, two of a kind on reels 1-2 (2-5x, cherries 1x),
+	/// Return to player is 100.92 % (slightly in the player's favour, chosen so the slots are fun and
+	/// a little profitable without printing money): a net win on 18.4 % of spins and at least the
+	/// bet back on 37.1 %. Pays: three of a kind, two of a kind on reels 1-2 (2-5x, every pair wins),
 	/// a cherry on reel 1 (bet back). Computed exactly over all 32^3 outcomes by tools/slots.py;
 	/// keep both files in sync when changing any number.
 	/// </summary>
@@ -21,10 +21,10 @@ namespace CasinoWorld.Common.Games.Slots
 		public static readonly int[] Weights = { 8, 7, 6, 5, 3, 2, 1 };
 
 		/// <summary>Total return for three of a kind, in multiples of the bet.</summary>
-		public static readonly int[] TriplePays = { 8, 11, 17, 28, 56, 140, 500 };
+		public static readonly int[] TriplePays = { 7, 10, 15, 25, 50, 120, 400 };
 
 		/// <summary>Two of a kind on reels 1 and 2 (not three), by symbol.</summary>
-		public static readonly int[] PairPays = { 1, 2, 2, 2, 3, 4, 5 };
+		public static readonly int[] PairPays = { 2, 2, 2, 3, 3, 4, 5 };
 
 		public const int OneCherryPay = 1;     // cherry on reel 1 (bet back)
 
