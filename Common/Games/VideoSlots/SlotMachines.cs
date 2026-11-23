@@ -611,13 +611,13 @@ namespace CasinoWorld.Common.Games.VideoSlots
 	public sealed class BloodMoonSlot : SlotMachine
 	{
 		// 0-3 low, 4-7 high, 8 Hunter wild (reels 2-5), 9 Blood Moon scatter.
-		private static readonly int[] BaseWeights = { 39, 38, 36, 35, 27, 24, 19, 15, 10, 5 };
+		private static readonly int[] BaseWeights = { 26, 25, 24, 23, 19, 16, 13, 10, 3, 5 };
 		private static readonly int[] WildMults = { 1, 2, 3 };
 		private static readonly int[] WildMultWeights = { 70, 20, 10 };
-		// Total-bet multiples per way for 3/4/5 reels (divided by 20 like a 20-coin ways game).
+		// Total-bet multiples per way for 3/4/5 reels: even the smallest win is a real part of the bet.
 		private static readonly double[][] Pays = {
-			new[] { 0.2, 0.5, 1.5 }, new[] { 0.2, 0.5, 1.5 }, new[] { 0.25, 0.6, 2.0 }, new[] { 0.25, 0.75, 2.5 },
-			new[] { 0.5, 1.5, 5.0 }, new[] { 0.6, 2.0, 7.5 }, new[] { 0.75, 3.0, 10.0 }, new[] { 1.0, 5.0, 20.0 },
+			new[] { 0.3, 0.6, 1.2 }, new[] { 0.3, 0.6, 1.2 }, new[] { 0.35, 0.7, 1.5 }, new[] { 0.4, 0.8, 1.8 },
+			new[] { 0.6, 1.2, 3.0 }, new[] { 0.8, 1.6, 4.0 }, new[] { 1.0, 2.0, 5.0 }, new[] { 1.5, 3.0, 8.0 },
 		};
 		private readonly int[] upgraded = { -1, -1, -1, -1 };   // low symbol -> premium it became
 		private int wildsCollected, upgrades;
@@ -626,7 +626,7 @@ namespace CasinoWorld.Common.Games.VideoSlots
 
 		public override string Key => "BloodMoon";
 		public override int Reels => 5;
-		public override int Rows => 4;
+		public override int Rows => 3;
 		public override int SymbolCount => 10;
 		public override int Scatter => 9;
 		public override int Wild => 8;
@@ -672,7 +672,7 @@ namespace CasinoWorld.Common.Games.VideoSlots
 				}
 				if (reels < 3)
 					continue;
-				var w = new WinGroup { Symbol = s, Count = reels, Win = Scale(Pays[s][reels - 3] * Unit / 20 * ways * mult) };
+				var w = new WinGroup { Symbol = s, Count = reels, Win = Scale(Pays[s][reels - 3] * Unit * Math.Min(ways, 6) * mult) };   // ways capped so wins stay chunky
 				foreach (Pos p in cells)
 					if (p.Reel < reels)
 						w.Cells.Add(p);
@@ -769,7 +769,7 @@ namespace CasinoWorld.Common.Games.VideoSlots
 	/// <summary>Pay scales per machine, measured with tools/slotsim (dotnet run -c Release -- tune).</summary>
 	public static class Tuning
 	{
-		public static double LunarGods = 0.515, Angler = 1.61, Boreal = 1.579, BloodMoon = 0.833;
+		public static double LunarGods = 0.515, Angler = 1.61, Boreal = 1.579, BloodMoon = 0.385;
 	}
 
 	public static class SlotGames

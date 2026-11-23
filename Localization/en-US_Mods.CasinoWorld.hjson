@@ -804,7 +804,7 @@ UI: {
 		HintLunarGods: 6x5, pays anywhere: 8+ of a symbol. Four Celestial Sigils start the free spins!
 		HintAngler: 10 lines. Three Golden Crates start the free spins: the Angler reels in the cash!
 		HintBoreal: 20 lines. Three Frozen Crates start the animal lottery!
-		HintBloodMoon: 1024 ways. Three Blood Moons start the trophy hunt!
+		HintBloodMoon: 243 ways. Three Blood Moons start the trophy hunt!
 		Bonus: FREE SPINS! {0} spins coming up!
 		Retrigger: +{0} free spins!
 		Nothing: No win this time.
@@ -839,7 +839,7 @@ UI: {
 		PayTypeLunarGods: Pays anywhere, 8-9 / 10-11 / 12+ (x bet)
 		PayTypeAngler: 3 / 4 / 5 in a row on 10 lines (x line bet)
 		PayTypeBoreal: 3 / 4 / 5 in a row on 20 lines (x line bet)
-		PayTypeBloodMoon: 3 / 4 / 5 reels, 1024 ways (x bet / 20 per way)
+		PayTypeBloodMoon: 3 / 4 / 5 reels, 243 ways (x bet per way, up to 6 ways)
 		ScatterRuleLunarGods: 4+ anywhere: 15 free spins
 		ScatterRuleAngler: 3/4/5: 10/15/20 free spins
 		ScatterRuleBoreal: 3+: animal lottery
