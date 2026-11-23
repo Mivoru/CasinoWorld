@@ -2,6 +2,16 @@
 # Please read https://github.com/tModLoader/tModLoader/wiki/Localization to learn more about localization and these files.
 
 Items: {
+	LuckyPenny: {
+		DisplayName: Lucky Penny
+		Tooltip: Heads: the coin splits in two on its first hit
+	}
+
+	HellfireDice: {
+		DisplayName: Hellfire Dice
+		Tooltip: Throws two burning dice that set enemies on fire
+	}
+
 	VaultKey: {
 		DisplayName: Vault Key
 		Tooltip:
@@ -1024,6 +1034,8 @@ UI: {
 }
 
 Projectiles: {
+	PennyCoin.DisplayName: Lucky Penny
+	HellfireDie.DisplayName: Hellfire Die
 	BouncingChip.DisplayName: Chip
 	BetZone.DisplayName: Winning Number
 	GoldBarDrop.DisplayName: Gold Bar
