@@ -595,6 +595,7 @@ Boss: {
 }
 
 Bestiary: {
+	GuardCaptain: Captain of the card guard. He only marches out when the army has lost a hundred men, and he never goes home empty-handed.
 	ThePitBoss: He runs the floor of the High Rollers casino from a flying roulette wheel. Nobody leaves his table up, not for long.
 	BrokeGambler: He bet the house, then the horse, then his own heartbeat. He still swears the next spin is the one.
 	LuckyBat: A cave bat that stole a gold coin from a careless miner and refuses to let go.
@@ -723,6 +724,7 @@ NPCs: {
 	}
 
 	TheWildCard.DisplayName: The Wild Card
+	GuardCaptain.DisplayName: Guard Captain
 	ThePitBoss.DisplayName: The Pit Boss
 	ChipSlime.DisplayName: Chip Slime
 	CardSoldier.DisplayName: Card Soldier
@@ -1167,4 +1169,13 @@ Challenges: {
 	AllDone: All of today's challenges done! The house throws in a crate.
 	Bonus: Finish all three for a free crate.
 	BonusClaimed: All done for today. Come back tomorrow!
+}
+
+Event: {
+	Start: High Stakes Night! The card army is raiding the world!
+	Captain: The Guard Captain has come to collect!
+	Won: The Guard Captain falls. High Stakes Night is over, and the house pays out!
+	Dawn: The card army scatters at dawn.
+	Bar: "High Stakes Night: {0}%"
+	BarCaptain: "High Stakes Night: defeat the Guard Captain!"
 }
