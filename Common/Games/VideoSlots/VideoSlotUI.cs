@@ -106,9 +106,7 @@ namespace CasinoWorld.Common.Games.VideoSlots
 			float t = Main.GlobalTimeWrappedHourly;
 
 			// Cabinet frame with a glowing accent edge.
-			CasinoDraw.Fill(sb, a, accent * 0.9f);
-			CasinoDraw.Fill(sb, CasinoDraw.Shrink(a, 3), body);
-			CasinoDraw.Fill(sb, CasinoDraw.Shrink(a, 6), Color.Lerp(body, Color.Black, 0.35f));
+			CasinoDraw.Cabinet(sb, a, accent, Color.Lerp(body, Color.Black, 0.35f));
 
 			// Marquee with chasing lights.
 			var marquee = new Rectangle(a.X + 26, a.Y + 14, Cell * 5, 50);

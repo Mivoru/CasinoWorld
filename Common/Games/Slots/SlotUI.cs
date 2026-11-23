@@ -39,7 +39,6 @@ namespace CasinoWorld.Common.Games.Slots
 		private const float SymbolScale = 1.2f;
 
 		private static readonly Color Cabinet = new(70, 34, 104);
-		private static readonly Color CabinetDark = new(40, 18, 62);
 		private static readonly Color Neon = new(255, 80, 200);
 
 		private enum Action { Close, Bet, Spin, Lever }
@@ -131,9 +130,7 @@ namespace CasinoWorld.Common.Games.Slots
 			round.BetIndex = Math.Clamp(round.BetIndex, 0, chips.Length - 1);
 
 			// Cabinet body.
-			CasinoDraw.Fill(sb, a, CasinoDraw.Gold);
-			CasinoDraw.Fill(sb, CasinoDraw.Shrink(a, 3), CabinetDark);
-			CasinoDraw.Fill(sb, CasinoDraw.Shrink(a, 6), Cabinet);
+			CasinoDraw.Cabinet(sb, a, CasinoDraw.Gold, Cabinet);
 
 			DrawMarquee(sb, new Rectangle(a.X + 30, a.Y + 14, 360, 44));
 
@@ -145,8 +142,12 @@ namespace CasinoWorld.Common.Games.Slots
 				CasinoDraw.Fill(sb, box, new Color(250, 248, 240));
 				DrawReel(sb, box, round.Offset[k]);
 				// Shading at the top and bottom of the reel, like a curved drum.
-				CasinoDraw.Fill(sb, new Rectangle(box.X, box.Y, box.Width, 10), Color.Black * 0.18f);
-				CasinoDraw.Fill(sb, new Rectangle(box.X, box.Bottom - 10, box.Width, 10), Color.Black * 0.18f);
+				for (int g = 0; g < 5; g++) {
+					float alpha = 0.32f * (5 - g) / 5f;
+					CasinoDraw.Fill(sb, new Rectangle(box.X, box.Y + g * 3, box.Width, 3), Color.Black * alpha);
+					CasinoDraw.Fill(sb, new Rectangle(box.X, box.Bottom - (g + 1) * 3, box.Width, 3), Color.Black * alpha);
+				}
+				CasinoDraw.Fill(sb, new Rectangle(box.X + 4, box.Y + 18, 3, box.Height - 36), Color.White * 0.35f);   // glass glint
 			}
 			Rectangle first = ReelBox(0), last = ReelBox(2);
 			Color line = flash ? Color.Red : Color.Red * 0.35f;

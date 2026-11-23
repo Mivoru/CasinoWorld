@@ -60,7 +60,7 @@ namespace CasinoWorld.Common.Games.Blackjack
 			Rectangle rail = Rail;
 			BlackjackRound round = System.Round;
 
-			yield return new Button(new Rectangle(a.Right - 32, a.Y + 10, 22, 22), Action.Close, "X", true, CasinoDraw.Red);
+			yield return new Button(new Rectangle(a.Right - 34, a.Y + 12, 22, 22), Action.Close, "X", true, CasinoDraw.Red);
 
 			int y = rail.Y + 10;
 			long[] chips = Chips;

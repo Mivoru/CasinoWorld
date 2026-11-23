@@ -71,7 +71,7 @@ namespace CasinoWorld.Common.Games.Roulette
 			Rectangle a = Area;
 			int bx = a.X + BoardX, by = a.Y + BoardY;
 
-			yield return new Region(new Rectangle(a.Right - 30, a.Y + 8, 22, 22), RegionKind.Close, Label: "X", Color: RedCell);
+			yield return new Region(new Rectangle(a.Right - 34, a.Y + 12, 22, 22), RegionKind.Close, Label: "X", Color: RedCell);
 
 			// Corner (4 numbers) and split (2 numbers) hot spots come first so they win the hit test.
 			for (int c = 0; c < 11; c++) {
@@ -263,7 +263,10 @@ namespace CasinoWorld.Common.Games.Roulette
 		private void DrawWheel(SpriteBatch sb, RouletteRound round, Vector2 center)
 		{
 			Texture2D wheel = wheelTexture.Value;
-			Fill(sb, new Rectangle((int)center.X - 96, (int)center.Y - 96, 192, 192), FeltDark * 0.5f);
+			// Static bowl: the wheel silhouette, larger and darkened, plus a soft drop shadow.
+			sb.Draw(wheel, center + new Vector2(4, 6), null, Color.Black * 0.35f, 0f, wheel.Size() / 2f, 1.08f, SpriteEffects.None, 0f);
+			sb.Draw(wheel, center, null, new Color(70, 40, 22), 0f, wheel.Size() / 2f, 1.08f, SpriteEffects.None, 0f);
+			sb.Draw(wheel, center, null, new Color(30, 16, 10), 0f, wheel.Size() / 2f, 1.03f, SpriteEffects.None, 0f);
 			sb.Draw(wheel, center, null, Color.White, round.WheelAngle, wheel.Size() / 2f, 1f, SpriteEffects.None, 0f);
 
 			// Pocket numbers on the outer rim, turning with the wheel (text stays upright).
@@ -285,14 +288,19 @@ namespace CasinoWorld.Common.Games.Roulette
 
 			bool ballVisible = round.Phase is RoulettePhase.Spinning or RoulettePhase.ShowingResult;
 			if (ballVisible) {
-				float radius = MathHelper.Lerp(80f, 69f, round.BallDrop);
+				// The ball rattles over the frets while it drops into the pocket band.
+				float drop = round.BallDrop;
+				float bounce = drop > 0.05f && drop < 0.95f ? Math.Abs((float)Math.Sin(drop * 38f)) * 4f * (1f - drop) : 0f;
+				float radius = MathHelper.Lerp(80f, 69f, drop) + bounce;
 				Vector2 ball = center + radius * new Vector2((float)Math.Cos(round.BallAngle), (float)Math.Sin(round.BallAngle));
 				Texture2D tex = ballTexture.Value;
+				sb.Draw(tex, ball + new Vector2(2, 3), null, Color.Black * 0.4f, 0f, tex.Size() / 2f, 1f, SpriteEffects.None, 0f);
 				sb.Draw(tex, ball, null, Color.White, 0f, tex.Size() / 2f, 1f, SpriteEffects.None, 0f);
 			}
 
 			// Pointer above the wheel.
-			Fill(sb, new Rectangle((int)center.X - 2, (int)center.Y - 100, 4, 10), Gold);
+			for (int k = 0; k < 5; k++)
+				Fill(sb, new Rectangle((int)center.X - 5 + k, (int)center.Y - 104 + k * 2, 10 - k * 2, 2), k == 0 ? Color.White : Gold);
 
 			if (round.Phase == RoulettePhase.ShowingResult && round.Result >= 0) {
 				int n = round.Result;
