@@ -21,11 +21,11 @@ namespace CasinoWorld.Content.Tiles
 	{
 		public const int Width = 3, Height = 4;
 
-		public abstract SlotDefinition Definition { get; }
+		public abstract string Key { get; }
 
 		private Asset<Texture2D> glow;
 
-		public override string Texture => "CasinoWorld/Content/Tiles/VideoSlot" + Definition.Key;
+		public override string Texture => "CasinoWorld/Content/Tiles/VideoSlot" + Key;
 
 		public override void SetStaticDefaults()
 		{
@@ -41,7 +41,7 @@ namespace CasinoWorld.Content.Tiles
 			TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop, Width, 0);
 			TileObjectData.newTile.UsesCustomCanPlace = true;
 			TileObjectData.addTile(Type);
-			AddMapEntry(SlotThemes.Accent(Definition.Key), Language.GetText("Mods.CasinoWorld.UI.VideoSlots.Title" + Definition.Key));
+			AddMapEntry(SlotThemes.Accent(Key), Language.GetText("Mods.CasinoWorld.UI.VideoSlots.Title" + Key));
 		}
 
 		public static Point16 TopLeft(int i, int j)
@@ -54,7 +54,7 @@ namespace CasinoWorld.Content.Tiles
 
 		public override bool RightClick(int i, int j)
 		{
-			ModContent.GetInstance<VideoSlotSystem>().OpenMachine(TopLeft(i, j), Type, Definition);
+			ModContent.GetInstance<VideoSlotSystem>().OpenMachine(TopLeft(i, j), Type, Key);
 			return true;
 		}
 
@@ -64,13 +64,13 @@ namespace CasinoWorld.Content.Tiles
 			player.noThrow = 2;
 			player.cursorItemIconEnabled = true;
 			player.cursorItemIconID = -1;
-			player.cursorItemIconText = Language.GetTextValue("Mods.CasinoWorld.UI.VideoSlots.Title" + Definition.Key);
+			player.cursorItemIconText = Language.GetTextValue("Mods.CasinoWorld.UI.VideoSlots.Title" + Key);
 		}
 
 		public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
 		{
 			if (Main.tile[i, j].TileFrameY / 18 % Height == 0) {
-				Color c = SlotThemes.Accent(Definition.Key);
+				Color c = SlotThemes.Accent(Key);
 				r = c.R / 400f;
 				g = c.G / 400f;
 				b = c.B / 400f;
@@ -95,15 +95,15 @@ namespace CasinoWorld.Content.Tiles
 		{
 			Vector2 offScreen = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
 			Vector2 origin = new Vector2(i * 16, j * 16) - Main.screenPosition + offScreen;
-			int[] icons = SlotThemes.Icons(Definition.Key);
+			int[] icons = SlotThemes.Icons(Key);
 			float t = Main.GlobalTimeWrappedHourly;
 			// Signature item on the marquee, gently bobbing.
-			DrawIcon(spriteBatch, icons[Definition.Scatter], origin + new Vector2(24, 8 + (float)System.Math.Sin(t * 2 + i) * 1.5f), 14f);
+			DrawIcon(spriteBatch, icons[SlotThemes.ScatterIndex], origin + new Vector2(24, 8 + (float)System.Math.Sin(t * 2 + i) * 1.5f), 14f);
 			// Reel window: three symbols cycling now and then.
 			int seed = i * 7 + j * 13;
 			bool spinning = (t * 0.6f + seed * 0.37f) % 4f < 0.8f;
 			for (int k = 0; k < 3; k++) {
-				int s = spinning ? (int)(t * 18f + k * 2 + seed) % Definition.SymbolCount : (int)(t * 0.6f + seed * 0.37f + k * 1.3f) % Definition.SymbolCount;
+				int s = spinning ? (int)(t * 18f + k * 2 + seed) % 4 : (int)(t * 0.6f + seed * 0.37f + k * 1.3f) % 4;
 				DrawIcon(spriteBatch, icons[s], origin + new Vector2(14.7f + k * 8f, 25.6f), 8f);
 			}
 		}
@@ -118,11 +118,11 @@ namespace CasinoWorld.Content.Tiles
 		}
 	}
 
-	public class VideoSlotLunarGods : VideoSlotMachine { public override SlotDefinition Definition => SlotDefinitions.LunarGods; }
+	public class VideoSlotLunarGods : VideoSlotMachine { public override string Key => "LunarGods"; }
 
-	public class VideoSlotAngler : VideoSlotMachine { public override SlotDefinition Definition => SlotDefinitions.Angler; }
+	public class VideoSlotAngler : VideoSlotMachine { public override string Key => "Angler"; }
 
-	public class VideoSlotBoreal : VideoSlotMachine { public override SlotDefinition Definition => SlotDefinitions.Boreal; }
+	public class VideoSlotBoreal : VideoSlotMachine { public override string Key => "Boreal"; }
 
-	public class VideoSlotBloodMoon : VideoSlotMachine { public override SlotDefinition Definition => SlotDefinitions.BloodMoon; }
+	public class VideoSlotBloodMoon : VideoSlotMachine { public override string Key => "BloodMoon"; }
 }

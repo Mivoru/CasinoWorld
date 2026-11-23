@@ -793,25 +793,57 @@ UI: {
 	}
 
 	VideoSlots: {
-		Hint: 10 lines. Three scatters anywhere start the free spins!
+		HintLunarGods: 6x5, pays anywhere: 8+ of a symbol. Four Celestial Sigils start the free spins!
+		HintAngler: 10 lines. Three Golden Crates start the free spins: the Angler reels in the cash!
+		HintBoreal: 20 lines. Three Frozen Crates start the animal lottery!
+		HintBloodMoon: 1024 ways. Three Blood Moons start the trophy hunt!
 		Bonus: FREE SPINS! {0} spins coming up!
 		Retrigger: +{0} free spins!
 		Nothing: No win this time.
+		Win: Win: {0}
+		WinLabel: WIN  {0}
 		BonusTotal: Bonus over: you won {0}!
-		FreeSpinsLeft: Free spins left: {0}
+		BonusOver: BONUS WIN
+		FreeSpins: "{0} FREE SPINS"
+		FreeSpinsLeft: Free spins: {0} / {1}
+		BonusSoFar: Bonus so far: {0}
+		TotalMult: Total multiplier: x{0}
+		Anglers: "Anglers: {0} / 4   collect x{1}"
+		Trophies: "Wilds: {0} / 3   upgrades {1} / 4"
+		Collected: COLLECTED {0}
+		Upgrade: TROPHY! Symbol removed
+		Lottery: The northern lights choose your bonus...
+		Auto: FREE
 		Bet: Bet per spin: {0}
 		Wild: WILD
 		Scatter: BONUS
-		PaysNote: 3 / 4 / 5 in a row, per line (bet / 10)
-		ScatterPays: 3+ anywhere: {0} free spins
+		BigWin: BIG WIN
+		MegaWin: MEGA WIN
+		EpicWin: EPIC WIN
+		Animal0: Penguin
+		Animal1: Snow Flinx
+		Animal2: Wolf
+		Animal3: Ice Golem
+		AnimalFeature0: "{0} spins: walking x2 wilds slide one reel left each spin"
+		AnimalFeature1: "{0} spins: snowballs turn 1-3 cells wild every spin"
+		AnimalFeature2: "{0} spins: every wild freezes in place"
+		AnimalFeature3: "{0} spins: a middle reel freezes wild, wins pay x2"
+		PayTypeLunarGods: Pays anywhere, 8-9 / 10-11 / 12+ (x bet)
+		PayTypeAngler: 3 / 4 / 5 in a row on 10 lines (x line bet)
+		PayTypeBoreal: 3 / 4 / 5 in a row on 20 lines (x line bet)
+		PayTypeBloodMoon: 3 / 4 / 5 reels, 1024 ways (x bet / 20 per way)
+		ScatterRuleLunarGods: 4+ anywhere: 15 free spins
+		ScatterRuleAngler: 3/4/5: 10/15/20 free spins
+		ScatterRuleBoreal: 3+: animal lottery
+		ScatterRuleBloodMoon: 3/4/5: 10/12/15 free spins
 		TitleLunarGods: Gates of the Lunar Gods
 		TitleAngler: Angler's Bonanza
 		TitleBoreal: Boreal Wilds
 		TitleBloodMoon: Blood Moon Hunter
-		FeatureLunarGods: Wins tumble away. Orbs multiply; in free spins they add up.
-		FeatureAngler: Fish carry cash. In free spins the Angler collects it all.
-		FeatureBoreal: In free spins, every wild freezes in place.
-		FeatureBloodMoon: Free spins pick a symbol that expands and pays every line.
+		FeatureLunarGods: Wins tumble. Moon Lord's beam drops x2-x500 orbs. In free spins every orb adds to a growing multiplier.
+		FeatureAngler: Fish carry cash. Each Angler collects it all. Every 4 Anglers: +10 spins and x2, x3, x10.
+		FeatureBoreal: Three crates start a lottery of four animals, each with its own bonus.
+		FeatureBloodMoon: Hunter wilds carry x2/x3. Blood Shot turns cells wild. Every 3 wilds removes a low symbol.
 	}
 
 	Slots: {

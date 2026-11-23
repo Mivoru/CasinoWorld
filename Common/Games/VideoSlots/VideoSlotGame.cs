@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using CasinoWorld.Content.Tiles;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -12,19 +11,36 @@ using Terraria.UI;
 
 namespace CasinoWorld.Common.Games.VideoSlots
 {
-	/// <summary>How each machine looks in the game: vanilla item icons as symbols, theme colours.</summary>
+	/// <summary>
+	/// How each machine looks: symbol icons (positive = item, negative = NPC portrait, 0 = drawn by the UI),
+	/// theme colours.
+	/// </summary>
 	public static class SlotThemes
 	{
 		public static int[] Icons(string key) => key switch {
 			"LunarGods" => new int[] { ItemID.FragmentSolar, ItemID.FragmentVortex, ItemID.FragmentNebula, ItemID.FragmentStardust, ItemID.LunarOre,
-				ItemID.LunarBar, ItemID.Terrarian, ItemID.Meowmere, ItemID.CelestialSigil, ItemID.MoonLordTrophy, ItemID.SoulofLight },
-			"Angler" => new int[] { ItemID.Bass, ItemID.Trout, ItemID.Salmon, ItemID.AtlanticCod, ItemID.Tuna,
-				ItemID.RedSnapper, ItemID.Swordfish, ItemID.GoldenCarp, ItemID.AnglerHat, ItemID.GoldenCrate },
-			"Boreal" => new int[] { ItemID.Shiverthorn, ItemID.IceBlock, ItemID.SnowballCannon, ItemID.IceSkates, ItemID.FrostCore,
-				ItemID.IceFeather, ItemID.Frostbrand, ItemID.NorthPole, ItemID.IceQueenTrophy, ItemID.FrozenCrate },
-			_ => new int[] { ItemID.Vertebrae, ItemID.ChumBucket, ItemID.SharkToothNecklace, ItemID.BloodRainBow, ItemID.VampireFrogStaff,
-				ItemID.BloodyMachete, ItemID.SanguineStaff, ItemID.MoneyTrough, ItemID.BloodMoonMonolith, ItemID.BloodMoonStarter },
+				ItemID.LunarBar, ItemID.Terrarian, ItemID.Meowmere, ItemID.BossMaskMoonlord, ItemID.CelestialSigil, 0 },
+			"Angler" => new int[] { ItemID.ApprenticeBait, ItemID.JourneymanBait, ItemID.MasterBait, ItemID.FishingPotion,
+				ItemID.TackleBox, ItemID.FishermansGuide, ItemID.GoldenFishingRod, ItemID.Bass, ItemID.AnglerHat, ItemID.GoldenCrate },
+			"Boreal" => new int[] { ItemID.Shiverthorn, ItemID.IceTorch, ItemID.SnowballCannon, ItemID.IceSkates,
+				-NPCID.Penguin, -NPCID.SnowFlinx, -NPCID.Wolf, -NPCID.IceGolem, ItemID.IceMirror, ItemID.FrozenCrate },
+			_ => new int[] { ItemID.Vertebrae, ItemID.ChumBucket, ItemID.SharkToothNecklace, ItemID.BloodRainBow,
+				ItemID.VampireFrogStaff, ItemID.BloodyMachete, ItemID.SanguineStaff, ItemID.MoneyTrough, ItemID.Boomstick, ItemID.BloodMoonStarter },
 		};
+
+		/// <summary>Angler fish: the icon grows with the cash it carries.</summary>
+		public static int FishIcon(int units) => units switch {
+			>= 1000 => ItemID.GoldenCarp,
+			>= 250 => ItemID.Swordfish,
+			>= 100 => ItemID.Tuna,
+			>= 50 => ItemID.RedSnapper,
+			>= 20 => ItemID.Salmon,
+			_ => ItemID.Bass,
+		};
+
+		public static int ScatterIndex => 9;
+
+		public static int SymbolCount(string key) => key == "LunarGods" ? 11 : 10;
 
 		public static Color Accent(string key) => key switch {
 			"LunarGods" => new Color(110, 220, 255),
@@ -41,46 +57,89 @@ namespace CasinoWorld.Common.Games.VideoSlots
 		};
 	}
 
-	public enum VideoPhase { Idle, Spinning, Tumbling, Result }
+	public enum VideoPhase { Idle, Spinning, Steps, Intro, Pause, Outro }
 
 	/// <summary>
-	/// One player's session at a video slot: bets, the engine (with free-spin state), the spin animation
-	/// and payouts. Free spins play automatically one after another; closing the window plays out the rest.
+	/// One player's session at a video slot: the machine engine, the spin and step animation timeline and
+	/// payouts. Free spins play automatically; closing the window plays out the rest instantly.
 	/// </summary>
 	public class VideoSlotRound
 	{
-		public const int ReelStopStart = 30, ReelStopStep = 14, StepTicks = 34, ResultTicks = 70;
+		public const int ReelStopStart = 26, ReelStopStep = 10, TeaseStep = 42, PauseTicks = 46, IntroTicks = 170, LotteryTicks = 250, OutroTicks = 170;
 
-		public SlotDefinition Definition { get; private set; }
-		public VideoSlotEngine Engine { get; private set; }
+		public string Key { get; private set; }
+		public SlotMachine Machine { get; private set; }
 		public VideoPhase Phase { get; private set; } = VideoPhase.Idle;
-		public SpinOutcome Outcome { get; private set; }
+		public SpinResult Result { get; private set; }
 		public int Step { get; private set; }
 		public int Timer { get; private set; }
 		public int BetIndex;
 		public long LastBet { get; private set; }
 		public long BonusTotal { get; private set; }
-		public long LastWinCoins { get; private set; }
+		/// <summary>Win of the current spin shown so far (counts up with the steps).</summary>
+		public long ShownUnits { get; private set; }
+		public int BigWinTimer { get; private set; }
+		public long BigWinUnits { get; private set; }
 		public string Message = "";
 		public Color MessageColor = Color.White;
 
-		public bool InBonus => Engine?.InBonus == true || bonusPending;
-		private bool bonusPending;
-		public bool CanSpin => Phase is VideoPhase.Idle or VideoPhase.Result && !InBonus;
+		private bool inBonusRun;
+		private bool paid;
+		private ReLogic.Utilities.SlotId teaseSound = ReLogic.Utilities.SlotId.Invalid;
 
-		public void Use(SlotDefinition definition)
+		public bool InBonusRun => inBonusRun;
+		public bool CanSpin => Phase == VideoPhase.Idle && !inBonusRun;
+
+		public void Use(string key)
 		{
-			if (Definition == definition && Engine != null)
+			if (Key == key && Machine != null)
 				return;
-			Definition = definition;
-			Engine = new VideoSlotEngine(definition, n => Main.rand.Next(n));
+			Key = key;
+			Machine = SlotGames.Create(key, n => Main.rand.Next(n));
 			Phase = VideoPhase.Idle;
-			Outcome = null;
-			Message = Language.GetTextValue("Mods.CasinoWorld.UI.VideoSlots.Hint");
+			Result = null;
+			inBonusRun = false;
+			Message = Language.GetTextValue("Mods.CasinoWorld.UI.VideoSlots.Hint" + key);
 			MessageColor = Color.White;
 		}
 
-		public long Coins(long lineMultiples) => lineMultiples * LastBet / VideoSlotEngine.LineCount;
+		public long Coins(long units) => units * LastBet / SlotMachine.Unit;
+
+		/// <summary>Tick at which a reel stops; teased reels (one scatter short) spin noticeably longer.</summary>
+		public int StopTick(int reel)
+		{
+			int t = ReelStopStart + ReelStopStep * reel;
+			if (Result != null && Result.TeaseFrom >= 0 && reel >= Result.TeaseFrom)
+				t += TeaseStep * (reel - Result.TeaseFrom + 1);
+			return t;
+		}
+
+		/// <summary>Remaining reels glow once the reels before the tease have stopped.</summary>
+		public bool Teasing(int reel) => Phase == VideoPhase.Spinning && Result != null && Result.TeaseFrom > 0 && reel >= Result.TeaseFrom
+			&& Timer < StopTick(reel) && Timer >= StopTick(Result.TeaseFrom - 1);
+
+		/// <summary>The reel that is about to stop during a tease (spins slowest, glows brightest).</summary>
+		public bool TeaseNext(int reel) => Teasing(reel) && (reel == Result.TeaseFrom || Timer >= StopTick(reel - 1));
+
+		public SlotStep CurrentStep => Result == null ? null : Result.Steps[Math.Min(Step, Result.Steps.Count - 1)];
+
+		public int StepDuration(SlotStep s)
+		{
+			int fx = s.Fx.Count;
+			int d = s.Kind switch {
+				StepKind.Land => s.Wins.Count > 0 ? 44 : 8,
+				StepKind.Tumble => 40,
+				StepKind.Multiply => 80,
+				StepKind.Collect => 34 + 16 * fx,
+				StepKind.Shots => 22 + 12 * fx,
+				StepKind.Expand => 56,
+				StepKind.Upgrade => 80,
+				_ => 30,
+			};
+			if (Key == "LunarGods" && fx > 0 && s.Kind is StepKind.Land or StepKind.Tumble)
+				d += 26 + 10 * fx;   // Moon Lord's beams reveal the orbs
+			return d;
+		}
 
 		public void TrySpin(Player player, long bet)
 		{
@@ -99,96 +158,162 @@ namespace CasinoWorld.Common.Games.VideoSlots
 
 		private void StartSpin()
 		{
-			Outcome = Engine.Spin();
+			Result = Machine.Spin();
 			Phase = VideoPhase.Spinning;
 			Step = 0;
 			Timer = 0;
+			ShownUnits = 0;
+			paid = false;
 			Message = "";
 			SoundEngine.PlaySound(CasinoSounds.ReelSpin);
 		}
 
 		public void Update(Player player)
 		{
-			if (Phase == VideoPhase.Idle || Outcome == null)
+			if (BigWinTimer > 0)
+				BigWinTimer--;
+			if (Phase == VideoPhase.Idle || Result == null)
 				return;
 			Timer++;
 			switch (Phase) {
 				case VideoPhase.Spinning:
-					if (Timer >= ReelStopStart && (Timer - ReelStopStart) % ReelStopStep == 0 && (Timer - ReelStopStart) / ReelStopStep < VideoSlotEngine.Reels)
-						SoundEngine.PlaySound(CasinoSounds.ReelStop);
-					if (Timer >= ReelStopStart + ReelStopStep * VideoSlotEngine.Reels) {
+					for (int r = 0; r < Machine.Reels; r++)
+						if (Timer == StopTick(r))
+							SoundEngine.PlaySound(CasinoSounds.ReelStop with { Pitch = Result.TeaseFrom >= 0 && r >= Result.TeaseFrom ? 0.3f : 0f });
+					if (Result.TeaseFrom > 0 && Timer == StopTick(Result.TeaseFrom - 1) + 1)
+						teaseSound = SoundEngine.PlaySound(CasinoSounds.SlotTease);
+					if (Result.TeaseFrom > 0 && Timer > StopTick(Result.TeaseFrom - 1) && Timer % 10 == 0 && Timer < StopTick(Machine.Reels - 1))
+						SoundEngine.PlaySound(SoundID.MenuTick with { Volume = 0.7f, Pitch = Math.Min(1f, -0.4f + Timer / 200f) });
+					if (Timer >= StopTick(Machine.Reels - 1) + 4) {
+						if (SoundEngine.TryGetActiveSound(teaseSound, out var tease))
+							tease.Stop();
 						Timer = 0;
-						Phase = Outcome.Steps.Count > 1 ? VideoPhase.Tumbling : VideoPhase.Result;
-						if (Phase == VideoPhase.Result)
-							Finish(player);
+						Phase = VideoPhase.Steps;
+						BeginStep(player);
 					}
 					break;
-				case VideoPhase.Tumbling:
-					if (Timer >= StepTicks) {
+				case VideoPhase.Steps:
+					if (Timer >= StepDuration(CurrentStep)) {
 						Timer = 0;
-						Step++;
-						SoundEngine.PlaySound(CasinoSounds.ChipStack with { Pitch = Step * 0.1f });
-						if (Step >= Outcome.Steps.Count - 1) {
-							Phase = VideoPhase.Result;
+						if (Step >= Result.Steps.Count - 1)
 							Finish(player);
+						else {
+							Step++;
+							BeginStep(player);
 						}
 					}
 					break;
-				case VideoPhase.Result:
-					if (Timer >= ResultTicks && (Engine.InBonus || bonusPending)) {
-						bonusPending = false;
-						if (Engine.InBonus)
-							StartSpin();
-						else
-							EndBonus(player);
+				case VideoPhase.Intro:
+					if (Timer >= (Key == "Boreal" ? LotteryTicks : IntroTicks)) {
+						Timer = 0;
+						StartSpin();
 					}
+					break;
+				case VideoPhase.Pause:
+					if (Timer >= PauseTicks) {
+						Timer = 0;
+						if (Machine.InBonus)
+							StartSpin();
+						else if (inBonusRun) {
+							Phase = VideoPhase.Outro;
+							SoundEngine.PlaySound(BonusTotal >= LastBet * 30 ? CasinoSounds.Jackpot : CasinoSounds.CoinsPayout);
+						}
+						else
+							Phase = VideoPhase.Idle;
+					}
+					break;
+				case VideoPhase.Outro:
+					if (Timer >= OutroTicks)
+						EndBonus(player);
 					break;
 			}
 		}
 
+		private void BeginStep(Player player)
+		{
+			SlotStep s = CurrentStep;
+			ShownUnits = 0;
+			for (int k = 0; k <= Step && k < Result.Steps.Count; k++) {
+				SlotStep prev = Result.Steps[k];
+				ShownUnits = prev.Kind == StepKind.Multiply ? prev.Win : ShownUnits + prev.Win;
+			}
+			switch (s.Kind) {
+				case StepKind.Tumble:
+					SoundEngine.PlaySound(CasinoSounds.ChipStack with { Pitch = Math.Min(0.8f, Step * 0.12f) });
+					break;
+				case StepKind.Multiply:
+					SoundEngine.PlaySound(SoundID.Item4);
+					break;
+				case StepKind.Collect:
+					SoundEngine.PlaySound(SoundID.Splash);
+					break;
+				case StepKind.Shots:
+					SoundEngine.PlaySound(Key == "BloodMoon" ? SoundID.Item36 : Key == "Boreal" ? SoundID.Item51 : SoundID.Splash);
+					break;
+				case StepKind.Expand:
+					SoundEngine.PlaySound(SoundID.Item30);
+					break;
+				case StepKind.Upgrade:
+					SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 0.6f });
+					break;
+			}
+			if (Key == "LunarGods" && s.Fx.Count > 0 && s.Kind is StepKind.Land or StepKind.Tumble)
+				SoundEngine.PlaySound(SoundID.Zombie104 with { Volume = 0.45f });
+			if (s.Wins.Count > 0)
+				SoundEngine.PlaySound(CasinoSounds.SmallWin with { Volume = 0.6f, Pitch = Math.Min(0.6f, Step * 0.1f) });
+		}
+
 		private void Finish(Player player)
 		{
-			long coins = Coins(Outcome.Win);
-			LastWinCoins = coins;
+			if (paid)
+				return;
+			paid = true;
+			long units = Result.Win;
+			ShownUnits = units;
+			long coins = Coins(units);
 			if (coins > 0) {
 				Games.Coins.Give(player, coins);
-				CombatText.NewText(player.Hitbox, Color.Gold, "+" + Games.Coins.Format(coins), coins >= LastBet * 20);
+				CombatText.NewText(player.Hitbox, Color.Gold, "+" + Games.Coins.Format(coins), units >= SlotMachine.Unit * 20);
 			}
-			bool freeSpin = inBonusRun;
-			if (freeSpin)
+			if (Result.FreeSpin)
 				BonusTotal += coins;
 			else
 				CasinoRecords.Report(player, CasinoGame.Slots, coins - LastBet);
 
-			if (Outcome.FreeSpinsAwarded > 0) {
-				if (!inBonusRun) {
-					inBonusRun = true;
-					BonusTotal = 0;
-					Message = Language.GetTextValue("Mods.CasinoWorld.UI.VideoSlots.Bonus", Outcome.FreeSpinsAwarded);
-				}
-				else
-					Message = Language.GetTextValue("Mods.CasinoWorld.UI.VideoSlots.Retrigger", Outcome.FreeSpinsAwarded);
-				MessageColor = SlotThemes.Accent(Definition.Key);
-				SoundEngine.PlaySound(CasinoSounds.CrowdCheer);
-				SoundEngine.PlaySound(CasinoSounds.Jackpot with { Volume = 0.6f });
+			if (units >= SlotMachine.Unit * 15) {
+				BigWinTimer = 150;
+				BigWinUnits = units;
+				SoundEngine.PlaySound(CasinoSounds.BigWin);
+				CasinoRewards.TryJackpot(player, LastBet, units >= SlotMachine.Unit * 50 ? 1f : 0.5f);
+			}
+
+			if (Result.BonusStarted) {
+				inBonusRun = true;
+				BonusTotal = 0;
+				Message = Language.GetTextValue("Mods.CasinoWorld.UI.VideoSlots.Bonus", Result.FreeSpinsAwarded);
+				MessageColor = SlotThemes.Accent(Key);
+				SoundEngine.PlaySound(CasinoSounds.BonusFanfare);
+				SoundEngine.PlaySound(CasinoSounds.CrowdCheer with { Volume = 0.6f });
+				Phase = VideoPhase.Intro;
+				Timer = 0;
+				return;
+			}
+			if (Result.FreeSpinsAwarded > 0) {
+				Message = Language.GetTextValue("Mods.CasinoWorld.UI.VideoSlots.Retrigger", Result.FreeSpinsAwarded);
+				MessageColor = SlotThemes.Accent(Key);
+				SoundEngine.PlaySound(CasinoSounds.CrowdCheer with { Volume = 0.6f });
 			}
 			else if (coins > 0) {
-				Message = Language.GetTextValue("Mods.CasinoWorld.UI.Slots.Win", Outcome.Multiplier > 1 ? Outcome.Multiplier : 1, Games.Coins.Format(coins));
+				Message = Language.GetTextValue("Mods.CasinoWorld.UI.VideoSlots.Win", Games.Coins.Format(coins));
 				MessageColor = Color.LightGreen;
-				SoundEngine.PlaySound(coins >= LastBet * 20 ? CasinoSounds.Jackpot : CasinoSounds.SmallWin);
-				if (coins >= LastBet * 20)
-					CasinoRewards.TryJackpot(player, LastBet, 0.5f);
 			}
 			else if (!inBonusRun) {
 				Message = Language.GetTextValue("Mods.CasinoWorld.UI.VideoSlots.Nothing");
 				MessageColor = Color.LightGray;
 			}
-
-			if (inBonusRun && !Engine.InBonus)
-				bonusPending = true;   // show the last free spin, then the bonus summary
+			Phase = inBonusRun || BigWinTimer > 0 ? VideoPhase.Pause : VideoPhase.Idle;
+			Timer = 0;
 		}
-
-		private bool inBonusRun;
 
 		private void EndBonus(Player player)
 		{
@@ -196,27 +321,24 @@ namespace CasinoWorld.Common.Games.VideoSlots
 			Message = Language.GetTextValue("Mods.CasinoWorld.UI.VideoSlots.BonusTotal", Games.Coins.Format(BonusTotal));
 			MessageColor = Color.Gold;
 			CasinoRecords.Report(player, CasinoGame.Slots, BonusTotal);
-			if (BonusTotal >= LastBet * 50)
-				SoundEngine.PlaySound(CasinoSounds.Jackpot);
-			BonusTotal = 0;
 			Phase = VideoPhase.Idle;
+			Timer = 0;
 		}
 
-		/// <summary>Window closed: finish the animation and play out all remaining free spins at once.</summary>
+		/// <summary>Window closed: pay this spin and play out all remaining free spins at once.</summary>
 		public void FinishImmediately(Player player)
 		{
-			if (Outcome == null || Phase == VideoPhase.Idle)
+			if (Result == null || Phase == VideoPhase.Idle)
 				return;
-			if (Phase != VideoPhase.Result)
-				Finish(player);
+			Finish(player);
 			int guard = 0;
-			while (Engine.InBonus && guard++ < 500) {
-				Outcome = Engine.Spin();
+			while (Machine.InBonus && guard++ < 1000) {
+				Result = Machine.Spin();
+				paid = false;
 				Finish(player);
 			}
 			if (inBonusRun)
 				EndBonus(player);
-			bonusPending = false;
 			Phase = VideoPhase.Idle;
 		}
 	}
@@ -237,12 +359,12 @@ namespace CasinoWorld.Common.Games.VideoSlots
 
 		protected override void OnClose(Player player) => Round.FinishImmediately(player);
 
-		public void OpenMachine(Point16 topLeft, int tileType, SlotDefinition definition)
+		public void OpenMachine(Point16 topLeft, int tileType, string key)
 		{
-			if (IsOpen && Round.Definition != definition)
+			if (IsOpen && Round.Key != key)
 				Close();
 			machineType = tileType;
-			Round.Use(definition);
+			Round.Use(key);
 			Open(topLeft);
 		}
 	}

@@ -41,6 +41,9 @@ namespace CasinoWorld.Common
 		public static readonly SoundStyle CardThrow = S("CardThrow", 0.55f, 0.25f, 6);
 		public static readonly SoundStyle CardHit = S("CardHit", 0.55f, 0.25f, 6);
 		public static readonly SoundStyle ChipFlick = S("ChipFlick", 0.55f, 0.2f, 6);
+		public static readonly SoundStyle SlotTease = S("SlotTease", 0.8f, 0f, 1);
+		public static readonly SoundStyle BonusFanfare = S("BonusFanfare", 0.9f, 0f, 1);
+		public static readonly SoundStyle BigWin = S("BigWin", 0.9f, 0f, 1);
 		public static readonly SoundStyle ChipHit = S("ChipHit", 0.5f, 0.25f, 6);
 		public static readonly SoundStyle JackpotProc = S("JackpotProc", 0.6f, 0.1f, 3);
 		public static readonly SoundStyle BustProc = S("BustProc", 0.35f, 0.1f, 2);
