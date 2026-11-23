@@ -62,6 +62,9 @@ namespace CasinoWorld.Common.Gambler
 		public const float MartingaleStep = 0.02f;
 		private int martingaleMisses;
 
+		/// <summary>Extra jackpot chance from the held weapon's Gambler prefix (Lucky, Rigged...), set by the prefix.</summary>
+		public float PrefixJackpot;
+
 		/// <summary>Copper wagered since the last loyalty token was paid out.</summary>
 		public long TokenProgress;
 
@@ -78,6 +81,7 @@ namespace CasinoWorld.Common.Gambler
 			SpectralSet = false;
 			CelestialSet = false;
 			Martingale = false;
+			PrefixJackpot = Content.Prefixes.GamblerPrefix.JackpotOf(Player.HeldItem);
 			if (houseEdgeCooldown > 0)
 				houseEdgeCooldown--;
 		}
@@ -102,8 +106,16 @@ namespace CasinoWorld.Common.Gambler
 			float jackpotChance = JackpotChance;
 			if (Martingale)
 				jackpotChance = Math.Min(jackpotChance + MartingaleStep * martingaleMisses, 0.75f);
+			GamblerPot pot = Player.GetModPlayer<GamblerPot>();
+			float bustChance = BustChance;
+			if (pot.AllInActive) {
+				jackpotChance = Math.Min(jackpotChance + Content.Buffs.AllIn.JackpotBonus, 0.75f);
+				bustChance = Math.Min(1f - jackpotChance, bustChance + Content.Buffs.AllIn.BustBonus);
+			}
+			jackpotChance += PrefixJackpot;
 
 			float roll = Main.rand.NextFloat();
+			pot.Feed(roll < jackpotChance, roll >= jackpotChance && roll < jackpotChance + bustChance);
 			if (Martingale && roll >= jackpotChance)
 				martingaleMisses++;
 			if (roll < jackpotChance) {
@@ -120,12 +132,12 @@ namespace CasinoWorld.Common.Gambler
 				Effects.CasinoFx.Ring(target.Center, new Color(255, 250, 220), 8, 2.5f, 1f);
 				Lighting.AddLight(target.Center, 1.2f, 0.9f, 0.3f);
 			}
-			else if (roll < jackpotChance + BustChance && HouseEdge && houseEdgeCooldown <= 0) {
+			else if (roll < jackpotChance + bustChance && HouseEdge && houseEdgeCooldown <= 0) {
 				houseEdgeCooldown = 600;
 				CombatText.NewText(target.Hitbox, new Color(120, 220, 255), Language.GetTextValue("Mods.CasinoWorld.Gambler.Saved"));
 				Effects.CasinoFx.Ring(target.Center, new Color(120, 220, 255), 10, 3f);
 			}
-			else if (roll < jackpotChance + BustChance) {
+			else if (roll < jackpotChance + bustChance) {
 				modifiers.SourceDamage *= BustMultiplier;
 				CombatText.NewText(target.Hitbox, Color.Gray, Language.GetTextValue("Mods.CasinoWorld.Gambler.Bust"));
 				for (int k = 0; k < 4; k++) {

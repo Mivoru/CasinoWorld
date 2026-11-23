@@ -2,6 +2,10 @@
 # Please read https://github.com/tModLoader/tModLoader/wiki/Localization to learn more about localization and these files.
 
 Items: {
+	GamblerEmblem: {
+		DisplayName: Gambler Emblem
+		Tooltip: 15% increased gambler damage
+	}
 	ChipSlimeBanner: {
 		DisplayName: Chip Slime Banner
 		Tooltip: "{$CommonItemTooltip.BannerBonus}{$Mods.CasinoWorld.NPCs.ChipSlime.DisplayName}"
@@ -405,6 +409,11 @@ Items: {
 DamageClasses.GamblerDamageClass.DisplayName: gambler damage
 
 Buffs: {
+	AllIn: {
+		DisplayName: All In
+		Description: Everything on the table! +25% jackpot chance, +10% bust chance
+	}
+
 	MiniSlotBuff: {
 		DisplayName: Mini Slot
 		Description: A tiny slot machine is following you. Sometimes it hits 777
@@ -417,6 +426,7 @@ Buffs: {
 }
 
 Gambler: {
+	AllInReady: "ALL IN! [{0}]"
 	Jackpot: JACKPOT!
 	Bust: bust
 	Saved: edge!
@@ -946,6 +956,7 @@ UI: {
 }
 
 Projectiles: {
+	AllInBurst.DisplayName: All In
 	HighRollerChip.DisplayName: High Roller Chip
 	LoadedDie.DisplayName: Loaded Die
 	ThrownCard.DisplayName: Thrown Card
@@ -1009,4 +1020,18 @@ Configs: {
 
 BossChecklist: {
 	WildCardSpawn: Use a [i:CasinoWorld/GoldenChip] at night outside the casinos. Crafted from Loyalty Tokens and gold or platinum bars.
+}
+
+Keybinds: {
+	AllIn.DisplayName: All In (Gambler)
+}
+
+Prefixes: {
+	JackpotLine: "{0}% jackpot chance"
+	Lucky.DisplayName: Lucky
+	Rigged.DisplayName: Rigged
+	Loaded.DisplayName: Loaded
+	Shady.DisplayName: Shady
+	Cursed.DisplayName: Cursed
+	Unlucky.DisplayName: Unlucky
 }

@@ -20,6 +20,28 @@ namespace CasinoWorld.Content.Buffs
 		}
 	}
 
+	/// <summary>All In: five seconds of high stakes from a full Pot.</summary>
+	public class AllIn : ModBuff
+	{
+		public const float JackpotBonus = 0.25f;
+		public const float BustBonus = 0.10f;
+
+		public override void SetStaticDefaults()
+		{
+			Main.debuff[Type] = false;
+			Main.buffNoSave[Type] = true;
+			BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
+		}
+
+		public override void Update(Player player, ref int buffIndex)
+		{
+			if (Main.rand.NextBool(3))
+				Common.Effects.CasinoFx.Spark(player.Center + Main.rand.NextVector2Circular(20, 28), new Microsoft.Xna.Framework.Vector2(0, -1f),
+					Main.rand.NextBool() ? new Microsoft.Xna.Framework.Color(255, 70, 70) : new Microsoft.Xna.Framework.Color(255, 220, 90), 0.8f);
+			Lighting.AddLight(player.Center, 0.5f, 0.3f, 0.1f);
+		}
+	}
+
 	public class GamblorghiniBuff : ModBuff
 	{
 		public override LocalizedText DisplayName => ModContent.GetInstance<Gamblorghini>().DisplayName;
