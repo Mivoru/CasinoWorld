@@ -33,7 +33,7 @@ namespace CasinoWorld.Common.Games.Blackjack
 		public const int PanelWidth = 720;
 		public const int PanelHeight = 440;
 
-		private const int CardW = 44, CardH = 62, CardStep = 26;
+		private const int CardW = 48, CardH = 68, CardStep = 28;
 		private const int RailHeight = 64;
 
 		private enum Action { Close, Chip, Clear, Deal, Hit, Stand, Double, Split }
@@ -139,7 +139,7 @@ namespace CasinoWorld.Common.Games.Blackjack
 			if (round.Dealer.Count > 0)
 				dealerLabel += ":  " + (round.HoleCardHidden ? "?" : BlackjackRules.Value(round.Dealer).ToString());
 			Utils.DrawBorderString(sb, dealerLabel, new Vector2(a.Center.X, dealerY - 6), Color.White, 0.9f, 0.5f, 1f);
-			DrawHand(sb, round.Dealer, new Vector2(a.Center.X, dealerY), hideSecond: round.HoleCardHidden);
+			DrawHand(sb, round.Dealer, new Vector2(a.Center.X, dealerY), round.HoleCardHidden, -1);
 
 			// Player hands, centred in the middle.
 			int handsY = a.Y + 214;
@@ -147,7 +147,7 @@ namespace CasinoWorld.Common.Games.Blackjack
 			for (int h = 0; h < count; h++) {
 				float cx = count == 1 ? a.Center.X : a.Center.X + (h == 0 ? -150 : 150);
 				if (h >= round.Hands.Count) {
-					DrawHand(sb, Array.Empty<int>(), new Vector2(cx, handsY), false);
+					DrawHand(sb, Array.Empty<int>(), new Vector2(cx, handsY), false, h);
 					continue;
 				}
 
@@ -157,7 +157,7 @@ namespace CasinoWorld.Common.Games.Blackjack
 					int width = CardW + CardStep * Math.Max(1, hand.Cards.Count - 1);
 					CasinoDraw.Fill(sb, new Rectangle((int)cx - width / 2 - 6, handsY - 6, width + 12, CardH + 12), CasinoDraw.Gold * 0.55f);
 				}
-				DrawHand(sb, hand.Cards, new Vector2(cx, handsY), false);
+				DrawHand(sb, hand.Cards, new Vector2(cx, handsY), false, h);
 
 				string label = hand.Value.ToString();
 				if (hand.IsBlackjack)
@@ -218,14 +218,16 @@ namespace CasinoWorld.Common.Games.Blackjack
 		private static void DrawShoe(SpriteBatch sb, Vector2 pos)
 		{
 			var body = new Rectangle((int)pos.X, (int)pos.Y + 10, 64, 40);
-			sb.Draw(CasinoDraw.CardBack, new Rectangle(body.X + 8, body.Y - 14, CardW - 6, CardH - 20), Color.White);
+			shoePosition = new Vector2(body.X + 8, body.Y - 14);
+			sb.Draw(Cards, new Rectangle(body.X + 8, body.Y - 14, CardW - 6, CardH - 20), BackFrame, Color.White);
 			CasinoDraw.Fill(sb, body, new Color(30, 14, 40));
 			CasinoDraw.Fill(sb, new Rectangle(body.X, body.Y, body.Width, 3), CasinoDraw.Gold);
 			Utils.DrawBorderString(sb, Text("Shoe"), new Vector2(body.Center.X, body.Bottom - 6), Color.White * 0.8f, 0.6f, 0.5f, 1f);
 		}
 
-		/// <summary>Draws cards centred on centerX; empty hands show two outlined card slots.</summary>
-		private static void DrawHand(SpriteBatch sb, IReadOnlyList<int> cards, Vector2 top, bool hideSecond)
+		/// <summary>Draws cards centred on centerX; empty hands show two outlined card slots.
+		/// New cards slide in from the shoe and flip face up; the dealer's hole card flips when revealed.</summary>
+		private static void DrawHand(SpriteBatch sb, IReadOnlyList<int> cards, Vector2 top, bool hideSecond, int handKey)
 		{
 			if (cards.Count == 0) {
 				for (int k = 0; k < 2; k++) {
@@ -233,14 +235,48 @@ namespace CasinoWorld.Common.Games.Blackjack
 					CasinoDraw.Fill(sb, slot, Color.White * 0.25f);
 					CasinoDraw.Fill(sb, CasinoDraw.Shrink(slot, 2), CasinoDraw.Felt);
 				}
+				ForgetHand(handKey);
 				return;
 			}
 
 			int width = CardW + CardStep * (cards.Count - 1);
 			float x = top.X - width / 2f;
-			for (int k = 0; k < cards.Count; k++)
-				DrawCard(sb, new Vector2(x + k * CardStep, top.Y), cards[k], hidden: hideSecond && k == 1);
+			for (int k = 0; k < cards.Count; k++) {
+				bool hidden = hideSecond && k == 1;
+				var key = (handKey, k);
+				uint now = Main.GameUpdateCount;
+				if (!dealtAt.TryGetValue(key, out var info) || info.card != cards[k]) {
+					info = (cards[k], now, hidden);
+					dealtAt[key] = info;
+				}
+				if (info.hidden && !hidden) {
+					info = (cards[k], now - DealTicks / 2, false);   // hole card: flip only, no slide
+					dealtAt[key] = info;
+				}
+				float p = Math.Min(1f, (now - info.at) / (float)DealTicks);
+				Vector2 target = new(x + k * CardStep, top.Y);
+				Vector2 from = shoePosition == Vector2.Zero ? target : shoePosition;
+				Vector2 pos = Vector2.Lerp(from, target, Math.Min(1f, p * 2f));
+				float flip = p < 0.5f ? 1f : Math.Abs((float)Math.Cos((p - 0.5f) * 2f * Math.PI));
+				bool showBack = hidden || p < 0.75f;
+				DrawCard(sb, pos, cards[k], showBack, p < 0.5f ? 1f : flip, (1f - Math.Min(1f, p * 2f)) * 0.6f);
+			}
 		}
+
+		private const int DealTicks = 24;
+		private static readonly Dictionary<(int hand, int index), (int card, uint at, bool hidden)> dealtAt = new();
+		private static Vector2 shoePosition;
+
+		private static void ForgetHand(int handKey)
+		{
+			foreach (var key in new List<(int, int)>(dealtAt.Keys))
+				if (key.Item1 == handKey)
+					dealtAt.Remove(key);
+		}
+
+		private static Texture2D Cards => (cardsTexture ??= ModContent.Request<Texture2D>("CasinoWorld/Assets/UI/Cards")).Value;
+		private static ReLogic.Content.Asset<Texture2D> cardsTexture;
+		private static Rectangle BackFrame => new(0, 4 * CardH, CardW, CardH);
 
 		private static void DrawBetChip(SpriteBatch sb, Vector2 center, string text)
 		{
@@ -249,26 +285,13 @@ namespace CasinoWorld.Common.Games.Blackjack
 			Utils.DrawBorderString(sb, text, center + new Vector2(16, 3), Color.Yellow, 0.8f, 0f, 0.5f);
 		}
 
-		private static void DrawCard(SpriteBatch sb, Vector2 pos, int card, bool hidden)
+		/// <summary>Draws one card from the atlas (or its back), squashed horizontally for the flip and tilted while flying.</summary>
+		private static void DrawCard(SpriteBatch sb, Vector2 pos, int card, bool showBack, float scaleX = 1f, float tilt = 0f)
 		{
-			var rect = new Rectangle((int)pos.X, (int)pos.Y, CardW, CardH);
-			CasinoDraw.Fill(sb, new Rectangle(rect.X + 3, rect.Y + 3, CardW, CardH), Color.Black * 0.35f);
-			if (hidden) {
-				sb.Draw(CasinoDraw.CardBack, rect, Color.White);
-				return;
-			}
-
-			CasinoDraw.Fill(sb, rect, new Color(60, 60, 60));
-			CasinoDraw.Fill(sb, CasinoDraw.Shrink(rect, 1), new Color(245, 242, 235));
-
-			int suit = BlackjackRules.Suit(card);
-			Color ink = suit is 1 or 2 ? CasinoDraw.Red : CasinoDraw.Black;
-			Utils.DrawBorderString(sb, BlackjackRules.RankName(card), new Vector2(rect.X + 4, rect.Y + 3), ink, 0.85f);
-
-			Texture2D suits = CasinoDraw.Suits;
-			var src = new Rectangle(suit * 12, 0, 12, 12);
-			sb.Draw(suits, new Vector2(rect.X + 5, rect.Y + 24), src, Color.White);
-			sb.Draw(suits, new Vector2(rect.Center.X - 6, rect.Center.Y), src, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
+			var center = pos + new Vector2(CardW / 2f, CardH / 2f);
+			CasinoDraw.Fill(sb, new Rectangle((int)pos.X + 3, (int)pos.Y + 3, (int)(CardW * scaleX), CardH), Color.Black * 0.3f);
+			Rectangle src = showBack ? BackFrame : new Rectangle(BlackjackRules.Rank(card) * CardW, BlackjackRules.Suit(card) * CardH, CardW, CardH);
+			sb.Draw(Cards, center, src, Color.White, tilt, new Vector2(CardW / 2f, CardH / 2f), new Vector2(Math.Max(0.05f, scaleX), 1f), SpriteEffects.None, 0f);
 		}
 	}
 }
