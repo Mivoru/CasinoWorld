@@ -96,6 +96,7 @@ namespace CasinoWorld.Common.Games.VideoSlots
 				return;
 			Key = key;
 			Machine = SlotGames.Create(key, n => Main.rand.Next(n));
+			Machine.PayScale *= Systems.CasinoConfig.Instance.VideoSlotPayout;
 			Phase = VideoPhase.Idle;
 			Result = null;
 			inBonusRun = false;

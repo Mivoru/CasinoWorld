@@ -53,7 +53,7 @@ namespace CasinoWorld.Common.Players
 			}
 
 			// Reminder of the hardmode casino for players who have not found it yet.
-			if (!VisitedUnderground && !CasinoTravel.InCasino && CasinoWorldSystem.HasUndergroundCasino)
+			if (!VisitedUnderground && !CasinoTravel.InCasino && CasinoWorldSystem.HasUndergroundCasino && CasinoConfig.Instance.Announcements)
 				Main.NewText(CasinoWorldSystem.UndergroundCasinoDirections().ToString(), CasinoWorldSystem.AnnounceColor);
 		}
 

@@ -40,6 +40,11 @@ namespace CasinoWorld.Common.Games
 		/// <summary>Takes a wager and credits loyalty token progress. False if the player cannot pay.</summary>
 		public static bool TryWager(Player player, long amount)
 		{
+			if (!Systems.CasinoConfig.Instance.GamblingEnabled) {
+				if (player.whoAmI == Main.myPlayer)
+					Main.NewText(Terraria.Localization.Language.GetTextValue("Mods.CasinoWorld.UI.GamblingDisabled"), new Microsoft.Xna.Framework.Color(255, 160, 120));
+				return false;
+			}
 			if (!Coins.TryTake(player, amount))
 				return false;
 

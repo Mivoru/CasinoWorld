@@ -85,6 +85,8 @@ namespace CasinoWorld.Common.Systems
 		/// </summary>
 		private static void AnnounceUndergroundCasino()
 		{
+			if (!CasinoConfig.Instance.Announcements)
+				return;
 			NetworkText text = UndergroundCasinoDirections();
 			if (Main.netMode == NetmodeID.Server)
 				ChatHelper.BroadcastChatMessage(text, AnnounceColor);

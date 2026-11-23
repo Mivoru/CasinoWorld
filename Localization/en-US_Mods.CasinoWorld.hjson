@@ -756,6 +756,7 @@ Crates: {
 }
 
 UI: {
+	GamblingDisabled: Gambling is turned off on this world (mod settings).
 	ClosedBoss: The casino doors are locked while a boss is on the loose!
 	ClosedEvent: The casino is closed until the invasion is over!
 	NoSummonsInside: The house does not allow that in here.
@@ -982,4 +983,30 @@ Projectiles: {
 	RollingDie.DisplayName: Rolling Die
 	ShellCard.DisplayName: Shell Card
 	SpadeShot.DisplayName: Spade Shot
+}
+
+Configs: {
+	CasinoConfig: {
+		DisplayName: Casino World
+		GamblingEnabled: {
+			Label: Gambling enabled
+			Tooltip: Off: tables, slots and crates take no bets. The casinos, NPCs and gear stay.
+		}
+		VideoSlotPayout: {
+			Label: Video slot payout
+			Tooltip: Multiplies every video slot win. 1.00 is the tuned return of about 97-99 %.
+		}
+		Announcements: {
+			Label: Announcements
+			Tooltip: Chat messages about the hardmode casino opening and where to find it.
+		}
+		HighStakesNight: {
+			Label: High Stakes Night
+			Tooltip: In hardmode, the card army can raid the world on some nights.
+		}
+	}
+}
+
+BossChecklist: {
+	WildCardSpawn: Use a [i:CasinoWorld/GoldenChip] at night outside the casinos. Crafted from Loyalty Tokens and gold or platinum bars.
 }
