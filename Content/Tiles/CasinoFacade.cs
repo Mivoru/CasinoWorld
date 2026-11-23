@@ -15,6 +15,8 @@ namespace CasinoWorld.Content.Tiles
 		public override Rectangle DoorArea => new(10, 11, 4, 5);
 		protected override byte[,] Light => LightMap;
 		protected override Color MapColor => new(140, 22, 38);
+		protected override (byte r, byte g, byte b)[] MapPalette => FacadeMapColors.CasinoFacadePalette;
+		protected override byte[,] MapIndex => FacadeMapColors.CasinoFacadeIndex;
 
 		public override void Enter() => CasinoTravel.Enter<SurfaceCasino>();
 	}
