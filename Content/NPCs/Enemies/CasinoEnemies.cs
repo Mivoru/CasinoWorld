@@ -1,4 +1,9 @@
 using CasinoWorld.Common;
+using CasinoWorld.Common.Effects;
+using CasinoWorld.Content.Projectiles.Boss;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria.Audio;
 using CasinoWorld.Content.Items;
 using CasinoWorld.Content.Items.Crates;
 using CasinoWorld.Content.Items.Weapons;
@@ -38,19 +43,72 @@ namespace CasinoWorld.Content.NPCs.Enemies
 			NPC.DeathSound = CasinoSounds.ChipSlimeDeath;
 		}
 
+		/// <summary>1 in 20 is a golden chip slime: twice the life, glows and sparkles, drops far more.</summary>
+		public bool Golden;
+
+		public override void SendExtraAI(System.IO.BinaryWriter writer) => writer.Write(Golden);
+
+		public override void ReceiveExtraAI(System.IO.BinaryReader reader) => Golden = reader.ReadBoolean();
+
+		public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
+		{
+			if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(20)) {
+				Golden = true;
+				NPC.lifeMax *= 2;
+				NPC.life = NPC.lifeMax;
+				NPC.value *= 10;
+				NPC.netUpdate = true;
+			}
+		}
+
+		public override void AI()
+		{
+			if (Golden) {
+				Lighting.AddLight(NPC.Center, 0.5f, 0.4f, 0.1f);
+				if (Main.rand.NextBool(6))
+					CasinoFx.Spark(NPC.Center + Main.rand.NextVector2Circular(14, 10), new Vector2(0, -0.5f), new Color(255, 220, 90), 0.8f);
+			}
+		}
+
+		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+		{
+			if (Golden)
+				NPC.color = new Color(255, 215, 90);
+			return true;
+		}
+
+		public override void HitEffect(NPC.HitInfo hit)
+		{
+			int jelly = Golden ? DustID.GoldCoin : DustID.t_Slime;
+			for (int k = 0; k < (NPC.life <= 0 ? 16 : 4); k++) {
+				Dust d = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, jelly, hit.HitDirection * 2f, -1.5f, 120, Golden ? default : new Color(230, 70, 90), 1.1f);
+				d.noGravity = Main.rand.NextBool();
+			}
+			if (NPC.life <= 0) {
+				CasinoFx.ChipImpact(NPC.Center, Golden ? new Color(255, 220, 90) : new Color(230, 80, 90));
+				if (Golden)
+					CasinoFx.Ring(NPC.Center, new Color(255, 220, 90), 16, 4f, 1.2f);
+			}
+		}
+
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
+			float stage = Main.hardMode ? 0.5f : 1f;   // an early-game pest, rarer once harder enemies take over
 			if (spawnInfo.Player.ZoneOverworldHeight && !Main.dayTime)
-				return SpawnCondition.OverworldNightMonster.Chance * 0.12f;
+				return SpawnCondition.OverworldNightMonster.Chance * 0.12f * stage;
 			if (spawnInfo.Player.ZoneRockLayerHeight || spawnInfo.Player.ZoneDirtLayerHeight)
-				return SpawnCondition.Cavern.Chance * 0.06f;
+				return SpawnCondition.Cavern.Chance * 0.06f * stage;
 			return 0f;
 		}
 
 		public override void ModifyNPCLoot(NPCLoot npcLoot)
 		{
-			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<LoyaltyToken>(), 3, 1, 3));
-			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<LuckyCrate>(), 40));
+			var golden = new LeadingConditionRule(new GoldenChipCondition());
+			golden.OnSuccess(ItemDropRule.Common(ModContent.ItemType<LoyaltyToken>(), 1, 8, 15));
+			golden.OnSuccess(ItemDropRule.Common(ModContent.ItemType<LuckyCrate>(), 3));
+			golden.OnFailedConditions(ItemDropRule.Common(ModContent.ItemType<LoyaltyToken>(), 3, 1, 3));
+			golden.OnFailedConditions(ItemDropRule.Common(ModContent.ItemType<LuckyCrate>(), 40));
+			npcLoot.Add(golden);
 		}
 
 		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
@@ -61,6 +119,14 @@ namespace CasinoWorld.Content.NPCs.Enemies
 				new FlavorTextBestiaryInfoElement("Mods.CasinoWorld.Bestiary.ChipSlime"),
 			});
 		}
+	}
+
+	/// <summary>Loot condition: the chip slime that died was golden.</summary>
+	public class GoldenChipCondition : IItemDropRuleCondition
+	{
+		public bool CanDrop(DropAttemptInfo info) => info.npc?.ModNPC is ChipSlime slime && slime.Golden;
+		public bool CanShowItemDropInUI() => false;
+		public string GetConditionDescription() => null;
 	}
 
 	/// <summary>A marching playing card with a spear. Caves and night surface.</summary>
@@ -84,6 +150,27 @@ namespace CasinoWorld.Content.NPCs.Enemies
 			NPC.value = Item.buyPrice(silver: 5);
 			NPC.HitSound = CasinoSounds.CardSoldierHit;
 			NPC.DeathSound = CasinoSounds.CardSoldierDeath;
+		}
+
+		public override void PostAI()
+		{
+			// Spear lunge: on the ground and close to the target, a quick hop forward every two seconds.
+			if (!NPC.HasValidTarget || NPC.velocity.Y != 0f)
+				return;
+			Player target = Main.player[NPC.target];
+			if (++NPC.localAI[0] >= 120 && NPC.Distance(target.Center) < 130f) {
+				NPC.localAI[0] = 0;
+				NPC.velocity.X = System.Math.Sign(target.Center.X - NPC.Center.X) * 6.5f;
+				NPC.velocity.Y = -3f;
+				SoundEngine.PlaySound(CasinoSounds.CardThrow with { Pitch = -0.3f }, NPC.Center);
+			}
+		}
+
+		public override void HitEffect(NPC.HitInfo hit)
+		{
+			int count = NPC.life <= 0 ? 14 : 3;
+			for (int k = 0; k < count; k++)
+				Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(10, 20), CasinoFx.ShardType, new Vector2(hit.HitDirection * 2f, -2f) + Main.rand.NextVector2Circular(1.5f, 1.5f), 0, k % 3 == 0 ? new Color(220, 40, 50) : Color.White);
 		}
 
 		public override void FindFrame(int frameHeight)
@@ -141,13 +228,42 @@ namespace CasinoWorld.Content.NPCs.Enemies
 			NPC.height = 44;
 			NPC.aiStyle = NPCAIStyleID.Mimic;
 			AIType = NPCID.Mimic;
-			NPC.damage = 70;
+			NPC.damage = 80;
 			NPC.defense = 30;
-			NPC.lifeMax = 1200;
+			NPC.lifeMax = 700;
 			NPC.knockBackResist = 0.1f;
 			NPC.value = Item.buyPrice(gold: 2);
 			NPC.HitSound = CasinoSounds.SlotMimicHit;
 			NPC.DeathSound = CasinoSounds.SlotMimicDeath;
+		}
+
+		public override void PostAI()
+		{
+			// Once awake, every three seconds it pulls its own lever and sprays a fan of hot chips.
+			if (NPC.ai[0] == 0f || !NPC.HasValidTarget)
+				return;
+			if (++NPC.localAI[0] == 160)
+				SoundEngine.PlaySound(CasinoSounds.LeverPull, NPC.Center);
+			if (NPC.localAI[0] >= 180) {
+				NPC.localAI[0] = 0;
+				SoundEngine.PlaySound(CasinoSounds.Jackpot with { Volume = 0.5f, Pitch = 0.3f }, NPC.Center);
+				CasinoFx.Ring(NPC.Top, new Color(255, 220, 90), 10, 3f);
+				if (Main.netMode != NetmodeID.MultiplayerClient) {
+					Player target = Main.player[NPC.target];
+					Vector2 aim = (target.Center - NPC.Center).SafeNormalize(Vector2.UnitX);
+					int damage = Main.expertMode ? 24 : 32;
+					for (int k = -2; k <= 2; k++)
+						Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Top, aim.RotatedBy(k * 0.2f) * 6f - Vector2.UnitY * 2f, ModContent.ProjectileType<AllInChip>(), damage, 1f, Main.myPlayer, k % 2 == 0 ? 0 : 1);
+				}
+			}
+		}
+
+		public override void HitEffect(NPC.HitInfo hit)
+		{
+			for (int k = 0; k < (NPC.life <= 0 ? 30 : 4); k++)
+				Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GoldCoin, hit.HitDirection * 2f, -2f);
+			if (NPC.life <= 0)
+				CasinoFx.Explosion(NPC.Center, 90, new Color(255, 210, 80), new Color(200, 120, 255), 2f);
 		}
 
 		public override void FindFrame(int frameHeight)
