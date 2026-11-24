@@ -78,7 +78,7 @@ namespace CasinoWorld.Common.Systems
 
 		public override void PostUpdateWorld()
 		{
-			if (Main.netMode == NetmodeID.MultiplayerClient || CasinoTravel.InCasino)
+			if (Main.netMode == NetmodeID.MultiplayerClient || SubworldLibrary.SubworldSystem.AnyActive())
 				return;
 			// Nightfall: maybe start a raid.
 			if (wasDay && !Main.dayTime) {

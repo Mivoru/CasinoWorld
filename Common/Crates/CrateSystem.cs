@@ -4,6 +4,7 @@ using CasinoWorld.Common.Games;
 using CasinoWorld.Content.Items.Crates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -134,10 +135,18 @@ namespace CasinoWorld.Common.Crates
 	public class CratePanel : UIElement
 	{
 		public const int PanelWidth = 720;
-		public const int PanelHeight = 330;
+		public const int PanelHeight = 366;
 
 		private static readonly Color Back = new(22, 18, 30);
 		private static readonly Color Strip = new(34, 30, 44);
+
+		private static Asset<Texture2D> luckyBig, highRollerBig, glow;
+
+		private static Texture2D BigCrate(CrateKind kind) => (kind == CrateKind.HighRoller
+			? highRollerBig ??= ModContent.Request<Texture2D>("CasinoWorld/Assets/UI/HighRollerCrateBig", AssetRequestMode.ImmediateLoad)
+			: luckyBig ??= ModContent.Request<Texture2D>("CasinoWorld/Assets/UI/LuckyCrateBig", AssetRequestMode.ImmediateLoad)).Value;
+
+		private static Texture2D Glow => (glow ??= ModContent.Request<Texture2D>("CasinoWorld/Assets/Fx/Glow72", AssetRequestMode.ImmediateLoad)).Value;
 
 		private static CrateSystem System => ModContent.GetInstance<CrateSystem>();
 
@@ -183,8 +192,7 @@ namespace CasinoWorld.Common.Crates
 			Point mouse = CrateSystem.UIMouse;
 			Color accent = CrateLoot.RarityColors[(int)opening.PrizeRarity];
 
-			CasinoDraw.Fill(sb, a, CasinoDraw.Gold);
-			CasinoDraw.Fill(sb, CasinoDraw.Shrink(a, 3), Back);
+			DrawFrame(sb, a, opening.Kind);
 			string title = Lang.GetItemNameValue(CrateItem.ItemTypeFor(opening.Kind));
 			Utils.DrawBorderString(sb, title, new Vector2(a.X + 20, a.Y + 16), CasinoDraw.Gold, 1.1f);
 			CasinoDraw.Button(sb, CloseButton, "X", CasinoDraw.Red, CloseButton.Contains(mouse), true, 0.8f);
@@ -193,27 +201,80 @@ namespace CasinoWorld.Common.Crates
 
 			if (opening.Done) {
 				// Prize banner.
-				var banner = new Rectangle(a.X + 20, a.Y + 186, a.Width - 40, 72);
+				var banner = new Rectangle(a.X + 20, a.Y + 196, a.Width - 40, 92);
 				float pulse = 0.55f + 0.2f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 5f);
 				CasinoDraw.Fill(sb, banner, accent * pulse);
 				CasinoDraw.Fill(sb, CasinoDraw.Shrink(banner, 3), Back);
+				// Colour washing in from both ends, then the open crate with light in the prize's colour.
+				for (int s = 0; s < 12; s++) {
+					CasinoDraw.Fill(sb, new Rectangle(banner.X + 3 + s * 14, banner.Y + 3, 14, banner.Height - 6), accent * (0.26f - s * 0.02f));
+					CasinoDraw.Fill(sb, new Rectangle(banner.Right - 17 - s * 14, banner.Y + 3, 14, banner.Height - 6), accent * (0.26f - s * 0.02f));
+				}
+				var crateAt = new Vector2(banner.Right - 60, banner.Center.Y);
+				DrawGlow(sb, crateAt - new Vector2(0, 14), accent, 0.8f + 0.1f * pulse);
+				DrawCrate(sb, opening.Kind, true, crateAt);
+				DrawGlow(sb, new Vector2(banner.X + 44, banner.Center.Y), accent, 0.55f);
 				DrawItem(sb, opening.Prize.ItemType, new Vector2(banner.X + 44, banner.Center.Y), 52f);
 				string name = Lang.GetItemNameValue(opening.Prize.ItemType) + (opening.PrizeStack > 1 ? "  x" + opening.PrizeStack : "");
-				Utils.DrawBorderString(sb, name, new Vector2(banner.X + 86, banner.Y + 14), accent, 1.15f);
-				Utils.DrawBorderString(sb, Text("Rarity" + opening.PrizeRarity), new Vector2(banner.X + 86, banner.Y + 44), accent * 0.85f, 0.8f);
+				CasinoDraw.Fit(sb, name, new Vector2(banner.X + 86, banner.Y + 22), accent, 1.15f, banner.Width - 200);
+				Utils.DrawBorderString(sb, Text("Rarity" + opening.PrizeRarity), new Vector2(banner.X + 86, banner.Y + 54), accent * 0.85f, 0.8f);
 
 				CasinoDraw.Button(sb, AgainButton, Text("OpenAnother"), CasinoDraw.ButtonGold, AgainButton.Contains(mouse), true, 0.9f);
 				CasinoDraw.Button(sb, DoneButton, Text("Done"), CasinoDraw.FeltDark, DoneButton.Contains(mouse), true, 0.9f);
 			}
 			else {
-				Utils.DrawBorderString(sb, Text("Opening"), new Vector2(a.Center.X, a.Y + 214), Color.White * 0.8f, 0.9f, 0.5f);
-				DrawOdds(sb, new Vector2(a.X + 20, a.Bottom - 46), opening.Kind);
+				// The crate rattles harder as the reel slows down; its colour does not give the prize away.
+				float p = Math.Min(1f, opening.Timer / (float)CrateOpening.SpinTicks);
+				var crateAt = new Vector2(a.Center.X, a.Y + 236) + new Vector2((float)Math.Sin(opening.Timer * 0.9f), -Math.Abs((float)Math.Sin(opening.Timer * 0.45f))) * (1f + p * 3f);
+				DrawGlow(sb, new Vector2(a.Center.X, a.Y + 236), KindColor(opening.Kind), 0.8f + p * 0.4f);
+				DrawCrate(sb, opening.Kind, false, crateAt);
+				Utils.DrawBorderString(sb, Text("Opening"), new Vector2(a.Center.X, a.Y + 276), Color.White * 0.8f, 0.85f, 0.5f);
+				DrawOdds(sb, new Vector2(a.X + 20, a.Bottom - 38), opening.Kind);
 			}
+		}
+
+		private static Color KindColor(CrateKind kind) => kind == CrateKind.HighRoller ? new Color(190, 90, 240) : new Color(255, 190, 70);
+
+		private static Color KindBack(CrateKind kind) => kind == CrateKind.HighRoller ? new Color(52, 24, 84) : new Color(84, 34, 28);
+
+		/// <summary>Window in the crate's own colours: lacquer border, two gold beads, studs, a soft gradient inside.</summary>
+		private static void DrawFrame(SpriteBatch sb, Rectangle a, CrateKind kind)
+		{
+			Color lacquer = KindBack(kind);
+			CasinoDraw.Fill(sb, new Rectangle(a.X + 6, a.Y + 8, a.Width, a.Height), Color.Black * 0.35f);
+			CasinoDraw.Fill(sb, a, new Color(146, 88, 26));
+			CasinoDraw.Fill(sb, CasinoDraw.Shrink(a, 2), CasinoDraw.Gold);
+			CasinoDraw.Fill(sb, new Rectangle(a.X + 2, a.Y + 2, a.Width - 4, 2), new Color(255, 236, 160));
+			CasinoDraw.Fill(sb, CasinoDraw.Shrink(a, 4), lacquer);
+			CasinoDraw.Fill(sb, CasinoDraw.Shrink(a, 8), CasinoDraw.Gold);
+			Rectangle inner = CasinoDraw.Shrink(a, 9);
+			CasinoDraw.Fill(sb, inner, Back);
+			for (int k = 0; k < 10; k++)
+				CasinoDraw.Fill(sb, new Rectangle(inner.X, inner.Y + k * 10, inner.Width, 10), lacquer * (0.6f * (1f - k / 10f)));
+			foreach (Point c in new[] { new Point(a.X + 6, a.Y + 6), new Point(a.Right - 6, a.Y + 6), new Point(a.X + 6, a.Bottom - 6), new Point(a.Right - 6, a.Bottom - 6) }) {
+				CasinoDraw.Fill(sb, new Rectangle(c.X - 5, c.Y - 5, 10, 10), new Color(146, 88, 26));
+				CasinoDraw.Fill(sb, new Rectangle(c.X - 4, c.Y - 4, 8, 8), CasinoDraw.Gold);
+				CasinoDraw.Fill(sb, new Rectangle(c.X - 4, c.Y - 4, 4, 4), new Color(255, 236, 160));
+			}
+		}
+
+		private static void DrawGlow(SpriteBatch sb, Vector2 center, Color color, float scale)
+		{
+			Texture2D tex = Glow;
+			sb.Draw(tex, center, null, new Color(color.R, color.G, color.B, 0) * 0.7f, 0f, tex.Size() / 2f, scale, SpriteEffects.None, 0f);
+		}
+
+		private static void DrawCrate(SpriteBatch sb, CrateKind kind, bool open, Vector2 center)
+		{
+			Texture2D tex = BigCrate(kind);
+			Rectangle frame = tex.Frame(1, 2, 0, open ? 1 : 0);
+			sb.Draw(tex, new Vector2((int)center.X, (int)center.Y), frame, Color.White, 0f, frame.Size() / 2f, 1f, SpriteEffects.None, 0f);
 		}
 
 		private void DrawStrip(SpriteBatch sb, CrateOpening opening)
 		{
 			Rectangle strip = StripRect;
+			CasinoDraw.Fill(sb, new Rectangle(strip.X - 2, strip.Y - 2, strip.Width + 4, strip.Height + 4), CasinoDraw.Gold);
 			CasinoDraw.Fill(sb, strip, Strip);
 			float centerX = strip.Center.X;
 			float slotW = CrateOpening.SlotWidth;
@@ -229,7 +290,10 @@ namespace CasinoWorld.Common.Crates
 				if (x1 <= x0)
 					continue;
 				var card = new Rectangle(x0, strip.Y + 8, x1 - x0, strip.Height - 16);
-				CasinoDraw.Fill(sb, card, new Color(48, 44, 60));
+				bool won = opening.Done && k == CrateOpening.WinnerIndex;
+				var cardColor = new Color(48, 44, 60);
+				CasinoDraw.Fill(sb, card, Color.Lerp(cardColor, color, won ? 0.75f : 0.3f));
+				CasinoDraw.Fill(sb, new Rectangle(card.X, card.Y + 2, card.Width, card.Height - 2), won ? Color.Lerp(cardColor, color, 0.25f) : cardColor);
 				// Rarity glow from the bottom.
 				for (int s = 0; s < 6; s++)
 					CasinoDraw.Fill(sb, new Rectangle(card.X, card.Bottom - 8 - s * 10, card.Width, 10), color * (0.22f - s * 0.035f));
@@ -258,8 +322,8 @@ namespace CasinoWorld.Common.Crates
 		{
 			// Stage and pity counters above the odds row.
 			CratePity pity = Main.LocalPlayer.GetModPlayer<CratePity>();
-			string info = Text("Stage" + CrateLoot.CurrentStage) + "   " + Text("Pity", CrateLoot.PityRare - pity.SinceRare, CrateLoot.PityGold - pity.SinceGold);
-			Utils.DrawBorderString(sb, info, pos - new Vector2(0, 20), Color.White * 0.7f, 0.7f);
+			string info = Text("Stage" + CrateLoot.CurrentStage) + "   " + Text("Pity", CrateLoot.PityRare - pity.SinceRare, CrateLoot.PityRed - pity.SinceRed, CrateLoot.PityGold - pity.SinceGold);
+			CasinoDraw.Fit(sb, info, pos - new Vector2(0, 20), Color.White * 0.7f, 0.7f, PanelWidth - 40);
 			int[] weights = CrateLoot.Weights(kind);
 			float x = pos.X;
 			for (int k = 0; k < weights.Length; k++) {

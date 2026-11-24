@@ -49,6 +49,7 @@ namespace CasinoWorld.Common.Net
 					break;
 
 				case CasinoMessage.RecordsRequest when Main.netMode == NetmodeID.Server:
+					Games.CasinoRecords.Load();   // the other casino's server may have added wins
 					Games.CasinoRecords.Broadcast(sender);
 					break;
 

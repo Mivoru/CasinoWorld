@@ -288,6 +288,9 @@ namespace CasinoWorld.Common.Games.Blackjack
 			if (total > staked) {
 				bool natural = Hands.Count == 1 && Hands[0].IsBlackjack;
 				SetMessage(Text(natural ? "Blackjack" : "Win", Coins.Format(total)), Color.LightGreen);
+				UiFx.Win(total, staked);
+				if (natural)
+					UiFx.Banner(Language.GetTextValue("Mods.CasinoWorld.UI.Win.Blackjack"), new Color(255, 215, 80), total, 1);
 				SoundEngine.PlaySound(natural ? CasinoSounds.Jackpot : CasinoSounds.SmallWin);
 				SoundEngine.PlaySound(CasinoSounds.CoinsPayout);
 				CombatText.NewText(player.Hitbox, Color.Gold, "+" + Coins.Format(total), dramatic: natural);

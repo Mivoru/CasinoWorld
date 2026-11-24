@@ -1,1 +1,27 @@
-This description will show up on the steam page, check out https://steamcommunity.com/comment/Guide/formattinghelp.
+[h1]Casino World[/h1]
+Walk into a working casino, risk your fortune, and become the Gambler: a new class whose every hit rolls the dice.
+
+[h2]Two casinos to explore[/h2]
+[list]
+[*]Build the casino on the surface; find the High Rollers casino deep underground in hardmode
+[*]Roulette, blackjack, dice, slots, scratch cards and four video slots with their own bonus games
+[*]Daily challenges, prize crates, a free daily spin of the Fortune Wheel
+[/list]
+
+[h2]The Gambler class[/h2]
+[list]
+[*]Weapons that throw cards, dice, chips and gold bars, each with its own trick against walls
+[*]No crits: hits land Jackpots (triple damage) or Busts (half). Luck tips the odds
+[*]Fill the Pot and go ALL IN: the dealer deals you a poker hand, and the hand decides your luck
+[*]Five armour sets. The Upgrade Machine takes your gear up to +10 and turns each set into the next
+[/list]
+
+[h2]Bosses and events[/h2]
+[list]
+[*]The Wild Card: a jester with a shell game, dice tricks and an all-in finale
+[*]The Pit Boss: red or black? Pick your column before the hall erupts
+[*]High Stakes Night: the card army raids your world
+[/list]
+
+All in-game currency, no real money. Gambling, screen shake and flashes can be switched off in the mod settings.
+Requires Subworld Library. Works with Boss Checklist.

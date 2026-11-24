@@ -79,6 +79,17 @@ namespace CasinoWorld.Content.Tiles
 			}
 		}
 
+		/// <summary>Attract mode: a spark off the top light and, rarely, a distant chime.</summary>
+		public override void NearbyEffects(int i, int j, bool closer)
+		{
+			if (!closer || Main.tile[i, j].TileFrameX % 54 != 0 || Main.tile[i, j].TileFrameY % 72 != 0)
+				return;
+			if (Main.rand.NextBool(80))
+				Common.Effects.CasinoFx.Spark(new Vector2(i * 16 + Main.rand.Next(48), j * 16 + Main.rand.Next(12)), new Vector2(0, -0.4f), Main.rand.NextBool() ? new Color(255, 120, 220) : new Color(255, 225, 120), 0.7f);
+			if (Main.rand.NextBool(6000))
+				Terraria.Audio.SoundEngine.PlaySound(Common.CasinoSounds.SmallWin with { Volume = 0.15f, Pitch = 0.2f }, new Vector2(i * 16 + 24, j * 16 + 24));
+		}
+
 		private static Asset<Texture2D> symbols;
 
 		// Reel window centres inside the 48x64 sprite (from the Blender model: x 0.92/1.42/1.92, z 2.4 tiles).

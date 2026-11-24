@@ -180,10 +180,9 @@ namespace CasinoWorld.Content.Items.Weapons
 
 		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
 		{
-			if (++throws % 8 != 0)
-				return true;
-			for (int k = -3; k <= 3; k++)
-				Projectile.NewProjectile(source, position, velocity.RotatedBy(k * 0.12f), type, damage, knockback, player.whoAmI);
+			int reach = ++throws % 8 == 0 ? 3 : 0;
+			for (int k = -reach; k <= reach; k++)
+				Projectile.NewProjectile(source, position, velocity.RotatedBy(k * 0.12f), type, damage, knockback, player.whoAmI, 0f, 1f);
 			return false;
 		}
 	}
@@ -255,6 +254,22 @@ namespace CasinoWorld.Content.Projectiles
 			AIType = ProjectileID.WoodenBoomerang;
 			Projectile.DamageType = ModContent.GetInstance<GamblerDamageClass>();
 			Projectile.width = Projectile.height = 20;
+		}
+
+		public override bool OnTileCollide(Vector2 oldVelocity)
+		{
+			// The wheel hits the rail: one burst per throw, red burns, black knocks back hard.
+			if (Projectile.localAI[1]++ == 0f) {
+				bool red = Projectile.identity % 2 == 0;
+				if (!red)
+					Projectile.knockBack *= 2f;
+				WallHit.Blast(Projectile, 64f, red ? 0.5f : 0.35f);
+				if (!red)
+					Projectile.knockBack /= 2f;
+				Common.Effects.CasinoFx.Ring(Projectile.Center, red ? new Color(255, 70, 70) : new Color(200, 200, 220), 18, 4.5f, 1.2f);
+				SoundEngine.PlaySound(Common.CasinoSounds.RouletteBallBounce, Projectile.Center);
+			}
+			return true;
 		}
 
 		public override void OnKill(int timeLeft)

@@ -156,6 +156,7 @@ namespace CasinoWorld.Common.Games
 			LastWin = win;
 			if (win > 0) {
 				Coins.Give(player, win);
+				UiFx.Win(win, total);
 				CombatText.NewText(player.Hitbox, Color.Gold, "+" + Coins.Format(win), win >= total * 10);
 				Message = Language.GetTextValue("Mods.CasinoWorld.UI.Dice.Win", Dice[0], Dice[1], Dice[2], Coins.Format(win));
 				MessageColor = Color.LightGreen;
@@ -200,6 +201,13 @@ namespace CasinoWorld.Common.Games
 				ui.Draw(Main.spriteBatch, new GameTime());
 				return true;
 			}, InterfaceScaleType.UI));
+		}
+
+		// Also when the server drops the connection: a round must not carry over to another character.
+		public override void OnWorldUnload()
+		{
+			if (IsOpen)
+				Close();
 		}
 
 		public override void PreSaveAndQuit()

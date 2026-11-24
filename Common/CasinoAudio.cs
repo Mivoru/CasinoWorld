@@ -61,6 +61,32 @@ namespace CasinoWorld.Common
 		public static readonly SoundStyle SlotMimicHit = S("SlotMimicHit", 0.6f, 0.2f, 4);
 		public static readonly SoundStyle SlotMimicDeath = S("SlotMimicDeath", 0.9f, 0f, 2);
 		public static readonly SoundStyle HouseLaugh = S("HouseLaugh", 1f, 0f, 1);
+		public static readonly SoundStyle RevolverShot = S("RevolverShot", 0.65f, 0.15f, 4);
+		public static readonly SoundStyle CannonShot = S("CannonShot", 0.65f, 0.15f, 4);
+		public static readonly SoundStyle ChipShotgun = S("ChipShotgun", 0.65f, 0.15f, 4);
+		public static readonly SoundStyle RakeSweep = S("RakeSweep", 0.65f, 0.15f, 4);
+		public static readonly SoundStyle BarThrow = S("BarThrow", 0.65f, 0.15f, 4);
+		public static readonly SoundStyle BarSlam = S("BarSlam", 0.65f, 0.15f, 4);
+		public static readonly SoundStyle SpectralThrow = S("SpectralThrow", 0.65f, 0.15f, 4);
+		public static readonly SoundStyle MeteorCall = S("MeteorCall", 0.65f, 0.15f, 4);
+		public static readonly SoundStyle SlotBlaster = S("SlotBlaster", 0.65f, 0.15f, 4);
+		public static readonly SoundStyle CoinRain = S("CoinRain", 0.65f, 0.15f, 4);
+		public static readonly SoundStyle GalaxyThrow = S("GalaxyThrow", 0.65f, 0.15f, 4);
+		public static readonly SoundStyle PlinkoPeg = S("PlinkoPeg", 0.45f, 0f, 6);
+		public static readonly SoundStyle PlinkoLand = S("PlinkoLand", 0.8f, 0f, 2);
+		public static readonly SoundStyle DerbyBell = S("DerbyBell", 0.8f, 0f, 2);
+		public static readonly SoundStyle DerbyStart = S("DerbyStart", 0.8f, 0f, 2);
+		public static readonly SoundStyle HiLoWin = S("HiLoWin", 0.8f, 0f, 2);
+		public static readonly SoundStyle HiLoLose = S("HiLoLose", 0.8f, 0f, 2);
+		public static readonly SoundStyle NearMiss = S("NearMiss", 0.8f, 0f, 2);
+		public static readonly SoundStyle HeartBeat = S("HeartBeat", 0.8f, 0f, 2);
+		public static readonly SoundStyle MegaWin = S("MegaWin", 0.8f, 0f, 2);
+		public static readonly SoundStyle GateOpen = S("GateOpen", 0.8f, 0f, 2);
+		public static readonly SoundStyle WaterRise = S("WaterRise", 0.8f, 0f, 2);
+		public static readonly SoundStyle IceShatter = S("IceShatter", 0.8f, 0f, 2);
+		public static readonly SoundStyle HuntHorn = S("HuntHorn", 0.8f, 0f, 2);
+		public static readonly SoundStyle DiamondBeam = S("DiamondBeam", 0.8f, 0f, 2);
+		public static readonly SoundStyle ElevatorRide = S("ElevatorRide", 0.7f, 0f, 1);
 		public static readonly SoundStyle HookChain = S("HookChain", 0.6f, 0.15f, 3);
 	}
 
@@ -72,6 +98,10 @@ namespace CasinoWorld.Common
 		public static int TheHouse => MusicLoader.GetMusicSlot(ModContent.GetInstance<CasinoWorld>(), "Assets/Music/TheHouse");
 		public static int TheHouseWheel => MusicLoader.GetMusicSlot(ModContent.GetInstance<CasinoWorld>(), "Assets/Music/TheHouseWheel");
 		public static int PitBoss => MusicLoader.GetMusicSlot(ModContent.GetInstance<CasinoWorld>(), "Assets/Music/PitBoss");
+		public static int BonusLunar => MusicLoader.GetMusicSlot(ModContent.GetInstance<CasinoWorld>(), "Assets/Music/BonusLunar");
+		public static int BonusAngler => MusicLoader.GetMusicSlot(ModContent.GetInstance<CasinoWorld>(), "Assets/Music/BonusAngler");
+		public static int BonusBoreal => MusicLoader.GetMusicSlot(ModContent.GetInstance<CasinoWorld>(), "Assets/Music/BonusBoreal");
+		public static int BonusBlood => MusicLoader.GetMusicSlot(ModContent.GetInstance<CasinoWorld>(), "Assets/Music/BonusBlood");
 		public static int PitBossTwo => MusicLoader.GetMusicSlot(ModContent.GetInstance<CasinoWorld>(), "Assets/Music/PitBossTwo");
 	}
 }

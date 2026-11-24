@@ -41,7 +41,17 @@ namespace CasinoWorld.Content.Projectiles
 
 		public override void AI()
 		{
-			Projectile.velocity.Y = System.Math.Min(Projectile.velocity.Y + 0.3f, 12f);
+			if (Projectile.ai[1] == 1f) {
+				Projectile.velocity = Vector2.Zero;
+				if (Projectile.timeLeft % 8 == 0)
+					CasinoFx.Ring(Projectile.Center, new Color(255, 70, 50), 6, 1.5f, 0.7f);
+				// An enemy that steps on it sets it off.
+				foreach (NPC npc in Main.ActiveNPCs)
+					if (Projectile.timeLeft > 4 && npc.CanBeChasedBy(Projectile) && npc.Distance(Projectile.Center) < 32f + npc.width / 2f)
+						Projectile.timeLeft = 4;
+			}
+			else
+				Projectile.velocity.Y = System.Math.Min(Projectile.velocity.Y + 0.3f, 12f);
 			Projectile.rotation += Projectile.velocity.X * 0.06f;
 			if (Main.rand.NextBool(2))
 				CasinoFx.Spark(Projectile.Center + new Vector2(0, -6).RotatedBy(Projectile.rotation), new Vector2(0, -1f), new Color(255, 170, 60), 0.6f);
@@ -60,7 +70,12 @@ namespace CasinoWorld.Content.Projectiles
 		public override bool OnTileCollide(Vector2 oldVelocity)
 		{
 			if (++Bounces > MaxBounces) {
-				Projectile.timeLeft = System.Math.Min(Projectile.timeLeft, 4);
+				// Out of bounces: it sticks where it lands and the fuse burns down (blinking eyes).
+				if (Projectile.ai[1] == 0f) {
+					Projectile.ai[1] = 1f;
+					Projectile.timeLeft = System.Math.Min(Projectile.timeLeft, 34);
+					SoundEngine.PlaySound(SoundID.Item17 with { Pitch = 0.3f }, Projectile.Center);
+				}
 				Projectile.velocity = Vector2.Zero;
 				return false;
 			}
@@ -135,6 +150,24 @@ namespace CasinoWorld.Content.Projectiles
 			Lighting.AddLight(Projectile.Center, 0.35f, 0.28f, 0.08f);
 		}
 
+		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+		{
+			// ai[1]: volley number. The fifth card of a volley in the same enemy completes the flush.
+			if (Projectile.owner != Main.myPlayer || Projectile.ai[1] == 0f || !Main.player[Projectile.owner].GetModPlayer<RoyalFlushCombo>().Hit((int)Projectile.ai[1], target))
+				return;
+			WallHit.Blast(Projectile, 80f, 1.2f);
+			CasinoFx.Ring(Projectile.Center, new Color(255, 220, 80), 24, 6f, 1.3f);
+		}
+
+		public override bool OnTileCollide(Vector2 oldVelocity)
+		{
+			// The card burns up in a golden flash.
+			CasinoFx.Ring(Projectile.Center, new Color(255, 210, 80), 14, 3.5f, 1f);
+			for (int k = 0; k < 8; k++)
+				Dust.NewDustPerfect(Projectile.Center, DustID.GoldFlame, -oldVelocity.SafeNormalize(Vector2.Zero).RotatedByRandom(0.8f) * Main.rand.NextFloat(1f, 4f), 0, default, 1.3f).noGravity = true;
+			return true;
+		}
+
 		public override void OnKill(int timeLeft)
 		{
 			if (timeLeft > 0)
@@ -168,7 +201,9 @@ namespace CasinoWorld.Content.Projectiles
 
 		public override bool OnTileCollide(Vector2 oldVelocity)
 		{
-			Collision.HitTiles(Projectile.position, oldVelocity, Projectile.width, Projectile.height);
+			// The wall pays out two coins.
+			WallHit.Coins(Projectile, oldVelocity, 2, 0.2f);
+			SoundEngine.PlaySound(CasinoSounds.CoinsPayout with { Volume = 0.35f }, Projectile.Center);
 			return true;
 		}
 

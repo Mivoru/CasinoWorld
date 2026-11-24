@@ -14,37 +14,76 @@ namespace CasinoWorld.Common.Games
 	public enum Challenge { BlackjackWins, RouletteWins, SlotWins, Wagers, Jackpots, CasinoKills, VideoBonus, Crates }
 
 	/// <summary>
-	/// Three casino challenges per real-world day (like the daily Fortune Wheel), shown by the Prize
-	/// Cashier. Each pays loyalty tokens when done; all three also pay a crate. Progress is local.
+	/// Three casino challenges per in-game day, shown by the Prize Cashier. Each pays loyalty tokens when
+	/// done; all three also pay a crate. Everything here belongs to one character (saved with it).
+	///
+	/// A new set arrives at dawn. World time stands still inside a casino, so time spent there is counted
+	/// separately: a full day's worth (24 minutes) since the last new set also brings a new one.
 	/// </summary>
 	public class DailyChallenges : ModPlayer
 	{
 		private static readonly int[] Targets = { 3, 5, 8, 20, 25, 20, 1, 2 };
 		private static readonly int[] Rewards = { 40, 40, 35, 25, 35, 40, 60, 30 };
 
-		private long day = -1;
+		private const int TicksPerDay = (int)(Main.dayLength + Main.nightLength);
+
 		private readonly Challenge[] today = new Challenge[3];
 		private readonly int[] progress = new int[3];
 		private bool bonusPaid;
+		private bool rolled;
 
-		private static long Today => DateTime.Now.Date.Ticks / TimeSpan.TicksPerDay;
+		/// <summary>Ticks spent in casinos since the last new set. Saved, so short visits add up.</summary>
+		private int casinoTicks;
+
+		/// <summary>Day or night on the last tick in the main world; null right after entering a world.</summary>
+		private bool? wasDay;
+
+		public override void OnEnterWorld() => wasDay = null;
+
+		public override void PreUpdate()
+		{
+			if (Player.whoAmI != Main.myPlayer)
+				return;
+			if (Systems.CasinoTravel.InCasino) {
+				wasDay = null;
+				if (++casinoTicks >= TicksPerDay)
+					NewDay();
+				return;
+			}
+			if (wasDay == false && Main.dayTime)
+				NewDay();
+			wasDay = Main.dayTime;
+		}
+
+		private void NewDay()
+		{
+			Roll();
+			Main.NewText(Language.GetTextValue("Mods.CasinoWorld.Challenges.New"), new Color(255, 215, 90));
+		}
 
 		private void Refresh()
 		{
-			if (day == Today)
-				return;
-			day = Today;
-			bonusPaid = false;
-			var rng = new Random((int)(Today * 31 + Player.name.GetHashCode()));
+			if (!rolled)
+				Roll();
+		}
+
+		/// <summary>Draws three challenges; none of them repeats from the previous set.</summary>
+		private void Roll()
+		{
 			var pool = new System.Collections.Generic.List<Challenge>((Challenge[])Enum.GetValues(typeof(Challenge)));
+			if (rolled)
+				pool.RemoveAll(c => Array.IndexOf(today, c) >= 0);
 			if (!Main.hardMode)
 				pool.Remove(Challenge.VideoBonus);   // video slots are in the hardmode casino
 			for (int k = 0; k < 3; k++) {
-				int pick = rng.Next(pool.Count);
+				int pick = Main.rand.Next(pool.Count);
 				today[k] = pool[pick];
 				pool.RemoveAt(pick);
 				progress[k] = 0;
 			}
+			bonusPaid = false;
+			rolled = true;
+			casinoTicks = 0;
 		}
 
 		/// <summary>Counts towards today's challenges for the local player.</summary>
@@ -111,16 +150,20 @@ namespace CasinoWorld.Common.Games
 
 		public override void SaveData(TagCompound tag)
 		{
-			tag["challengeDay"] = day;
+			tag["challengeCasinoTicks"] = casinoTicks;
+			if (!rolled)
+				return;
 			tag["challengeKinds"] = new[] { (int)today[0], (int)today[1], (int)today[2] };
-			tag["challengeProgress"] = progress;
+			tag["challengeProgress"] = (int[])progress.Clone();
 			tag["challengeBonus"] = bonusPaid;
 		}
 
 		public override void LoadData(TagCompound tag)
 		{
-			day = tag.ContainsKey("challengeDay") ? tag.GetLong("challengeDay") : -1;
-			if (tag.ContainsKey("challengeKinds")) {
+			casinoTicks = tag.GetInt("challengeCasinoTicks");
+			// Saves from when challenges followed the real-world date (no tick counter) get a new set.
+			rolled = tag.ContainsKey("challengeKinds") && tag.ContainsKey("challengeCasinoTicks");
+			if (rolled) {
 				int[] kinds = tag.GetIntArray("challengeKinds");
 				int[] prog = tag.GetIntArray("challengeProgress");
 				for (int k = 0; k < 3 && k < kinds.Length; k++) {
@@ -128,7 +171,7 @@ namespace CasinoWorld.Common.Games
 					progress[k] = k < prog.Length ? prog[k] : 0;
 				}
 			}
-			bonusPaid = tag.ContainsKey("challengeBonus") && tag.GetBool("challengeBonus");
+			bonusPaid = rolled && tag.ContainsKey("challengeBonus") && tag.GetBool("challengeBonus");
 		}
 	}
 }

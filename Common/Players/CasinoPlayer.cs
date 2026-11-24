@@ -39,6 +39,8 @@ namespace CasinoWorld.Common.Players
 			Main.refreshMap = true;
 		}
 
+		private bool toldUpgrade;
+
 		public override void OnEnterWorld()
 		{
 			restoreTimer = RestoreDelay;
@@ -61,10 +63,12 @@ namespace CasinoWorld.Common.Players
 		{
 			tag["receivedBlueprint"] = receivedBlueprint;
 			tag["visitedUnderground"] = VisitedUnderground;
+			tag["toldUpgrade"] = toldUpgrade;
 		}
 
 		public override void LoadData(TagCompound tag)
 		{
+			toldUpgrade = tag.GetBool("toldUpgrade");
 			receivedBlueprint = tag.ContainsKey("receivedBlueprint") && tag.GetBool("receivedBlueprint");
 			VisitedUnderground = tag.ContainsKey("visitedUnderground") && tag.GetBool("visitedUnderground");
 		}
@@ -79,6 +83,12 @@ namespace CasinoWorld.Common.Players
 			}
 			if (Player.whoAmI != Main.myPlayer)
 				return;
+
+			// Told once per character, the first time gambler gear is in hand or worn in hardmode.
+			if (!toldUpgrade && Main.hardMode && (Player.HeldItem.ModItem is Upgrades.IGamblerUpgradeable || Player.armor[0].ModItem is Upgrades.IGamblerUpgradeable)) {
+				toldUpgrade = true;
+				Main.NewText(Terraria.Localization.Language.GetTextValue("Mods.CasinoWorld.Upgrade.Told"), new Color(120, 220, 255));
+			}
 
 			if (restoreTimer >= 0 && restoreTimer-- == 0)
 				CasinoTravel.TryRestorePosition(Player);

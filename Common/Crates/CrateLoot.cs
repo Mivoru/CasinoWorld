@@ -33,16 +33,17 @@ namespace CasinoWorld.Common.Crates
 	///   Red: Gambler weapons and armour of the current tier
 	///   Gold: a golden Gambler weapon, the Gamblorghini, or a pile of platinum
 	///
-	/// Rarity odds: Lucky 60/25/10/4/1 %, High Roller 45/30/15/8/2 % (CS:GO cases: 79.9/16/3.2/0.64/0.26 %).
-	/// Pity: at the latest every 10th crate without Pink or better gives Pink, and the 80th crate without
-	/// Gold gives Gold. Prices come from the expected value of the contents (tools/crate_ev.py).
+	/// Rarity odds: Lucky 58/25/10/6/1 %, High Roller 45/30/15/8/2 % (CS:GO cases: 79.9/16/3.2/0.64/0.26 %).
+	/// Pity: at the latest every 10th crate without Pink or better gives Pink, the 25th without Red
+	/// or better gives Red, and the 80th without Gold gives Gold. Prices come from the expected value of the contents (tools/crate_ev.py).
 	/// </summary>
 	public static class CrateLoot
 	{
-		public static readonly int[] LuckyWeights = { 600, 250, 100, 40, 10 };       // per mille
+		public static readonly int[] LuckyWeights = { 580, 250, 100, 60, 10 };       // per mille
 		public static readonly int[] HighRollerWeights = { 450, 300, 150, 80, 20 };
 
 		public const int PityRare = 10;   // crates without Pink or better
+		public const int PityRed = 25;    // crates without Red or better
 		public const int PityGold = 80;   // crates without Gold
 
 		public static readonly Color[] RarityColors = {
@@ -171,16 +172,19 @@ namespace CasinoWorld.Common.Crates
 		}
 
 		/// <summary>Rolls a prize, applying the pity counters (which it also updates).</summary>
-		public static (CrateDrop drop, CrateRarity rarity) Roll(CrateKind kind, CrateStage stage, UnifiedRandom rand, ref int sinceRare, ref int sinceGold)
+		public static (CrateDrop drop, CrateRarity rarity) Roll(CrateKind kind, CrateStage stage, UnifiedRandom rand, CratePity pity)
 		{
 			CrateRarity rarity = RollRarity(kind, rand);
-			if (sinceGold + 1 >= PityGold)
+			if (pity.SinceGold + 1 >= PityGold)
 				rarity = CrateRarity.Gold;
-			else if (sinceRare + 1 >= PityRare && rarity < CrateRarity.Pink)
+			else if (pity.SinceRed + 1 >= PityRed && rarity < CrateRarity.Red)
+				rarity = CrateRarity.Red;
+			else if (pity.SinceRare + 1 >= PityRare && rarity < CrateRarity.Pink)
 				rarity = CrateRarity.Pink;
 
-			sinceGold = rarity == CrateRarity.Gold ? 0 : sinceGold + 1;
-			sinceRare = rarity >= CrateRarity.Pink ? 0 : sinceRare + 1;
+			pity.SinceGold = rarity == CrateRarity.Gold ? 0 : pity.SinceGold + 1;
+			pity.SinceRed = rarity >= CrateRarity.Red ? 0 : pity.SinceRed + 1;
+			pity.SinceRare = rarity >= CrateRarity.Pink ? 0 : pity.SinceRare + 1;
 			return (RollDrop(stage, rarity, rand), rarity);
 		}
 

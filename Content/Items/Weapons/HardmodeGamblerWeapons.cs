@@ -37,7 +37,7 @@ namespace CasinoWorld.Content.Items.Weapons
 		public override void SetDefaults()
 		{
 			base.SetDefaults();
-			Item.damage = 17;
+			Item.damage = 16;
 			Item.knockBack = 2f;
 			Item.useTime = Item.useAnimation = 24;
 			Item.shoot = ModContent.ProjectileType<RoyalCard>();
@@ -49,9 +49,10 @@ namespace CasinoWorld.Content.Items.Weapons
 
 		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
 		{
+			int volley = player.GetModPlayer<RoyalFlushCombo>().NextVolley();
 			for (int k = 0; k < Cards; k++) {
 				float angle = (k - (Cards - 1) / 2f) * Spread;
-				Projectile.NewProjectile(source, position, velocity.RotatedBy(angle), type, damage, knockback, player.whoAmI);
+				Projectile.NewProjectile(source, position, velocity.RotatedBy(angle), type, damage, knockback, player.whoAmI, 0f, volley);
 			}
 			return false;
 		}

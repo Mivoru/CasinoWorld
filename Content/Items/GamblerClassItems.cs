@@ -22,13 +22,6 @@ namespace CasinoWorld.Content.Items.Accessories
 			Item.value = Item.sellPrice(gold: 2);
 		}
 
-		public override void SetStaticDefaults()
-		{
-			// Joins the vanilla emblem shimmer cycle (... Summoner -> Gambler -> Warrior ...).
-			ItemID.Sets.ShimmerTransformToItem[ItemID.SummonerEmblem] = Type;
-			ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.WarriorEmblem;
-		}
-
 		public override void UpdateAccessory(Player player, bool hideVisual) => player.GetDamage<GamblerDamageClass>() += 0.15f;
 
 		public override void AddRecipes()
@@ -63,7 +56,7 @@ namespace CasinoWorld.Content.Items.Accessories
 
 namespace CasinoWorld.Content.Projectiles
 {
-	/// <summary>All In opening burst: one hit on everything within 15 tiles, a ring of cards and chips.</summary>
+	/// <summary>All In burst: one hit on everything within 15 tiles, a ring of cards and chips. ai[0] = 1 is the closing payout (no jackpot roll).</summary>
 	public class AllInBurst : ModProjectile
 	{
 		private const int Radius = 240;
@@ -88,15 +81,24 @@ namespace CasinoWorld.Content.Projectiles
 
 		public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
 		{
+			if (Projectile.ai[0] == 1f)
+				Projectile.DamageType = DamageClass.Default;
 			if (Main.dedServ)
 				return;
+			if (Projectile.ai[0] == 1f) {
+				SoundEngine.PlaySound(CasinoSounds.CoinsPayout, Projectile.Center);
+				CasinoFx.Ring(Projectile.Center, new Color(255, 220, 90), 40, 13f, 1.6f);
+				for (int k = 0; k < 40; k++)
+					Dust.NewDustPerfect(Projectile.Center, DustID.GoldCoin, Main.rand.NextVector2Circular(10, 10), 0, default, 1.4f);
+				return;
+			}
 			SoundEngine.PlaySound(CasinoSounds.Jackpot with { Volume = 0.8f }, Projectile.Center);
 			SoundEngine.PlaySound(CasinoSounds.CardShuffle, Projectile.Center);
 			CasinoFx.Ring(Projectile.Center, new Color(255, 70, 70), 32, 12f, 1.6f);
 			CasinoFx.Ring(Projectile.Center, new Color(255, 220, 90), 24, 8f, 1.4f);
 			for (int k = 0; k < 30; k++)
 				Dust.NewDustPerfect(Projectile.Center, CasinoFx.ShardType, Main.rand.NextVector2CircularEdge(8, 8) * Main.rand.NextFloat(0.5f, 1f), 0, k % 2 == 0 ? new Color(220, 40, 50) : Color.White, 1.2f);
-			Main.instance.CameraModifiers.Add(new PunchCameraModifier(Projectile.Center, Main.rand.NextVector2Unit(), 6f, 8f, 20, 1000f, "AllIn"));
+			global::CasinoWorld.Common.Effects.CasinoFx.Shake(Projectile.Center, Main.rand.NextVector2Unit(), 6f, 8f, 20, 1000f, "AllIn");
 			BossTitle.Flash(new Color(255, 200, 80));
 		}
 

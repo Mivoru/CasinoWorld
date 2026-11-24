@@ -140,30 +140,33 @@ namespace CasinoWorld.Content.Tiles.Interior
 					spriteBatch.Draw(pixel, new Rectangle((int)origin.X + x, (int)origin.Y + y, 2, 2), new Color(255, 120, 40) * 0.05f);
 			}
 
-			// Big, readable text: title, three columns with one line per winner (name and amount), and the
-			// latest win at the bottom. Names are cut to fit the column.
+			// Title, three tabs, and the winners of one tab at a time (they take turns). One list gets the whole
+			// width, so the longest names fit next to amounts with all four coins.
 			float pulse = 0.85f + 0.15f * (float)Math.Sin(t * 4f);
 			Utils.DrawBorderString(spriteBatch, Text("Title"), origin + new Vector2(160, 20), Amber * pulse, 1.05f, 0.5f, 0.5f);
 
-			var columns = new[] { (Text("Today"), CasinoRecords.Today), (Text("Week"), CasinoRecords.ThisWeek), (Text("AllTime"), CasinoRecords.Best) };
-			for (int c = 0; c < 3; c++) {
-				float cx = 58 + c * 102;
-				Utils.DrawBorderString(spriteBatch, columns[c].Item1, origin + new Vector2(cx, 42), HeaderColors[c], 0.78f, 0.5f, 0.5f);
-				var wins = columns[c].Item2.ToList();
-				if (wins.Count == 0)
-					Utils.DrawBorderString(spriteBatch, Text("Empty"), origin + new Vector2(cx, 66), Color.Gray, 0.6f, 0.5f, 0.5f);
-				for (int k = 0; k < wins.Count; k++) {
-					string name = wins[k].Player.Length > 8 ? wins[k].Player[..8] : wins[k].Player;
-					float y = 62 + k * 15;
-					Utils.DrawBorderString(spriteBatch, name, origin + new Vector2(cx - 46, y), Color.White, 0.6f, 0f, 0.5f);
-					Utils.DrawBorderString(spriteBatch, Coins.Format(wins[k].Amount), origin + new Vector2(cx + 46, y), Amber, 0.6f, 1f, 0.5f);
-				}
+			const float left = 14f, right = 306f;
+			string[] tabs = { Text("Today"), Text("Week"), Text("AllTime") };
+			int page = (int)(t / 5f) % 3;
+			for (int c = 0; c < 3; c++)
+				CasinoDraw.Fit(spriteBatch, tabs[c], origin + new Vector2(58 + c * 102, 42), c == page ? HeaderColors[c] : HeaderColors[c] * 0.35f, 0.78f, 96f, 0.5f, 0.5f);
+
+			var wins = (page == 0 ? CasinoRecords.Today : page == 1 ? CasinoRecords.ThisWeek : CasinoRecords.Best).ToList();
+			if (wins.Count == 0)
+				Utils.DrawBorderString(spriteBatch, Text("Empty"), origin + new Vector2(160, 76), Color.Gray, 0.75f, 0.5f, 0.5f);
+			for (int k = 0; k < wins.Count; k++) {
+				const float scale = 0.72f;
+				float y = 62 + k * 16;
+				string amount = Coins.Format(wins[k].Amount);
+				float amountWidth = Math.Min(150f, FontAssets.MouseText.Value.MeasureString(amount).X * scale);
+				CasinoDraw.Fit(spriteBatch, amount, origin + new Vector2(right, y), Amber, scale, 150f, 1f, 0.5f);
+				CasinoDraw.Fit(spriteBatch, $"{k + 1}. {wins[k].Player}", origin + new Vector2(left, y), Color.White, scale, right - left - amountWidth - 10f, 0f, 0.5f);
 			}
 
 			// Latest win, blinking at the bottom.
 			if (CasinoRecords.Latest is CasinoWin latest && (int)(t * 2) % 4 != 0) {
 				string line = Text("Latest", latest.Player, Coins.Format(latest.Amount), CasinoRecords.GameName(latest.Game));
-				Utils.DrawBorderString(spriteBatch, line, origin + new Vector2(160, 112), new Color(120, 255, 140), 0.66f, 0.5f, 0.5f);
+				CasinoDraw.Fit(spriteBatch, line, origin + new Vector2(160, 112), new Color(120, 255, 140), 0.66f, 296f, 0.5f, 0.5f);
 			}
 		}
 	}
@@ -290,6 +293,8 @@ namespace CasinoWorld.Content.Tiles.Interior
 			if (spinTimer > 0)
 				return;
 			holdTimer = 180;
+			Common.Games.UiFx.Coins_(Common.Games.UiFx.ScreenCenter, 30, 11f);
+			Common.Games.UiFx.Confetti(30);
 			Player player = Main.LocalPlayer;
 			int prize = Prizes[spinResult];
 			if (prize == 0) {
@@ -304,7 +309,24 @@ namespace CasinoWorld.Content.Tiles.Interior
 			}
 		}
 
+		/// <summary>Pays a running spin at once (leaving the world), so it never goes to another character.</summary>
+		public static void FinishSpin()
+		{
+			if (spinTimer <= 0)
+				return;
+			spinTimer = 1;
+			UpdateSpin();
+		}
+
 		private static void Games_GiveItem(Player player, Item item) => Coins.GiveItem(player, item);
+	}
+
+	/// <summary>Settles a running wheel spin when its player leaves the world.</summary>
+	public class FortuneWheelSystem : ModSystem
+	{
+		public override void PreSaveAndQuit() => FortuneWheel.FinishSpin();
+
+		public override void OnWorldUnload() => FortuneWheel.FinishSpin();
 	}
 
 	/// <summary>Remembers the last free Wheel of Fortune spin (one per real day) and runs the spin animation.</summary>

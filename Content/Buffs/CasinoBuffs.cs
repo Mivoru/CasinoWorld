@@ -20,11 +20,16 @@ namespace CasinoWorld.Content.Buffs
 		}
 	}
 
-	/// <summary>All In: five seconds of high stakes from a full Pot.</summary>
+	/// <summary>All In: high stakes from a full Pot. The dealt hand (GamblerPot.Hand) sets the odds and the duration.</summary>
 	public class AllIn : ModBuff
 	{
-		public const float JackpotBonus = 0.25f;
-		public const float BustBonus = 0.10f;
+		public override void ModifyBuffText(ref string buffName, ref string tip, ref int rare)
+		{
+			GamblerPot pot = Main.LocalPlayer.GetModPlayer<GamblerPot>();
+			if (pot.Hand != null)
+				tip = Language.GetTextValue("Mods.CasinoWorld.Gambler.AllInBuff", Language.GetTextValue("Mods.CasinoWorld.Gambler.Hands." + pot.Hand.Key),
+					(int)System.Math.Round(pot.JackpotBonus * 100), (int)System.Math.Round(pot.BustBonus * 100));
+		}
 
 		public override void SetStaticDefaults()
 		{

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using CasinoWorld.Common.Effects;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -31,11 +32,11 @@ namespace CasinoWorld.Common.Games.VideoSlots
 	/// the blood moon hunter) acts out each step of the spin: deathrays reveal orbs, the fishing line collects
 	/// cash, snowballs and shots turn cells wild. Side panel: bonus status and pay table.
 	/// </summary>
-	public class VideoSlotPanel : UIElement
+	public partial class VideoSlotPanel : UIElement
 	{
 		public const int PanelWidth = 800, PanelHeight = 600;
 
-		private enum Action { Close, Bet, Spin }
+		private enum Action { Close, Bet, Spin, Auto, AutoCount }
 
 		private readonly record struct Button(Rectangle Rect, Action Kind, string Label, bool Enabled, int Index = 0);
 
@@ -92,7 +93,10 @@ namespace CasinoWorld.Common.Games.VideoSlots
 			int y = a.Bottom - 104;
 			for (int k = 0; k < chips.Length; k++)
 				yield return new Button(new Rectangle(a.X + 22 + k * 64, y, 58, 44), Action.Bet, Games.Coins.Format(chips[k]), round.CanSpin, k);
-			yield return new Button(new Rectangle(a.X + 22 + chips.Length * 64 + 10, y - 2, 130, 48), Action.Spin, Language.GetTextValue("Mods.CasinoWorld.UI.Slots.Spin"), round.CanSpin);
+			yield return new Button(new Rectangle(a.X + 22 + chips.Length * 64 + 10, y - 2, 130, 48), Action.Spin, Language.GetTextValue("Mods.CasinoWorld.UI.Slots.Spin"), round.CanSpin && round.AutoLeft <= 0);
+			int autoX = a.X + 22 + chips.Length * 64 + 150;
+			yield return new Button(new Rectangle(autoX, y - 2, 104, 48), Action.Auto, AutoSpin.Label(round.AutoLeft), round.AutoLeft > 0 || round.CanSpin);
+			yield return new Button(new Rectangle(autoX + 110, y - 2, 58, 48), Action.AutoCount, "x" + AutoSpin.Counts[round.AutoChoice], round.AutoLeft <= 0);
 		}
 
 		public override void Update(GameTime gameTime)
@@ -101,11 +105,18 @@ namespace CasinoWorld.Common.Games.VideoSlots
 			if (IsMouseHovering)
 				Main.LocalPlayer.mouseInterface = true;
 			UpdateParticles();
+			UpdateScenery();
 		}
 
 		public override void LeftClick(UIMouseEvent evt)
 		{
+			if (Round.Machine == null)
+				return;
 			Point mouse = evt.MousePosition.ToPoint();
+			if (Grid.Contains(mouse) || Stage.Contains(mouse)) {   // click on the reels: skip the running animation
+				Round.Skip();
+				return;
+			}
 			foreach (Button button in Buttons()) {
 				if (!button.Enabled || !button.Rect.Contains(mouse))
 					continue;
@@ -118,6 +129,14 @@ namespace CasinoWorld.Common.Games.VideoSlots
 						break;
 					case Action.Bet:
 						round.BetIndex = button.Index;
+						SoundEngine.PlaySound(SoundID.MenuTick);
+						break;
+					case Action.Auto:
+						round.ToggleAuto();
+						SoundEngine.PlaySound(SoundID.MenuTick);
+						break;
+					case Action.AutoCount:
+						round.AutoChoice = (round.AutoChoice + 1) % AutoSpin.Counts.Length;
 						SoundEngine.PlaySound(SoundID.MenuTick);
 						break;
 					case Action.Spin:
@@ -147,11 +166,13 @@ namespace CasinoWorld.Common.Games.VideoSlots
 
 			CasinoDraw.Cabinet(sb, a, accent, Color.Lerp(body, Color.Black, 0.35f));
 			DrawStage(sb, round, key, accent, t);
+			DrawScenery(sb, round, key, accent, t);
 			DrawGrid(sb, round, key, accent, t);
 			DrawStageForeground(sb, round, key, t);
 			DrawOverlays(sb, round, key, accent, t);
 			DrawSide(sb, round, key, accent, new Rectangle(a.X + 552, a.Y + 16, 230, 470));
 			DrawParticles(sb);
+			DrawGlare(sb, key, accent, t);
 
 			foreach (Button button in Buttons()) {
 				bool hover = button.Rect.Contains(mouse);
@@ -159,6 +180,8 @@ namespace CasinoWorld.Common.Games.VideoSlots
 					CasinoDraw.Button(sb, button.Rect, "X", CasinoDraw.Red, hover, true, 0.8f);
 				else if (button.Kind == Action.Bet)
 					CasinoDraw.ChipButton(sb, button.Rect, button.Label, button.Index, hover, round.BetIndex == button.Index);
+				else if (button.Kind is Action.Auto or Action.AutoCount)
+					CasinoDraw.Button(sb, button.Rect, button.Label, AutoSpin.Tint(round.AutoLeft, button.Kind == Action.Auto), hover, button.Enabled, 0.9f);
 				else
 					CasinoDraw.Button(sb, button.Rect, round.InBonusRun ? Text("Auto") : button.Label, CasinoDraw.ButtonGold, hover, button.Enabled, 1.1f);
 			}
@@ -167,6 +190,7 @@ namespace CasinoWorld.Common.Games.VideoSlots
 			Utils.DrawBorderString(sb, Language.GetTextValue("Mods.CasinoWorld.UI.Slots.Money", Games.Coins.Format(money)), new Vector2(a.X + 24, a.Bottom - 50), Color.White, 0.85f);
 			Utils.DrawBorderString(sb, Text("Bet", Games.Coins.Format(Chips[Math.Clamp(round.BetIndex, 0, Chips.Length - 1)])), new Vector2(a.X + 300, a.Bottom - 50), Color.White, 0.85f);
 			CasinoDraw.Fit(sb, round.Message, new Vector2(a.X + 24, a.Bottom - 28), round.MessageColor, 0.85f, a.Width - 48);
+			DrawCurtain(sb, round, key, t);
 		}
 
 		/// <summary>Spawns particles when a new step or phase begins (UI side only).</summary>
@@ -180,16 +204,19 @@ namespace CasinoWorld.Common.Games.VideoSlots
 			if (round.Phase == VideoPhase.Steps && round.Step != seenStep && round.Result != null) {
 				seenStep = round.Step;
 				SlotStep s = round.CurrentStep;
+				StepMoment(round, round.Key, s);
 				if (s.Kind == StepKind.Tumble && round.Step > 0) {
 					foreach (WinGroup w in round.Result.Steps[round.Step - 1].Wins)
 						foreach (Pos p in w.Cells)
-							Burst(CellRect(p.Reel, p.Row).Center.ToVector2(), SlotThemes.Accent(round.Key), 6, false);
+							BreakCell(round.Key, CellRect(p.Reel, p.Row).Center.ToVector2(), w.Symbol);
 				}
 				if (s.Kind == StepKind.Multiply)
 					for (int k = 0; k < 30; k++)
 						Burst(Grid.Center.ToVector2(), Color.Gold, 1, true);
 			}
 			if (round.Phase != seenPhase) {
+				if (round.Phase == VideoPhase.Intro)
+					CurtainSound(round.Key);
 				if (round.Phase == VideoPhase.Outro || round.Phase == VideoPhase.Intro)
 					for (int k = 0; k < 40; k++)
 						Burst(new Vector2(Grid.Center.X, Grid.Y), Color.Gold, 1, true);
@@ -286,6 +313,7 @@ namespace CasinoWorld.Common.Games.VideoSlots
 					break;
 			}
 
+			DrawStageMood(sb, round, key, t);
 			Utils.DrawBorderString(sb, Text("Title" + key), new Vector2(s.Center.X, Area.Y + 22), accent, 1f, 0.5f, 0.5f);
 			if (key == "Boreal")
 				DrawAnimals(sb, round, s, t);
@@ -335,7 +363,7 @@ namespace CasinoWorld.Common.Games.VideoSlots
 		private void DrawMoonLordBack(SpriteBatch sb, VideoSlotRound round, float t)
 		{
 			Texture2D head = mlHead.Value;
-			MoonPose(round, out float raise, out bool eyeOpen, out _, out _, out _);
+			MoonPose(round, out float raise, out bool eyeOpen, out bool revealing, out SlotStep poseStep, out int poseTick);
 			// Arms from the shoulders (hidden behind the reels) up to the hands.
 			for (int side = -1; side <= 1; side += 2) {
 				Vector2 shoulder = MoonHeadTop + new Vector2(side * 50, 108);
@@ -355,6 +383,7 @@ namespace CasinoWorld.Common.Games.VideoSlots
 				FillCircle(sb, MoonHeadTop + new Vector2(0, 40), 70, glow);
 			}
 			sb.Draw(head, MoonHeadTop, frame, Color.White, 0f, new Vector2(head.Width / 4f, 0), 1f, SpriteEffects.None, 0f);
+			DrawMoonPupils(sb, round, poseStep, poseTick, revealing);
 		}
 
 		private void DrawMoonLord(SpriteBatch sb, VideoSlotRound round, float t)
@@ -386,7 +415,7 @@ namespace CasinoWorld.Common.Games.VideoSlots
 				Vector2 target = CellRect(step.Fx[k].Reel, step.Fx[k].Row).Center.ToVector2();
 				Beam(sb, MoonEye, target, 1f - Math.Abs(life * 2 - 1));
 				if (tick >= start + 6 && Once(100 + k))
-					Burst(target, new Color(140, 240, 255), 12, false);
+					OrbBreak(target, step.Grid[step.Fx[k].Reel, step.Fx[k].Row].Value);
 			}
 		}
 
@@ -395,16 +424,17 @@ namespace CasinoWorld.Common.Games.VideoSlots
 			Color outer = new Color(60, 200, 255) * (0.55f * strength), inner = new Color(220, 255, 255) * strength;
 			outer.A = 0;
 			inner.A = 0;
-			Line(sb, from, to, outer, 18 * strength + 4);
-			Line(sb, from, to, outer, 10 * strength + 2);
-			Line(sb, from, to, inner, 4 * strength + 1);
+			// Stepped ray: three solid tones, like the vanilla deathray.
+			Line(sb, from, to, outer, 14 * strength + 4);
+			Line(sb, from, to, inner * 0.7f, 8 * strength + 2);
+			Line(sb, from, to, Color.White * strength, 4 * strength);
 			FillCircle(sb, to, 16 * strength + 4, outer);
 		}
 
 		// The Angler stands on the pier; in a collect he casts his line to every fish in turn.
 		private Vector2 AnglerFeet => new(Stage.X + 64, Stage.Y + 52);
 
-		private Vector2 RodTip => AnglerFeet + new Vector2(64, -64);
+		private Vector2 RodTip;
 
 		private void DrawAngler(SpriteBatch sb, VideoSlotRound round, float t)
 		{
@@ -412,13 +442,23 @@ namespace CasinoWorld.Common.Games.VideoSlots
 			Texture2D tex = TextureAssets.Npc[NPCID.Angler].Value;
 			int frames = Main.npcFrameCount[NPCID.Angler];
 			var frame = new Rectangle(0, 0, tex.Width, tex.Height / Math.Max(1, frames));
-			sb.Draw(tex, AnglerFeet, frame, Color.White, 0f, new Vector2(frame.Width / 2f, frame.Height - 4), 1.2f, SpriteEffects.FlipHorizontally, 0f);
+			// He jumps for joy on wins, slumps after an empty spin and sways while he waits.
+			bool happy = round.BigWinTimer > 0 || round.Phase == VideoPhase.Steps && round.ShownUnits > 0;
+			bool sad = round.Phase == VideoPhase.Idle && round.Result != null && round.Result.Win == 0;
+			Vector2 feet = AnglerFeet - new Vector2(0, happy ? Math.Abs((float)Math.Sin(t * 9f)) * (round.BigWinTimer > 0 ? 16f : 7f) : 0);
+			float lean = happy ? (float)Math.Sin(t * 12f) * 0.12f : sad ? 0.12f : (float)Math.Sin(t * 1.5f) * 0.03f;
+			sb.Draw(tex, feet, frame, sad ? new Color(190, 190, 210) : Color.White, lean, new Vector2(frame.Width / 2f, frame.Height - 4), 1.2f, SpriteEffects.FlipHorizontally, 0f);
 			// Golden rod held out over the water.
 			Main.instance.LoadItem(ItemID.GoldenFishingRod);
 			Texture2D rod = TextureAssets.Item[ItemID.GoldenFishingRod].Value;
-			Vector2 grip = AnglerFeet + new Vector2(10, -26);
-			float angle = (RodTip - grip).ToRotation();
-			sb.Draw(rod, grip, null, Color.White, angle + MathHelper.PiOver4, new Vector2(0, rod.Height), (RodTip - grip).Length() / (rod.Width * 1.41f), SpriteEffects.None, 0f);
+			bool pulling = round.Phase == VideoPhase.Steps && round.CurrentStep?.Kind == StepKind.Collect;
+			FindRodEnds(rod, out Vector2 gripPx, out Vector2 tipPx);
+			Vector2 hand = feet + new Vector2(15, -14);
+			float bend = (pulling ? 0.14f + (float)Math.Sin(t * 26f) * 0.05f : (float)Math.Sin(t * 1.5f) * 0.03f) + lean * 0.5f;
+			const float RodScale = 1.15f;
+			sb.Draw(rod, hand, null, Color.White, bend, gripPx, RodScale, SpriteEffects.None, 0f);
+			RodTip = hand + ((tipPx - gripPx) * RodScale).RotatedBy(bend);
+			FillCircle(sb, hand, 3, new Color(236, 188, 150));   // fingers around the grip
 			if (ActiveStep(round, out SlotStep step, out int tick) && step.Kind == StepKind.Collect) {
 				for (int k = 0; k < step.Fx.Count; k++) {
 					int start = 8 + 16 * k;
@@ -427,7 +467,10 @@ namespace CasinoWorld.Common.Games.VideoSlots
 					Vector2 fish = CellRect(step.Fx[k].Reel, step.Fx[k].Row).Center.ToVector2();
 					if (tick < start + 14)
 						Line(sb, RodTip, Vector2.Lerp(RodTip, fish, MathHelper.Clamp((tick - start) / 6f, 0, 1)), Color.White * 0.85f, 1);
+					if (tick >= start + 6 && tick < start + 30)
+						FishLeap(sb, fish, SlotThemes.FishIcon(step.Grid[step.Fx[k].Reel, step.Fx[k].Row].Value), (tick - start - 6) / 24f);
 					if (tick >= start + 6 && Once(200 + k)) {
+						Burst(fish, new Color(180, 230, 255), 10, false);
 						foreach (Pos target in step.Targets)
 							CoinFlight(fish, CellRect(target.Reel, target.Row).Center.ToVector2());
 						SoundEngine.PlaySound(CasinoSounds.CoinsPayout with { Volume = 0.5f, Pitch = Math.Min(0.8f, k * 0.12f) });
@@ -436,25 +479,39 @@ namespace CasinoWorld.Common.Games.VideoSlots
 			}
 			else {
 				Vector2 bob = new(RodTip.X + 60, Stage.Y + 60 + (float)Math.Sin(t * 3) * 2);
-				Line(sb, RodTip, bob, Color.White * 0.6f, 1);
+				// Slack line: hangs in a curve from the tip to the float.
+				Vector2 sag = (RodTip + bob) / 2f + new Vector2(0, 14 + (float)Math.Sin(t * 2f) * 3f), last = RodTip;
+				for (int k = 1; k <= 10; k++) {
+					float f = k / 10f;
+					Vector2 next = Vector2.Lerp(Vector2.Lerp(RodTip, sag, f), Vector2.Lerp(sag, bob - new Vector2(0, 4), f), f);
+					Line(sb, last, next, Color.White * 0.7f, 1);
+					last = next;
+				}
 				CasinoDraw.Fill(sb, new Rectangle((int)bob.X - 3, (int)bob.Y - 4, 6, 4), Color.Red);
 				CasinoDraw.Fill(sb, new Rectangle((int)bob.X - 3, (int)bob.Y, 6, 3), Color.White);
 			}
 		}
 
 		// The hunter's boomstick at the right edge of the stage aims at the cells it shoots.
-		private Vector2 Muzzle => new(Stage.Right - 50, Stage.Bottom - 30);
+		private Vector2 HunterFeet => new(Stage.Right - 44, Stage.Bottom - 2);
+		private Vector2 HunterShoulder => HunterFeet + new Vector2(-3, -33);
+		private Vector2 Muzzle;
+		private float gunAim = MathHelper.Pi;
 
 		private void DrawHunter(SpriteBatch sb, VideoSlotRound round, float t)
 		{
 			Main.instance.LoadItem(ItemID.Boomstick);
 			Texture2D gun = TextureAssets.Item[ItemID.Boomstick].Value;
-			float aim = MathHelper.Pi + 0.4f + (float)Math.Sin(t) * 0.05f;
-			bool shooting = ActiveStep(round, out SlotStep step, out int tick) && step.Kind == StepKind.Shots;
+			float aim = MathHelper.Pi - 0.08f + (float)Math.Sin(t) * 0.04f;
+			bool shooting = ActiveStep(round, out SlotStep step, out int tick) && step.Kind == StepKind.Shots && step.Fx.Count > 0;
+			float recoil = shooting && tick >= 6 && (tick - 6) / 12 < step.Fx.Count ? Math.Max(0f, 1f - (tick - 6) % 12 / 8f) : 0f;
+			DrawHunterBody(sb, recoil, t);
+			if (Muzzle == Vector2.Zero)
+				Muzzle = HunterShoulder - new Vector2(60, 0);
 			if (shooting) {
 				int k = Math.Clamp((tick - 6) / 12, 0, step.Fx.Count - 1);
 				Vector2 target = CellRect(step.Fx[k].Reel, step.Fx[k].Row).Center.ToVector2();
-				aim = (target - Muzzle).ToRotation();
+				aim = (target - HunterShoulder).ToRotation();
 				for (int i = 0; i < step.Fx.Count; i++) {
 					int start = 6 + 12 * i;
 					if (tick >= start && tick < start + 5) {
@@ -464,14 +521,16 @@ namespace CasinoWorld.Common.Games.VideoSlots
 						Line(sb, Muzzle, tg, tracer, 3);
 						FillCircle(sb, Muzzle, 10, tracer);
 						if (Once(300 + i)) {
-							Burst(tg, new Color(200, 20, 30), 10, false);
+							Burst(tg, new Color(200, 20, 30), 18, false);
+							particles.Add(new Particle { Pos = Muzzle + new Vector2(14, -4), Vel = new Vector2(Main.rand.NextFloat(1f, 3f), -4f), Color = new Color(230, 60, 40), Max = 50, Size = 5, Gravity = true });   // spent shell
 							if (i > 0)
 								SoundEngine.PlaySound(SoundID.Item36 with { Volume = 0.5f });
 						}
 					}
 				}
 			}
-			sb.Draw(gun, Muzzle, null, Color.White, aim, new Vector2(gun.Width * 0.8f, gun.Height / 2f), 1.6f, Math.Cos(aim) < 0 ? SpriteEffects.FlipVertically : SpriteEffects.None, 0f);
+			gunAim += MathHelper.WrapAngle(aim - gunAim) * (shooting ? 0.5f : 0.1f);
+			DrawGun(sb, gun, recoil);
 		}
 
 		private void DrawSnowballs(SpriteBatch sb, VideoSlotRound round, float t)
@@ -501,7 +560,17 @@ namespace CasinoWorld.Common.Games.VideoSlots
 				Vector2 pos = new(s.X + 300 + k * 56, s.Bottom - 12);
 				float bob = k == chosen ? (float)Math.Abs(Math.Sin(t * 5)) * -6 : 0;
 				Color c = chosen < 0 || chosen == k ? Color.White : Color.White * 0.35f;
-				DrawIcon(sb, -Animals[k], pos + new Vector2(0, -20 + bob), 40f, c);
+				Vector2 extra = Vector2.Zero;
+				float turn = 0f;
+				if (k == chosen && ActiveStep(round, out SlotStep act, out int at)) {
+					switch (k) {   // each animal acts out its feature
+						case 0: extra.X = -(float)Math.Sin(Math.Min(1f, at / 30f) * Math.PI) * 60f; turn = -1.2f * (float)Math.Sin(Math.Min(1f, at / 30f) * Math.PI); break;
+						case 1 when act.Kind == StepKind.Shots: turn = (float)Math.Sin(at * 0.5f) * 0.4f; break;
+						case 2: turn = -0.35f; break;
+						case 3 when act.Kind == StepKind.Expand: extra.Y = at < 12 ? -at * 2f : Math.Min(0f, -24f + (at - 12) * 8f); break;
+					}
+				}
+				DrawIconEx(sb, -Animals[k], pos + new Vector2(0, -20 + bob) + extra, 40f, c, turn, Vector2.One);
 			}
 		}
 
@@ -557,19 +626,25 @@ namespace CasinoWorld.Common.Games.VideoSlots
 				}
 				for (int row = 0; row < m.Rows; row++) {
 					Rectangle cell = CellRect(reel, row);
-					CasinoDraw.Fill(sb, CasinoDraw.Shrink(cell, 2), (reel + row) % 2 == 0 ? new Color(30, 26, 40) : new Color(24, 21, 32));
+					CasinoDraw.Fill(sb, CasinoDraw.Shrink(cell, 2), Color.Lerp((reel + row) % 2 == 0 ? new Color(30, 26, 40) : new Color(24, 21, 32), SlotThemes.Body(key), 0.25f));
 				}
 				if (spinning) {
 					DrawSpinningReel(sb, round, reel, icons, t);
 					continue;
 				}
 				if (grid == null) {
-					for (int row = 0; row < m.Rows; row++)
-						DrawSymbol(sb, key, icons, new SlotCell { Symbol = (reel * 3 + row * 2) % Math.Min(8, m.SymbolCount) }, CellRect(reel, row).Center.ToVector2(), 1f, Color.White, m);
+					for (int row = 0; row < m.Rows; row++) {
+						int idle = (reel * 3 + row * 2) % Math.Min(8, m.SymbolCount);
+						DrawPlate(sb, key, CellRect(reel, row), Tier(m, idle), 1f);
+						DrawSymbol(sb, key, icons, new SlotCell { Symbol = idle }, CellRect(reel, row).Center.ToVector2() + new Vector2(0, (float)Math.Sin(t * 2f + reel + row) * 1.5f), 1f, Color.White, m);
+					}
 					continue;
 				}
 				int sinceStop = round.Phase == VideoPhase.Spinning ? round.Timer - round.StopTick(reel) : 99;
-				float landBounce = sinceStop < 8 ? (float)Math.Sin(sinceStop / 8f * Math.PI) * 6 : 0;
+				// Heavy landing: overshoots, springs back, kicks up dust.
+				float landBounce = sinceStop < 16 ? (float)Math.Sin(sinceStop * 0.55f) * 13f * (1f - sinceStop / 16f) : 0;
+				if (round.Phase == VideoPhase.Spinning && sinceStop is >= 0 and < 4 && Once(600 + reel))
+					LandFx(key, reel);
 				for (int row = 0; row < m.Rows; row++) {
 					Rectangle cell = CellRect(reel, row);
 					SlotCell c = grid[reel, row];
@@ -604,9 +679,23 @@ namespace CasinoWorld.Common.Games.VideoSlots
 					}
 					else if (stepping && step.Wins.Count > 0 && step.Kind is StepKind.Land or StepKind.Tumble)
 						color = Color.White * 0.55f;
-					DrawSymbol(sb, key, icons, c, center, scale, color, m);
-					if (winCells.Contains(pos))
-						DrawFrame(sb, cell, Color.Gold);
+					var plate = new Rectangle(cell.X, cell.Y + (int)(center.Y - cell.Center.Y), cell.Width, cell.Height);
+					if (!(key == "LunarGods" && c.Symbol == LunarGodsSlot.Orb))
+						DrawPlate(sb, key, plate, Tier(m, c.Symbol), color.A / 255f);
+					if (winCells.Contains(pos)) {
+						WinPose(key, c.Symbol, t, out Vector2 offset, out float turn, out Vector2 stretch);
+						CasinoDraw.Fill(sb, CasinoDraw.Shrink(cell, 3), Add(Color.Gold * (0.22f + 0.12f * (float)Math.Sin(t * 10))));
+						DrawSymbol(sb, key, icons, c, center + offset, scale, color, m, turn, stretch);
+						DrawGlint(sb, cell, t);
+						DrawFrame(sb, cell, Color.Lerp(Color.Gold, Color.White, 0.4f + 0.4f * (float)Math.Sin(t * 10)));
+						UiFx.Shimmer(cell, SlotThemes.Accent(key), 14);
+					}
+					else {
+						// The Angler's fish always swim a little.
+						bool swims = key == "Angler" && c.Symbol == AnglerSlot.Fish;
+						DrawSymbol(sb, key, icons, c, swims ? center + new Vector2((float)Math.Sin(t * 2f + reel * 2 + row) * 3f, 0) : center, swims && c.Value >= 1000 ? 1.35f : scale, color, m, swims ? (float)Math.Sin(t * 5f + reel + row) * 0.08f : 0f);
+					}
+					DrawCellExtras(sb, round, key, c, cell, pos, step, t);
 					if (c.Sticky)
 						DrawFrame(sb, cell, key == "Boreal" ? new Color(170, 230, 255) : Color.Red);
 				}
@@ -625,8 +714,15 @@ namespace CasinoWorld.Common.Games.VideoSlots
 						continue;
 					int[] line = m.Rows == 3 ? VideoLines.Lines5x3[w.Line] : VideoLines.Lines5x4[w.Line];
 					Color c = Color.Lerp(Color.Gold, Color.White, 0.5f + 0.5f * (float)Math.Sin(t * 10 + w.Line)) * 0.8f;
-					for (int r = 0; r < m.Reels - 1; r++)
-						Line(sb, CellRect(r, line[r]).Center.ToVector2(), CellRect(r + 1, line[r + 1]).Center.ToVector2(), c, 2);
+					float drawn = round.Timer / 5f;   // the line is drawn reel by reel
+					for (int r = 0; r < m.Reels - 1 && r < drawn; r++) {
+						Vector2 from = CellRect(r, line[r]).Center.ToVector2(), to = CellRect(r + 1, line[r + 1]).Center.ToVector2();
+						to = Vector2.Lerp(from, to, MathHelper.Clamp(drawn - r, 0f, 1f));
+						Line(sb, from, to, Add(c * 0.35f), 8);
+						Line(sb, from, to, c, 3);
+						if (drawn - r < 1f)
+							FillCircle(sb, to, 5, Add(Color.White));
+					}
 				}
 			}
 
@@ -681,12 +777,14 @@ namespace CasinoWorld.Common.Games.VideoSlots
 				int sym = Math.Abs((baseIndex - k) * 7 + reel * 3) % count;
 				if ((baseIndex - k + reel) % 5 == 0)
 					sym = m.Scatter;
-				DrawSymbol(sb, round.Key, icons, new SlotCell { Symbol = sym, Value = 2 }, new Vector2(g.X + reel * Cell + Cell / 2f, y), 1f, Color.White * 0.75f, m);
+				DrawSymbol(sb, round.Key, icons, new SlotCell { Symbol = sym, Value = 2 }, new Vector2(g.X + reel * Cell + Cell / 2f, y), 1f, Color.White * (tease ? 0.85f : 0.6f), m, 0f, tease ? Vector2.One : new Vector2(0.92f, 1.35f));
+				if (!tease)   // blur ghost
+					DrawIconEx(sb, icons[sym], new Vector2(g.X + reel * Cell + Cell / 2f, y - 14), Cell * 0.6f, Color.White * 0.22f, 0f, new Vector2(0.9f, 1.6f));
 			}
 			CasinoDraw.Fill(sb, new Rectangle(g.X + reel * Cell + 2, g.Y, Cell - 4, g.Height), Color.White * 0.05f);
 		}
 
-		private void DrawSymbol(SpriteBatch sb, string key, int[] icons, SlotCell c, Vector2 center, float scale, Color color, SlotMachine m)
+		private void DrawSymbol(SpriteBatch sb, string key, int[] icons, SlotCell c, Vector2 center, float scale, Color color, SlotMachine m, float rotation = 0f, Vector2? stretch = null)
 		{
 			float size = Cell * 0.62f * scale;
 			if (key == "LunarGods" && c.Symbol == LunarGodsSlot.Orb) {
@@ -699,9 +797,10 @@ namespace CasinoWorld.Common.Games.VideoSlots
 			if (c.Symbol == m.Scatter) {
 				Color halo = SlotThemes.Accent(key) * 0.35f * (color.A / 255f);
 				halo.A = 0;
-				FillCircle(sb, center, Cell * 0.42f, halo);
+				PixelFx.Glow(sb, center, 32f, halo);
 			}
-			DrawIcon(sb, icon, center, size, color);
+			DrawIconEx(sb, icon, center + new Vector2(2, 3), size, Color.Black * (0.35f * color.A / 255f), rotation, stretch ?? Vector2.One);   // drop shadow
+			DrawIconEx(sb, icon, center, size, color, rotation, stretch ?? Vector2.One);
 			float labelY = center.Y + Cell * 0.32f;
 			if (c.Symbol == m.Wild)
 				Utils.DrawBorderString(sb, c.Mult > 1 ? "WILD x" + c.Mult : Text("Wild"), new Vector2(center.X, labelY), Color.Gold * (color.A / 255f), 0.6f, 0.5f, 0.5f);
@@ -719,7 +818,7 @@ namespace CasinoWorld.Common.Games.VideoSlots
 			float s = Cell * 0.7f / frame.Width * scale;
 			Color halo = (tier == 3 ? Color.Gold : tier == 2 ? Color.MediumPurple : tier == 1 ? Color.DeepSkyBlue : Color.LimeGreen) * 0.3f;
 			halo.A = 0;
-			FillCircle(sb, center, Cell * 0.45f, halo * (0.8f + 0.2f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 6)));
+			PixelFx.Glow(sb, center, 48f, halo * (1.6f + 0.4f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 6)));
 			sb.Draw(tex, center, frame, color, 0f, frame.Size() / 2f, s, SpriteEffects.None, 0f);
 			Utils.DrawBorderString(sb, "x" + value, center + new Vector2(0, 3), Color.White * (color.A / 255f), value >= 100 ? 0.85f : 1f, 0.5f, 0.5f);
 		}
@@ -804,16 +903,6 @@ namespace CasinoWorld.Common.Games.VideoSlots
 				Utils.DrawBorderString(sb, Text("BonusOver"), new Vector2(g.Center.X, g.Center.Y - 34), accent, 1.2f, 0.5f, 0.5f);
 				Utils.DrawBorderString(sb, Games.Coins.Format((long)(round.BonusTotal * k)), new Vector2(g.Center.X, g.Center.Y + 14), Color.Gold, 1.6f + 0.1f * (float)Math.Sin(t * 8), 0.5f, 0.5f);
 			}
-			if (round.BigWinTimer > 0) {
-				long units = round.BigWinUnits;
-				string label = units >= SlotMachine.Unit * 100 ? Text("EpicWin") : units >= SlotMachine.Unit * 50 ? Text("MegaWin") : Text("BigWin");
-				float k = MathHelper.Clamp((150 - round.BigWinTimer) / 70f, 0, 1);
-				float scale = 1.8f + 0.2f * (float)Math.Sin(t * 10);
-				var box = new Rectangle(g.Center.X - 200, g.Center.Y - 60, 400, 120);
-				CasinoDraw.Fill(sb, box, Color.Black * 0.6f);
-				Utils.DrawBorderString(sb, label, new Vector2(g.Center.X, g.Center.Y - 22), Color.Lerp(Color.Gold, Color.White, 0.5f + 0.5f * (float)Math.Sin(t * 14)), scale, 0.5f, 0.5f);
-				Utils.DrawBorderString(sb, Games.Coins.Format((long)(round.Coins(units) * k)), new Vector2(g.Center.X, g.Center.Y + 28), Color.Gold, 1.3f, 0.5f, 0.5f);
-			}
 		}
 
 		private int lastLit = -1;
@@ -838,7 +927,7 @@ namespace CasinoWorld.Common.Games.VideoSlots
 				SoundEngine.PlaySound(SoundID.MenuTick with { Pitch = -0.2f + tick / 200f });
 			}
 			if (tick >= SpinEnd && Once(500))
-				SoundEngine.PlaySound(SoundID.Item30);
+				SoundEngine.PlaySound(CasinoSounds.IceShatter);
 			Utils.DrawBorderString(sb, Text("Lottery"), new Vector2(g.Center.X, g.Y + 22), new Color(190, 235, 255), 1f, 0.5f, 0.5f);
 			int cw = Math.Min(110, g.Width / 4 - 10);
 			for (int k = 0; k < 4; k++) {
@@ -848,6 +937,10 @@ namespace CasinoWorld.Common.Games.VideoSlots
 				CasinoDraw.Fill(sb, CasinoDraw.Shrink(card, 3), on ? new Color(30, 60, 100) : new Color(16, 24, 40));
 				float bob = on && tick >= SpinEnd ? (float)Math.Abs(Math.Sin(t * 6)) * -6 : 0;
 				DrawIcon(sb, -Animals[k], new Vector2(card.Center.X, card.Y + 52 + bob), 64f, on ? Color.White : Color.White * 0.5f);
+				if (tick >= SpinEnd && !on) {   // the others freeze over
+					CasinoDraw.Fill(sb, CasinoDraw.Shrink(card, 3), new Color(160, 215, 250) * Math.Min(0.6f, (tick - SpinEnd) / 30f));
+					Line(sb, new Vector2(card.X + 10, card.Y + 20), new Vector2(card.Right - 20, card.Y + 60), Color.White * 0.4f, 2);
+				}
 				Utils.DrawBorderString(sb, Text("Animal" + k), new Vector2(card.Center.X, card.Bottom - 22), on ? Color.White : Color.Gray, 0.7f, 0.5f, 0.5f);
 			}
 			if (tick >= SpinEnd) {
@@ -980,7 +1073,12 @@ namespace CasinoWorld.Common.Games.VideoSlots
 				else {
 					Color c = p.Color * fade;
 					c.A = 0;
-					CasinoDraw.Fill(sb, new Rectangle((int)p.Pos.X, (int)p.Pos.Y, (int)p.Size, (int)p.Size), c);
+					if (p.Size >= 4f)
+						PixelFx.Twinkle(sb, p.Pos, c, p.Life / (float)p.Max);
+					else {
+						Vector2 q = PixelFx.Snap(p.Pos);
+						CasinoDraw.Fill(sb, new Rectangle((int)q.X, (int)q.Y, p.Size >= 3f ? 4 : 2, p.Size >= 3f ? 4 : 2), c);
+					}
 				}
 			}
 		}
@@ -995,17 +1093,21 @@ namespace CasinoWorld.Common.Games.VideoSlots
 
 		private static void Line(SpriteBatch sb, Vector2 a, Vector2 b, Color c, float width)
 		{
-			Vector2 d = b - a;
-			if (d.LengthSquared() < 0.01f)
-				return;
-			sb.Draw(TextureAssets.MagicPixel.Value, a, new Rectangle(0, 0, 1, 1), c, d.ToRotation(), new Vector2(0, 0.5f), new Vector2(d.Length(), width), SpriteEffects.None, 0f);
+			PixelFx.Line(sb, a, b, c, width);
 		}
 
+		/// <summary>Pixel disc; glowing (additive) ones use the dithered glow sprites.</summary>
 		private static void FillCircle(SpriteBatch sb, Vector2 center, float radius, Color c)
 		{
-			for (int y = -(int)radius; y <= radius; y += 2) {
-				int half = (int)Math.Sqrt(Math.Max(0, radius * radius - y * y));
-				CasinoDraw.Fill(sb, new Rectangle((int)center.X - half, (int)center.Y + y, half * 2, 2), c);
+			if (c.A == 0) {
+				PixelFx.Glow(sb, center, radius * 2f, c);
+				return;
+			}
+			center = PixelFx.Snap(center);
+			for (int y = -(int)radius / 2 * 2; y <= radius; y += 2) {
+				int half = (int)Math.Sqrt(Math.Max(0, radius * radius - y * y)) / 2 * 2;
+				if (half > 0)
+					CasinoDraw.Fill(sb, new Rectangle((int)center.X - half, (int)center.Y + y, half * 2, 2), c);
 			}
 		}
 

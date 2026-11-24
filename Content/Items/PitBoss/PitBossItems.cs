@@ -98,6 +98,7 @@ namespace CasinoWorld.Content.Items.PitBoss
 		{
 			itemLoot.Add(ItemDropRule.OneFromOptions(1, ModContent.ItemType<CroupiersRake>(), ModContent.ItemType<BankBreaker>(), ModContent.ItemType<VaultBuster>()));
 			itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<LoyaltyToken>(), 1, 200, 280));
+			itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<VaultBullion>(), 1, 13, 18));
 			itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HighRollerCrate>(), 1, 3, 4));
 			itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<InsiderInfo>()));
 			itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<PitBossMask>(), 7));
@@ -237,7 +238,7 @@ namespace CasinoWorld.Content.Items.PitBoss
 		public override void SetDefaults()
 		{
 			base.SetDefaults();
-			Item.damage = 44;
+			Item.damage = 34;
 			Item.knockBack = 4f;
 			Item.useTime = Item.useAnimation = 24;
 			Item.shoot = ModContent.ProjectileType<RakeChip>();
@@ -263,7 +264,7 @@ namespace CasinoWorld.Content.Items.PitBoss
 		public override void SetDefaults()
 		{
 			base.SetDefaults();
-			Item.damage = 30;
+			Item.damage = 25;
 			Item.knockBack = 3f;
 			Item.useTime = Item.useAnimation = 34;
 			Item.useStyle = ItemUseStyleID.Shoot;
@@ -287,7 +288,7 @@ namespace CasinoWorld.Content.Items.PitBoss
 			for (int k = 0; k < 4; k++)
 				Dust.NewDustPerfect(muzzle, DustID.Smoke, velocity * 0.15f + Main.rand.NextVector2Circular(1, 1), 120, default, 1f).noGravity = true;
 			for (int k = 0; k < 5; k++)
-				Projectile.NewProjectile(source, muzzle, velocity.RotatedByRandom(0.22f) * Main.rand.NextFloat(0.85f, 1.1f), type, damage, knockback, player.whoAmI);
+				Projectile.NewProjectile(source, muzzle, velocity.RotatedByRandom(0.22f) * Main.rand.NextFloat(0.85f, 1.1f), type, damage, knockback, player.whoAmI, 2f);
 			return false;
 		}
 	}
@@ -298,7 +299,7 @@ namespace CasinoWorld.Content.Items.PitBoss
 		public override void SetDefaults()
 		{
 			base.SetDefaults();
-			Item.damage = 70;
+			Item.damage = 56;
 			Item.knockBack = 6f;
 			Item.useTime = Item.useAnimation = 30;
 			Item.shoot = ModContent.ProjectileType<VaultBar>();
@@ -317,7 +318,7 @@ namespace CasinoWorld.Content.Projectiles
 	/// <summary>Rake chip: rolls along the ground after landing. ai[0] colour.</summary>
 	public class RakeChip : ModProjectile
 	{
-		public override string Texture => "CasinoWorld/Content/Projectiles/HighRollerChip";
+		public override string Texture => "CasinoWorld/Content/Projectiles/NeutralChip";
 
 		private Color Tint => (int)Projectile.ai[0] switch { 0 => new Color(255, 90, 90), 1 => new Color(255, 220, 90), _ => new Color(110, 160, 255) };
 
@@ -344,8 +345,17 @@ namespace CasinoWorld.Content.Projectiles
 
 		public override bool OnTileCollide(Vector2 oldVelocity)
 		{
-			if (Projectile.velocity.X != oldVelocity.X)
-				return true;   // a wall stops the roll
+			if (Projectile.velocity.X != oldVelocity.X) {
+				// Raked back: one bounce, then it rolls home through everything again for half damage.
+				if (Projectile.ai[1]++ > 0f)
+					return true;
+				Projectile.velocity.X = -oldVelocity.X;
+				Projectile.damage = Math.Max(1, Projectile.damage / 2);
+				Projectile.ResetLocalNPCHitImmunity();
+				CasinoFx.Ring(Projectile.Center, Tint, 8, 3f);
+				SoundEngine.PlaySound(CasinoSounds.ChipStack with { Volume = 0.4f, Pitch = 0.3f }, Projectile.Center);
+				return false;
+			}
 			Projectile.velocity.Y = 0f;
 			Projectile.velocity.X = oldVelocity.X * 0.98f;
 			return false;
@@ -383,6 +393,16 @@ namespace CasinoWorld.Content.Projectiles
 			Projectile.rotation += 0.2f * Math.Sign(Projectile.velocity.X);
 		}
 
+		public override bool OnTileCollide(Vector2 oldVelocity)
+		{
+			// Dead weight: the slam shakes everything close by.
+			WallHit.Blast(Projectile, 70f, 0.4f);
+			Collision.HitTiles(Projectile.position, oldVelocity, Projectile.width, Projectile.height);
+			CasinoFx.Ring(Projectile.Bottom, new Color(255, 230, 140), 20, 5f, 1.2f);
+			SoundEngine.PlaySound(CasinoSounds.BarSlam, Projectile.Center);
+			return true;
+		}
+
 		public override void OnKill(int timeLeft)
 		{
 			SoundEngine.PlaySound(SoundID.Coins with { Volume = 0.8f }, Projectile.Center);
@@ -404,7 +424,7 @@ namespace CasinoWorld.Content.Projectiles
 	/// <summary>Coin from a Vault Buster burst: bounces once, then fades.</summary>
 	public class CoinShrapnel : ModProjectile
 	{
-		public override string Texture => "CasinoWorld/Content/Projectiles/HighRollerChip";
+		public override string Texture => "CasinoWorld/Content/Projectiles/NeutralChip";
 
 		public override bool PreDraw(ref Color lightColor)
 		{

@@ -16,6 +16,15 @@ namespace CasinoWorld.Content.Projectiles
 
 		private ref float Bounces => ref Projectile.ai[0];
 
+		/// <summary>Rolled face, 0 before the first bounce. Damage x(0.65 + 0.1 * face): 0.75 to 1.25, 1.0 on average.</summary>
+		private ref float Face => ref Projectile.ai[1];
+
+		public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+		{
+			if (Face > 0)
+				modifiers.SourceDamage *= 0.65f + 0.1f * Face;
+		}
+
 		public override void SetStaticDefaults() => CasinoFx.EnableTrail(Type, 6);
 
 		public override bool PreDraw(ref Color lightColor)
@@ -48,6 +57,13 @@ namespace CasinoWorld.Content.Projectiles
 				return true;
 
 			SoundEngine.PlaySound(CasinoSounds.DiceBounce, Projectile.Center);
+			if (Projectile.owner == Main.myPlayer) {
+				Face = Main.rand.Next(1, 7);
+				Projectile.netUpdate = true;
+				CombatText.NewText(Projectile.Hitbox, Face == 6 ? new Color(255, 220, 90) : new Color(225, 225, 225), (int)Face, Face == 6, true);
+				if (Face == 6)
+					CasinoFx.Ring(Projectile.Center, new Color(255, 220, 90), 10, 3f);
+			}
 			CasinoFx.Sparks(Projectile.Center, new Color(255, 230, 200), 3, 1.5f, 0.7f);
 			Collision.HitTiles(Projectile.position, oldVelocity, Projectile.width, Projectile.height);
 			if (Projectile.velocity.X != oldVelocity.X)
@@ -84,14 +100,47 @@ namespace CasinoWorld.Content.Projectiles
 
 		public override void AI()
 		{
+			if (Projectile.ai[2] > 0f) {   // stuck in a wall
+				Projectile.velocity = Vector2.Zero;
+				if (++Projectile.ai[2] > 180f)
+					Projectile.Kill();
+				Projectile.Opacity = Utils.GetLerpValue(180f, 140f, Projectile.ai[2], true);
+				return;
+			}
 			if (++Projectile.ai[0] > 40)
 				Projectile.velocity.Y += 0.08f;
 			Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 		}
 
+		public override bool OnTileCollide(Vector2 oldVelocity)
+		{
+			if (Projectile.ai[1] == 1f) {
+				Projectile.ai[1] = 2f;
+				WallHit.Bounce(Projectile, oldVelocity, 1f, 1f);
+				Projectile.damage = System.Math.Max(1, Projectile.damage * 3 / 5);
+				CasinoFx.Sparks(Projectile.Center, new Color(255, 120, 120), 4, 2f, 0.7f);
+				SoundEngine.PlaySound(CasinoSounds.CardFlip with { Volume = 0.4f, Pitch = 0.4f }, Projectile.Center);
+				return false;
+			}
+			if (Projectile.ai[1] != 0f)
+				return true;
+			// A card from the deck slices into the surface and stays there as a trap for half damage.
+			Projectile.ai[2] = 1f;
+			Projectile.damage = System.Math.Max(1, Projectile.damage / 2);
+			Projectile.rotation = oldVelocity.ToRotation() + MathHelper.PiOver2;
+			Projectile.position += oldVelocity.SafeNormalize(Vector2.Zero) * 4f;
+			Projectile.velocity = Vector2.Zero;
+			Projectile.tileCollide = false;
+			Projectile.timeLeft = 240;
+			Projectile.netUpdate = true;
+			SoundEngine.PlaySound(CasinoSounds.CardHit with { Volume = 0.4f }, Projectile.Center);
+			CasinoFx.Sparks(Projectile.Center, new Color(255, 200, 200), 3, 1.5f, 0.6f);
+			return false;
+		}
+
 		public override void OnKill(int timeLeft)
 		{
-			if (timeLeft > 0)
+			if (timeLeft > 0 && Projectile.ai[2] == 0f)
 				Collision.HitTiles(Projectile.position, Projectile.velocity, Projectile.width, Projectile.height);
 			CasinoFx.CardImpact(Projectile.Center, Projectile.velocity, new Color(220, 40, 50));
 		}
@@ -116,8 +165,13 @@ namespace CasinoWorld.Content.Projectiles
 
 		public override bool OnTileCollide(Vector2 oldVelocity)
 		{
-			Collision.HitTiles(Projectile.position, oldVelocity, Projectile.width, Projectile.height);
-			return true;
+			if (Projectile.ai[1]++ > 0f)
+				return true;
+			// Bank shot: off one wall, towards an enemy if one is close to its path.
+			bool aimed = WallHit.Bank(Projectile, oldVelocity, RicochetRange);
+			SoundEngine.PlaySound(CasinoSounds.ChipFlick with { Pitch = 0.4f }, Projectile.Center);
+			CasinoFx.Ring(Projectile.Center, aimed ? new Color(120, 255, 170) : new Color(255, 220, 120), 10, 3f);
+			return false;
 		}
 
 		public override void SetDefaults()

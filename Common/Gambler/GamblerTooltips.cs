@@ -30,6 +30,10 @@ namespace CasinoWorld.Common.Gambler
 				int dmg = tooltips.FindIndex(l => l.Mod == "Terraria" && l.Name == "Damage");
 				tooltips.Insert(dmg >= 0 ? dmg + 1 : tooltips.Count, line);
 			}
+			string key = GamblerPot.KeyName;
+			tooltips.Add(new TooltipLine(Mod, "GamblerAllIn", key == null ? Language.GetTextValue("Mods.CasinoWorld.Gambler.AllInUnbound") : Language.GetTextValue("Mods.CasinoWorld.Gambler.TooltipAllIn", key)) {
+				OverrideColor = key == null ? new Color(255, 110, 100) : new Color(200, 180, 140)
+			});
 		}
 	}
 }

@@ -63,10 +63,16 @@ namespace CasinoWorld.Content.NPCs.Boss
 		// Dice: the faces of the last roll and whether the next attack repeats (doubles).
 		private int dieA, dieB;
 		private bool repeatNext;
+		private int diceSum;
 		private int attacksSinceShell;
 
 		private float LifeRatio => NPC.life / (float)NPC.lifeMax;
 		public int Phase => LifeRatio > 0.6f ? 1 : LifeRatio > 0.25f ? 2 : 3;
+		private float previousTimer;
+
+		/// <summary>True on the one tick in which the timer passes a mark. The timer steps by 1.25 in phase 3, so exact comparisons can miss.</summary>
+		private bool At(float mark) => previousTimer < mark && Timer >= mark;
+
 		private float Speed => Phase == 3 ? 1.25f : 1f;
 
 		public override string Texture => "CasinoWorld/Content/NPCs/Boss/WildCard_Head";
@@ -176,7 +182,13 @@ namespace CasinoWorld.Content.NPCs.Boss
 			NPC.dontTakeDamage = CurrentState is State.Intro or State.ShellGame or State.Leave;
 			Lighting.AddLight(NPC.Center, Phase == 3 ? new Vector3(0.9f, 0.2f, 0.25f) : new Vector3(0.6f, 0.3f, 0.8f));
 
+			previousTimer = Timer;
 			Timer += Speed;
+			// Safety net: no trick takes this long.
+			if (Timer > 900 && CurrentState is not (State.Intro or State.Leave)) {
+				EndShellGameEarly();
+				SetState(State.Hover);
+			}
 			switch (CurrentState) {
 				case State.Intro: Intro(); break;
 				case State.Hover: Hover(); break;
@@ -203,12 +215,12 @@ namespace CasinoWorld.Content.NPCs.Boss
 				if (!Main.dedServ)
 					BossTitle.Show("Mods.CasinoWorld.Boss.WildCard.Title", "Mods.CasinoWorld.Boss.WildCard.Subtitle", new Color(255, 200, 80));
 			}
-			if ((int)Timer == 80) {
+			if (At(80)) {
 				SoundEngine.PlaySound(CasinoSounds.BossBell, NPC.Center);
 				CasinoFx.Ring(NPC.Center, new Color(255, 210, 90), 24, 7f, 1.4f);
 				CasinoFx.Ring(NPC.Center, new Color(200, 120, 255), 16, 4f, 1.2f);
 				if (!Main.dedServ)
-					Main.instance.CameraModifiers.Add(new PunchCameraModifier(NPC.Center, Vector2.UnitY, 5f, 8f, 20, 1500f, "WildCardIntro"));
+					global::CasinoWorld.Common.Effects.CasinoFx.Shake(NPC.Center, Vector2.UnitY, 5f, 8f, 20, 1500f, "WildCardIntro");
 			}
 			if (Timer > 90)
 				SetState(State.Hover);
@@ -370,7 +382,7 @@ namespace CasinoWorld.Content.NPCs.Boss
 		private void Pickup()
 		{
 			FlyTo(Target.Center + new Vector2(0, -320f), 9f, 18f);
-			if (Timer == 20 || (Phase == 3 && Timer == 80)) {
+			if (At(20) || (Phase == 3 && At(80))) {
 				SoundEngine.PlaySound(CasinoSounds.CardBridge, NPC.Center);
 				int columns = Phase == 1 ? 9 : 12;
 				float offset = Main.rand.NextFloat(0, 70f);
@@ -387,7 +399,7 @@ namespace CasinoWorld.Content.NPCs.Boss
 		private void DiceRoll()
 		{
 			FlyTo(Target.Center + new Vector2(Math.Sign(NPC.Center.X - Target.Center.X) * 220f, -220f), 8f, 18f);
-			if (Timer == 20 && Main.netMode != NetmodeID.MultiplayerClient) {
+			if (At(20) && Main.netMode != NetmodeID.MultiplayerClient) {
 				dieA = Main.rand.Next(1, 7);
 				dieB = Main.rand.Next(1, 7);
 				repeatNext = dieA == dieB;
@@ -397,7 +409,7 @@ namespace CasinoWorld.Content.NPCs.Boss
 				Shoot(hand, new Vector2(3f, -6f), ModContent.ProjectileType<RollingDie>(), 0, dieB, 0);
 				NPC.netUpdate = true;
 			}
-			if (Timer == 95) {
+			if (At(95)) {
 				int sum = dieA + dieB;
 				if (!Main.dedServ) {
 					CombatText.NewText(NPC.Hitbox, sum == 7 ? Color.Gold : Color.White, Language.GetTextValue("Mods.CasinoWorld.Boss.WildCard.Roll", dieA, dieB, sum), true);
@@ -406,7 +418,9 @@ namespace CasinoWorld.Content.NPCs.Boss
 				}
 				CasinoFx.Ring(NPC.Center, sum == 7 ? new Color(255, 220, 90) : PhaseColor, 14, 4f, 1.2f);
 				SoundEngine.PlaySound(CasinoSounds.BossBell with { Pitch = (sum - 7) * 0.05f }, NPC.Center);
-				SetState(State.DiceAttack, sum);
+				diceSum = sum;
+				if (Main.netMode != NetmodeID.MultiplayerClient)
+					SetState(State.DiceAttack, sum);
 			}
 		}
 
@@ -427,11 +441,10 @@ namespace CasinoWorld.Content.NPCs.Boss
 
 		private void FinishAttack()
 		{
-			if (repeatNext && Argument >= 2) {
+			if (repeatNext && diceSum >= 2) {   // the argument is the dash count during dashes
 				repeatNext = false;
-				int sum = (int)Argument;
-				SetState(State.DiceAttack, sum);
-				Timer = 20;   // a faster second go
+				SetState(State.DiceAttack, diceSum);
+				Timer = 8;   // a faster second go
 				return;
 			}
 			SetState(State.Hover);
@@ -440,7 +453,7 @@ namespace CasinoWorld.Content.NPCs.Boss
 		private void SnakeEyes()
 		{
 			FlyTo(Target.Center + new Vector2(0, -260f), 7f, 20f);
-			if (Timer == 10) {
+			if (At(10)) {
 				SoundEngine.PlaySound(CasinoSounds.ChipStack with { Pitch = -0.4f }, NPC.Center);
 				Shoot(HandPosition(-1), new Vector2(-6, -2), ModContent.ProjectileType<ChipSnake>(), ChipDamage);
 				Shoot(HandPosition(1), new Vector2(6, -2), ModContent.ProjectileType<ChipSnake>(), ChipDamage);
@@ -465,7 +478,7 @@ namespace CasinoWorld.Content.NPCs.Boss
 		private void LuckySevens()
 		{
 			NPC.velocity *= 0.92f;
-			if (Timer == 20) {
+			if (At(20)) {
 				SoundEngine.PlaySound(CasinoSounds.Jackpot with { Volume = 0.6f }, NPC.Center);
 				float start = Main.rand.NextFloat(MathHelper.TwoPi);
 				for (int k = 0; k < 7; k++)
@@ -484,7 +497,7 @@ namespace CasinoWorld.Content.NPCs.Boss
 				Vector2 away = (NPC.Center - Target.Center).SafeNormalize(Vector2.UnitY);
 				FlyTo(Target.Center + away * 280f, 9f, 10f);
 			}
-			else if (cycle < 23) {
+			else if (previousTimer - Counter * 46 < 22) {
 				SoundEngine.PlaySound(SoundID.Item74 with { Pitch = 0.4f }, NPC.Center);
 				SoundEngine.PlaySound(CasinoSounds.BossBell with { Volume = 0.6f, Pitch = 0.4f }, NPC.Center);
 				CasinoFx.Ring(NPC.Center, PhaseColor, 12, 5f, 1.2f);
@@ -508,7 +521,7 @@ namespace CasinoWorld.Content.NPCs.Boss
 			NPC.velocity *= 0.9f;
 			if (Timer <= Speed)
 				SoundEngine.PlaySound(SoundID.Roar with { Pitch = 0.4f, Volume = 0.6f }, NPC.Center);
-			if (Timer == 20) {
+			if (At(20)) {
 				SoundEngine.PlaySound(CasinoSounds.BossSpin, NPC.Center);
 				foreach (int side in new[] { -1, 1 }) {
 					Vector2 start = new(Target.Center.X + side * 700f, Target.Center.Y - 200f);
@@ -523,19 +536,19 @@ namespace CasinoWorld.Content.NPCs.Boss
 		private void Spiral()
 		{
 			NPC.velocity *= 0.9f;
-			if (Timer == 10) {
+			if (At(10)) {
 				SoundEngine.PlaySound(CasinoSounds.HouseLaugh with { Pitch = 0.2f }, NPC.Center);
 				SoundEngine.PlaySound(CasinoSounds.RouletteSpin, NPC.Center);
 				Say("Mods.CasinoWorld.Boss.WildCard.AllIn", new Color(255, 80, 80));
 				CasinoFx.Ring(NPC.Center, new Color(255, 70, 70), 28, 8f, 1.5f);
 				if (!Main.dedServ)
-					Main.instance.CameraModifiers.Add(new PunchCameraModifier(NPC.Center, Vector2.UnitX, 6f, 10f, 30, 1500f, "WildCardAllIn"));
+					global::CasinoWorld.Common.Effects.CasinoFx.Shake(NPC.Center, Vector2.UnitX, 6f, 10f, 30, 1500f, "WildCardAllIn");
 			}
-			if (Timer > 30 && Timer < 210 && (int)Timer % 5 == 0) {
+			if (Timer > 30 && Timer < 210 && (int)(Timer / 5) != (int)(previousTimer / 5)) {
 				float a = Timer * 0.11f;
 				for (int k = 0; k < 2; k++)
 					Shoot(NPC.Center, Vector2.UnitX.RotatedBy(a + k * MathHelper.Pi) * 5.5f, ModContent.ProjectileType<AllInChip>(), ChipDamage, k);
-				if ((int)Timer % 10 == 0)
+				if ((int)(Timer / 5) % 2 == 0)
 					SoundEngine.PlaySound(CasinoSounds.ChipPlace with { Volume = 0.4f }, NPC.Center);
 			}
 			if (Timer > 240)
@@ -568,7 +581,7 @@ namespace CasinoWorld.Content.NPCs.Boss
 			for (int k = 0; k < 2; k++)
 				Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(30, 40), CasinoFx.ShardType, new Vector2(hit.HitDirection * 2f, -2f) + Main.rand.NextVector2Circular(1, 1), 0, default, 1f);
 			if (NPC.life <= 0) {
-				Main.instance.CameraModifiers.Add(new PunchCameraModifier(NPC.Center, Main.rand.NextVector2Unit(), 12f, 6f, 30, 1000f, "WildCard"));
+				global::CasinoWorld.Common.Effects.CasinoFx.Shake(NPC.Center, Main.rand.NextVector2Unit(), 12f, 6f, 30, 1000f, "WildCard");
 				CasinoFx.Explosion(NPC.Center, 220, new Color(255, 210, 90), new Color(200, 120, 255), 0f);
 				CasinoFx.Ring(NPC.Center, Color.White, 30, 10f, 1.6f);
 				SoundEngine.PlaySound(CasinoSounds.Jackpot, NPC.Center);
@@ -669,7 +682,7 @@ namespace CasinoWorld.Content.NPCs.Boss
 					SoundEngine.PlaySound(SoundID.Roar with { Pitch = Phase == 3 ? -0.4f : 0f }, NPC.Center);
 					SoundEngine.PlaySound(CasinoSounds.BossBell, NPC.Center);
 					BossTitle.Flash(PhaseColor);
-					Main.instance.CameraModifiers.Add(new PunchCameraModifier(NPC.Center, Vector2.UnitY, 6f, 8f, 25, 1200f, "WildCardPhase"));
+					global::CasinoWorld.Common.Effects.CasinoFx.Shake(NPC.Center, Vector2.UnitY, 6f, 8f, 25, 1200f, "WildCardPhase");
 				}
 			}
 			if (transitionFlash > 0)
@@ -723,7 +736,6 @@ namespace CasinoWorld.Content.NPCs.Boss
 		{
 			if (NPC.IsABestiaryIconDummy)
 				return;
-			Texture2D pixel = TextureAssets.MagicPixel.Value;
 			if (CurrentState == State.Dash) {
 				float cycle = Timer - Counter * 46;
 				if (cycle < 22) {
@@ -731,9 +743,12 @@ namespace CasinoWorld.Content.NPCs.Boss
 					Vector2 from = NPC.Center - screenPos, to = Target.Center - screenPos;
 					Vector2 d = to - from;
 					float p = cycle / 22f;
-					Color line = PhaseColor * (0.25f + 0.45f * p) * (0.7f + 0.3f * (float)Math.Sin(t * 30));
-					line.A = 0;
-					sb.Draw(pixel, from, new Rectangle(0, 0, 1, 1), line, d.ToRotation(), new Vector2(0, 0.5f), new Vector2(d.Length(), 2f + p * 6f), SpriteEffects.None, 0f);
+					// A row of marching suit pips towards the player, bigger as the dash gets closer.
+					Vector2 dir = d.SafeNormalize(Vector2.UnitY);
+					float length = d.Length();
+					for (float q = 30f + t * 160f % 36f; q < length; q += 36f)
+						sb.Draw(Common.Games.CasinoDraw.Suits, PixelFx.Snap(from + dir * q), new Rectangle((int)(q / 36f) % 4 * 12, 0, 12, 12), Color.Lerp(Color.White, PhaseColor, 0.4f) * (0.3f + 0.7f * p), 0f, new Vector2(6), p > 0.5f ? 2f : 1f, SpriteEffects.None, 0f);
+					PixelFx.Glow(sb, to, 20f + p * 28f, PhaseColor * (0.4f + 0.4f * p));
 				}
 			}
 			if (CurrentState == State.Spiral) {

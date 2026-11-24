@@ -17,6 +17,7 @@ namespace CasinoWorld.Common.Systems
 		// Static fields survive the world switch because the client process keeps running.
 		private static Vector2? returnPosition;
 		private static int returnWorldId;
+		private static string returnPlayer;   // player file, so another character is not moved there
 
 		public static bool InCasino => SubworldSystem.Current is CasinoSubworld;
 
@@ -54,6 +55,7 @@ namespace CasinoWorld.Common.Systems
 
 			returnPosition = Main.LocalPlayer.position;
 			returnWorldId = Main.worldID;
+			returnPlayer = Main.ActivePlayerFileData?.Path;
 			if (typeof(T) == typeof(UndergroundCasino))
 				Main.LocalPlayer.GetModPlayer<Players.CasinoPlayer>().VisitedUnderground = true;
 			Terraria.Audio.SoundEngine.PlaySound(typeof(T) == typeof(UndergroundCasino) ? CasinoSounds.VaultDoor : CasinoSounds.DoorEnter);
@@ -86,7 +88,7 @@ namespace CasinoWorld.Common.Systems
 				return;
 
 			returnPosition = null;
-			if (Main.worldID != returnWorldId)
+			if (Main.worldID != returnWorldId || Main.ActivePlayerFileData?.Path != returnPlayer)
 				return;
 
 			player.Teleport(position, -1);

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using CasinoWorld.Content.Items;
+using CasinoWorld.Content.Items.PitBoss;
 using CasinoWorld.Content.Items.Weapons;
 using CasinoWorld.Content.Projectiles;
 using Terraria;
@@ -52,15 +53,24 @@ namespace CasinoWorld.Common
 		{
 			item.UseSound = item.ModItem switch {
 				LoadedDice or SnakeEyes or DoublingDice => CasinoSounds.DiceThrow,
-				MeteorDice => SoundID_Item88,
-				CardDeck or RoyalFlush or AceOfSpades or StardustDeck or DealersHand => CasinoSounds.CardThrow,
+				MeteorDice => CasinoSounds.MeteorCall,
+				AceOfSpades => CasinoSounds.SpectralThrow,
+				StardustDeck => CasinoSounds.GalaxyThrow,
+				RouletteRevolver => CasinoSounds.RevolverShot,
+				JackpotCannon => CasinoSounds.CannonShot,
+				InfinitySlot => CasinoSounds.SlotBlaster,
+				CroupiersRake => CasinoSounds.RakeSweep,
+				BankBreaker => CasinoSounds.ChipShotgun,
+				VaultBuster => CasinoSounds.BarThrow,
+				LuckyPenny => CasinoSounds.ChipFlick with { Pitch = 0.4f },
+				HellfireDice => CasinoSounds.DiceThrow with { Pitch = -0.3f },
+				CardDeck or RoyalFlush or DealersHand => CasinoSounds.CardThrow,
 				HighRoller => CasinoSounds.ChipFlick,
 				WheelOfFortune => CasinoSounds.RouletteBallBounce,
 				_ => item.UseSound,
 			};
 		}
 
-		private static SoundStyle SoundID_Item88 => Terraria.ID.SoundID.Item88;
 	}
 
 	/// <summary>Ka-ching when buying from casino staff or the Gambler.</summary>

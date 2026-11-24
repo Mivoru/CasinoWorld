@@ -58,10 +58,9 @@ namespace CasinoWorld.Common.Crates
 		}
 
 		/// <summary>Puts Lucky Crates into every chest (skips chests that already have one or are full).</summary>
-		private static int FillChests()
+		private static void FillChests()
 		{
 			int crate = ModContent.ItemType<LuckyCrate>();
-			int filled = 0;
 			foreach (Chest chest in Main.chest) {
 				if (chest == null || HasCrate(chest, crate))
 					continue;
@@ -72,40 +71,14 @@ namespace CasinoWorld.Common.Crates
 					if (chest.item[k].IsAir) {
 						chest.item[k].SetDefaults(crate);
 						chest.item[k].stack = count;
-						filled++;
 						break;
 					}
 				}
 			}
-			return filled;
 		}
 
-		public override void PostWorldGen()
-		{
-			FillChests();
-			chestsFilled = true;
-		}
-
-		// Worlds made before this rule get their chests filled once, on the first load.
-		private bool chestsFilled;
-
-		public override void ClearWorld() => chestsFilled = false;
-
-		public override void LoadWorldData(Terraria.ModLoader.IO.TagCompound tag) => chestsFilled = tag.ContainsKey("chestCrates");
-
-		public override void SaveWorldData(Terraria.ModLoader.IO.TagCompound tag)
-		{
-			if (chestsFilled)
-				tag["chestCrates"] = true;
-		}
-
-		public override void PostUpdateWorld()
-		{
-			if (chestsFilled || Main.netMode == NetmodeID.MultiplayerClient || Systems.CasinoTravel.InCasino)
-				return;
-			chestsFilled = true;
-			FillChests();
-		}
+		// Only new worlds: in an existing world the chests may belong to players.
+		public override void PostWorldGen() => FillChests();
 
 		/// <summary>Scatters High Roller Crates; called once when the underground casino opens.</summary>
 		public static void ScatterHighRollerCrates()

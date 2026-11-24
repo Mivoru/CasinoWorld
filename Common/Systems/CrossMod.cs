@@ -2,20 +2,45 @@ using System.Collections.Generic;
 using CasinoWorld.Content.Items;
 using CasinoWorld.Content.Items.PitBoss;
 using CasinoWorld.Content.Items.Vanity;
+using CasinoWorld.Content.Items.Accessories;
 using CasinoWorld.Content.NPCs.Boss;
+using CasinoWorld.Content.NPCs.People;
+using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace CasinoWorld.Common.Systems
 {
-	/// <summary>Optional integrations with other mods (Boss Checklist).</summary>
+	/// <summary>Optional integrations with other mods (Boss Checklist, Census).</summary>
 	public class CrossMod : ModSystem
 	{
 		public override void PostSetupContent()
 		{
-			if (!ModLoader.TryGetMod("BossChecklist", out Mod checklist))
-				return;
+			JoinEmblemShimmer();
 
+			if (ModLoader.TryGetMod("Census", out Mod census)) {
+				foreach (int type in new[] { ModContent.NPCType<TownGambler>(), ModContent.NPCType<Bookie>(), ModContent.NPCType<Magician>(), ModContent.NPCType<Bouncer>() })
+					census.Call("TownNPCCondition", type, Mod.GetLocalization("Census." + ModContent.GetModNPC(type).Name));
+			}
+
+			if (ModLoader.TryGetMod("BossChecklist", out Mod checklist))
+				LogBosses(checklist);
+		}
+
+		/// <summary>
+		/// Joins the emblem shimmer cycle after Summoner. Runs after every mod's SetStaticDefaults and keeps
+		/// the previous target, so emblems of other mods in the cycle stay reachable.
+		/// </summary>
+		private static void JoinEmblemShimmer()
+		{
+			int emblem = ModContent.ItemType<GamblerEmblem>();
+			int next = ItemID.Sets.ShimmerTransformToItem[ItemID.SummonerEmblem];
+			ItemID.Sets.ShimmerTransformToItem[emblem] = next > 0 ? next : ItemID.WarriorEmblem;
+			ItemID.Sets.ShimmerTransformToItem[ItemID.SummonerEmblem] = emblem;
+		}
+
+		private void LogBosses(Mod checklist)
+		{
 			// The Wild Card: after Skeletron (5.0), before the Wall of Flesh (6.0).
 			checklist.Call("LogBoss", Mod, nameof(TheWildCard), 5.5f, () => CasinoDowned.DownedWildCard, ModContent.NPCType<TheWildCard>(),
 				new Dictionary<string, object> {

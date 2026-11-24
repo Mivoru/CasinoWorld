@@ -19,20 +19,11 @@ using Terraria.ModLoader.Utilities;
 namespace CasinoWorld.Content.NPCs.Enemies
 {
 	/// <summary>
-	/// Pre-hardmode night zombie: a gambler who lost everything, in a torn tuxedo. Drawn with the vanilla
-	/// player renderer (green skin, ragged suit), so it animates exactly like vanilla zombies.
+	/// Pre-hardmode night zombie: a gambler who lost everything, in a torn tuxedo. Throws his empty wallet.
 	/// </summary>
 	public class BrokeGambler : ModNPC
 	{
-		public override string Texture => "Terraria/Images/NPC_" + NPCID.Zombie;
-
-		private PersonDoll doll;
-		private PersonLook look;
-
-		public override void SetStaticDefaults()
-		{
-			Main.npcFrameCount[Type] = Main.npcFrameCount[NPCID.Zombie];
-		}
+		public override void SetStaticDefaults() => Main.npcFrameCount[Type] = 5;
 
 		public override void SetDefaults()
 		{
@@ -44,7 +35,40 @@ namespace CasinoWorld.Content.NPCs.Enemies
 			NPC.defense = 6;
 			NPC.value = Item.buyPrice(silver: 3);
 			AIType = NPCID.Zombie;
-			AnimationType = NPCID.Zombie;
+		}
+
+		public override void FindFrame(int frameHeight)
+		{
+			NPC.spriteDirection = -NPC.direction;   // the sprite faces right
+			if (NPC.localAI[1] > 0f) {
+				NPC.frame.Y = frameHeight * 4;
+				return;
+			}
+			NPC.frameCounter += Math.Abs(NPC.velocity.X) + (NPC.IsABestiaryIconDummy ? 0.8f : 0f);
+			if (NPC.frameCounter >= 9) {
+				NPC.frameCounter = 0;
+				NPC.frame.Y = (NPC.frame.Y / frameHeight + 1) % 4 * frameHeight;
+			}
+		}
+
+		/// <summary>Now and then he throws the last thing he owns: his empty wallet.</summary>
+		public override void PostAI()
+		{
+			if (NPC.localAI[1] > 0f)
+				NPC.localAI[1]--;
+			if (!NPC.HasValidTarget)
+				return;
+			Player target = Main.player[NPC.target];
+			if (++NPC.localAI[0] < 210 || NPC.Distance(target.Center) > 380f || NPC.Distance(target.Center) < 60f)
+				return;
+			NPC.localAI[0] = 0;
+			NPC.localAI[1] = 24;
+			SoundEngine.PlaySound(SoundID.Item1 with { Pitch = 0.2f }, NPC.Center);
+			if (Main.netMode == NetmodeID.MultiplayerClient)
+				return;
+			Vector2 to = target.Center - NPC.Top;
+			const float Time = 45f;
+			Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Top, new Vector2(to.X / Time, to.Y / Time - 0.5f * 0.25f * Time), ModContent.ProjectileType<EmptyWallet>(), Main.expertMode ? 5 : 8, 1f, Main.myPlayer);
 		}
 
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -62,27 +86,6 @@ namespace CasinoWorld.Content.NPCs.Enemies
 				Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(8, 16), CasinoFx.ShardType, new Vector2(hit.HitDirection * 1.5f, -2f) + Main.rand.NextVector2Circular(1, 1), 0, new Color(240, 230, 170));
 			for (int k = 0; k < (NPC.life <= 0 ? 12 : 3); k++)
 				Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, hit.HitDirection * 2f, -1.5f);
-		}
-
-		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
-		{
-			if (NPC.IsABestiaryIconDummy)
-				return true;
-			look ??= new PersonLook {
-				Hair = 2 + NPC.whoAmI % 12, SkinVariant = NPC.whoAmI % 4, Skin = new Color(120, 170, 110), HairColor = new Color(60, 60, 50),
-				Eyes = new Color(200, 30, 30), Shirt = new Color(30, 30, 35), UnderShirt = new Color(170, 165, 140),
-				Pants = new Color(35, 35, 40), Shoes = new Color(60, 40, 30),
-			};
-			try {
-				doll ??= new PersonDoll();
-				doll.BodyPose = PersonDoll.ArmForward;   // zombie arms
-				doll.LegPose = -1;
-				doll.Draw(NPC, look, NPC.Bottom + new Vector2(0, NPC.gfxOffY));
-				return false;
-			}
-			catch {
-				return true;
-			}
 		}
 
 		public override void ModifyNPCLoot(NPCLoot npcLoot)
@@ -140,6 +143,19 @@ namespace CasinoWorld.Content.NPCs.Enemies
 			Lighting.AddLight(NPC.Bottom, 0.25f, 0.2f, 0.05f);
 			if (Main.rand.NextBool(10))
 				CasinoFx.Spark(NPC.Bottom, new Vector2(0, 0.5f), new Color(255, 220, 90), 0.6f);
+		}
+
+		/// <summary>Steals up to 5 silver on a bite, then flees with it. Kill it to get the coins back (vanilla stolen-coin rules).</summary>
+		public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo) => CoinThief.Steal(NPC, target, Item.buyPrice(silver: 5), once: true);
+
+		public override void PostAI()
+		{
+			if (NPC.extraValue <= 0 || !NPC.HasValidTarget)
+				return;
+			Vector2 away = (NPC.Center - Main.player[NPC.target].Center).SafeNormalize(-Vector2.UnitY);
+			NPC.velocity = Vector2.Lerp(NPC.velocity, away * 5f - Vector2.UnitY, 0.12f);
+			if (Main.rand.NextBool(3))
+				Dust.NewDustPerfect(NPC.Bottom, DustID.SilverCoin, new Vector2(0, 1f), 0, default, 0.8f);
 		}
 
 		public override void HitEffect(NPC.HitInfo hit)
@@ -419,8 +435,29 @@ namespace CasinoWorld.Content.NPCs.Enemies
 				Dust.NewDustPerfect(NPC.Center + new Vector2(-NPC.direction * 26, 0), DustID.BreatheBubble, new Vector2(0, -1f), 0, default, 1f);
 		}
 
+		/// <summary>Collection time: every few seconds, a gleam of the gold tooth, then a fast lunge through the water.</summary>
+		public override void PostAI()
+		{
+			if (!NPC.wet || !NPC.HasValidTarget || !Main.player[NPC.target].wet)
+				return;
+			Player target = Main.player[NPC.target];
+			NPC.localAI[0]++;
+			if (NPC.localAI[0] is > 140 and < 165) {
+				NPC.velocity *= 0.9f;
+				CasinoFx.Spark(NPC.Center + new Vector2(NPC.direction * 28, 2), Main.rand.NextVector2Circular(1, 1), new Color(255, 220, 90), 1f);
+			}
+			else if (NPC.localAI[0] >= 165 && NPC.Distance(target.Center) < 420f) {
+				NPC.localAI[0] = 0;
+				NPC.velocity = (target.Center - NPC.Center).SafeNormalize(Vector2.UnitX) * 12f;
+				SoundEngine.PlaySound(SoundID.Item74 with { Pitch = -0.4f, Volume = 0.7f }, NPC.Center);
+				for (int k = 0; k < 12; k++)
+					Dust.NewDustPerfect(NPC.Center, DustID.BreatheBubble, -NPC.velocity * 0.3f + Main.rand.NextVector2Circular(2, 2), 0, default, 1.2f);
+			}
+		}
+
 		public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
 		{
+			CoinThief.Steal(NPC, target, Item.buyPrice(gold: 1), once: false);
 			// The gold teeth flash on a bite.
 			CasinoFx.Sparks(NPC.Center + new Vector2(NPC.direction * 26, 2), new Color(255, 220, 90), 5, 2f);
 			SoundEngine.PlaySound(SoundID.CoinPickup with { Pitch = -0.4f }, NPC.Center);
@@ -451,6 +488,53 @@ namespace CasinoWorld.Content.NPCs.Enemies
 				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Ocean,
 				new FlavorTextBestiaryInfoElement("Mods.CasinoWorld.Bestiary.LoanShark"),
 			});
+		}
+	}
+}
+
+namespace CasinoWorld.Content.NPCs.Enemies
+{
+	/// <summary>Enemies that pick the player's pocket. The coins go to the NPC's extra value and drop again on its death.</summary>
+	public static class CoinThief
+	{
+		public static void Steal(NPC npc, Player player, long amount, bool once)
+		{
+			if (player.whoAmI != Main.myPlayer || once && npc.extraValue > 0)
+				return;
+			amount = Math.Min(amount, Utils.CoinsCount(out _, player.inventory, 58, 57, 56, 55, 54));
+			if (amount <= 0 || !player.BuyItem(amount))
+				return;
+			npc.extraValue += (int)amount;
+			if (Main.netMode == NetmodeID.MultiplayerClient)
+				NetMessage.SendData(MessageID.SyncExtraValue, number: npc.whoAmI, number2: amount, number3: npc.Center.X, number4: npc.Center.Y);
+			CombatText.NewText(player.Hitbox, new Color(255, 200, 90), Language.GetTextValue("Mods.CasinoWorld.NPCs.Stolen"));
+			SoundEngine.PlaySound(SoundID.CoinPickup, player.Center);
+		}
+	}
+
+	/// <summary>Broke Gambler's wallet: a light arc, opens into moths and dust.</summary>
+	public class EmptyWallet : ModProjectile
+	{
+		public override string Texture => "CasinoWorld/Content/Projectiles/EmptyWallet";
+
+		public override void SetDefaults()
+		{
+			Projectile.width = Projectile.height = 14;
+			Projectile.hostile = true;
+			Projectile.timeLeft = 240;
+		}
+
+		public override void AI()
+		{
+			Projectile.velocity.Y = Math.Min(Projectile.velocity.Y + 0.25f, 12f);
+			Projectile.rotation += Projectile.velocity.X * 0.06f;
+		}
+
+		public override void OnKill(int timeLeft)
+		{
+			SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
+			for (int k = 0; k < 8; k++)
+				Dust.NewDustPerfect(Projectile.Center, DustID.Smoke, Main.rand.NextVector2Circular(2, 2) - Vector2.UnitY, 120, default, 1f);
 		}
 	}
 }

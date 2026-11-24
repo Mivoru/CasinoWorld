@@ -28,9 +28,16 @@ namespace CasinoWorld.Common.Games.Roulette
 
 		protected override UIState CreateState() => new RouletteUIState();
 
+		public override void PreSaveAndQuit()
+		{
+			base.PreSaveAndQuit();
+			Round.CancelWaiting(Main.LocalPlayer);
+		}
+
 		public override void OnWorldUnload()
 		{
 			base.OnWorldUnload();
+			Round.CancelWaiting(Main.LocalPlayer);
 			spectatorResults.Clear();
 		}
 

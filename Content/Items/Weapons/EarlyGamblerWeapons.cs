@@ -110,9 +110,15 @@ namespace CasinoWorld.Content.Projectiles
 		{
 			if (Projectile.ai[0] != 0f || Projectile.ai[1] != 0f || Projectile.owner != Main.myPlayer)
 				return;
-			CombatText.NewText(target.Hitbox, new Color(255, 220, 90), "Heads!");
+			CombatText.NewText(target.Hitbox, new Color(255, 220, 90), Terraria.Localization.Language.GetTextValue("Mods.CasinoWorld.Gambler.Heads"));
 			for (int side = -1; side <= 1; side += 2)
 				Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, new Vector2(side * 5f, -4f), Type, Projectile.damage / 2, 1f, Projectile.owner, 1f, 1f);
+		}
+
+		public override bool OnTileCollide(Vector2 oldVelocity)
+		{
+			CasinoFx.Sparks(Projectile.Center, new Color(255, 200, 120), 5, 2.5f, 0.8f);   // OnKill adds the clink
+			return true;
 		}
 
 		public override void OnKill(int timeLeft) => CasinoFx.ChipImpact(Projectile.Center, new Color(230, 150, 80), Projectile.ai[1] == 0f);
@@ -160,6 +166,8 @@ namespace CasinoWorld.Content.Projectiles
 			if (++Projectile.localAI[0] > 2)
 				return true;
 			SoundEngine.PlaySound(CasinoSounds.DiceBounce, Projectile.Center);
+			if (Projectile.owner == Main.myPlayer)
+				Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<EmberPatch>(), Projectile.damage / 4, 1f, Projectile.owner);
 			for (int k = 0; k < 6; k++)
 				Dust.NewDustPerfect(Projectile.Bottom, DustID.Torch, Main.rand.NextVector2Circular(2, 1) - Vector2.UnitY, 0, default, 1.4f);
 			if (Projectile.velocity.X != oldVelocity.X)

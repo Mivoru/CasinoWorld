@@ -50,6 +50,27 @@ A single cherry on the first reel returns the bet.
 ## Video slots
 See [Video slots](video-slots.md).
 
+## Plinko
+A chip falls through 12 rows of pegs into one of 13 pockets. Up to six chips can fall at once.
+
+| Risk | Pockets, edge to centre | Return |
+|---|---|---|
+| Low | 9x, 3x, 1.6x, 1.3x, 1.1x, 1x, 0.5x | 97.9% |
+| Medium | 30x, 10x, 4x, 2x, 1.1x, 0.6x, 0.3x | 98.3% |
+| High | 150x, 22x, 8x, 2x, 0.7x, 0.2x, 0.2x | 96.6% |
+
+## Slime Derby
+| Slime | Win chance | Total return |
+|---|---|---|
+| Greenie | 36% | 2.7x |
+| Blue Bounce | 25% | 3.9x |
+| Red Rocket | 18% | 5.4x |
+| Purple Rain | 13% | 7.5x |
+| Golden Goo | 8% | 12x |
+
+## Higher or Lower
+Guess whether the next card is higher or lower. Equal cards win, ace is low, king is high, and the deck is endless. Each right guess multiplies the pot by 0.98 / chance, capped at 100x. Cash out any time; a wrong guess loses everything. Every guess costs about 2%, so long streaks return less.
+
 ## Scratch cards
 Sold by the Prize Cashier: Scratch Card (50s) and, in hardmode, Platinum Scratch Card (5g). Scratch nine fields; three of a kind wins a multiple of the card price. 34.9% of cards win, counting 1x returns, and the average return is 86%.
 
@@ -74,7 +95,7 @@ One free spin per real-world day. Twelve equal segments:
 | Lucky Crate | 1 |
 
 ## Daily challenges
-The Prize Cashier offers three challenges per real-world day. Completing all three also pays a Lucky Crate, or a High Roller Crate in hardmode.
+The Prize Cashier offers three challenges per in-game day, separately for each character. New ones arrive at dawn, or after 24 minutes spent inside casinos, where the clock stands still. Completing all three also pays a Lucky Crate, or a High Roller Crate in hardmode.
 
 | Challenge | Target | Tokens |
 |---|---|---|

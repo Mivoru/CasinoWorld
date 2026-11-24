@@ -126,11 +126,13 @@ namespace CasinoWorld.Content.Tiles
 				return false;
 			Player player = Main.LocalPlayer;
 			Vector2 destination = new Vector2(origin.X + Width / 2f, other + Height) * 16f - new Vector2(player.width / 2f, player.height);
-			player.Teleport(destination, TeleportationStyleID.TeleporterTile);
+			// Moved without the vanilla teleport effect and sound: doors, ride, ding.
+			player.Teleport(destination, -1);
 			player.velocity = Vector2.Zero;
 			if (Main.netMode == NetmodeID.MultiplayerClient)
-				NetMessage.SendData(MessageID.TeleportEntity, -1, -1, null, 0, player.whoAmI, destination.X, destination.Y, TeleportationStyleID.TeleporterTile);
-			SoundEngine.PlaySound(global::CasinoWorld.Common.CasinoSounds.ElevatorDing, destination);
+				NetMessage.SendData(MessageID.PlayerControls, number: player.whoAmI);
+			SoundEngine.PlaySound(global::CasinoWorld.Common.CasinoSounds.ElevatorRide);
+			SoundEngine.PlaySound(global::CasinoWorld.Common.CasinoSounds.ElevatorDing);
 			return true;
 		}
 
@@ -207,6 +209,45 @@ namespace CasinoWorld.Content.Tiles
 			r = 0.05f;
 			g = 0.12f;
 			b = 0.22f;
+		}
+
+		public override void DrawEffects(int i, int j, SpriteBatch spriteBatch, ref TileDrawInfo drawData)
+		{
+			if (drawData.tileFrameX == 0 && drawData.tileFrameY == 0)
+				Main.instance.TilesRenderer.AddSpecialLegacyPoint(i, j);
+		}
+
+		/// <summary>Falling water curtains between the bowls, rippling surfaces and glints.</summary>
+		public override void SpecialDraw(int i, int j, SpriteBatch spriteBatch)
+		{
+			Vector2 offScreen = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
+			Vector2 o = new Vector2(i * 16, j * 16) - Main.screenPosition + offScreen;
+			Texture2D px = Terraria.GameContent.TextureAssets.MagicPixel.Value;
+			float t = Main.GlobalTimeWrappedHourly;
+			void Fall(int x, int y0, int y1, int width, int seed)
+			{
+				for (int c = 0; c < width; c += 2)
+					for (int y = y0; y < y1; y += 2) {
+						int k = (y / 2 - (int)(t * 26f) + seed * 5 + c * 3) % 7;
+						k = (k + 7) % 7;
+						if (k > 4)
+							continue;
+						Color w = k == 0 ? new Color(235, 250, 255) : k < 3 ? new Color(150, 215, 245) : new Color(90, 170, 225);
+						spriteBatch.Draw(px, new Rectangle((int)o.X + x + c, (int)o.Y + y, 2, 2), w * (k == 0 ? 0.9f : 0.6f));
+					}
+			}
+			Fall(48, 26, 44, 4, 1);
+			Fall(76, 26, 44, 4, 2);
+			Fall(30, 50, 86, 6, 3);
+			Fall(92, 50, 86, 6, 4);
+			Fall(44, 50, 86, 4, 5);
+			Fall(80, 50, 86, 4, 6);
+			for (int k = 0; k < 7; k++) {   // ripples and glints on the basin
+				int x = 12 + (int)((k * 37 + t * 14f) % 100f);
+				spriteBatch.Draw(px, new Rectangle((int)o.X + x / 2 * 2, (int)o.Y + 84 + k % 2 * 2, 6 + k % 3 * 2, 2), Color.White * (0.35f + 0.3f * (float)System.Math.Sin(t * 3f + k)));
+			}
+			float twinkle = t * 0.8f % 1f;
+			global::CasinoWorld.Common.Effects.PixelFx.Twinkle(spriteBatch, o + new Vector2(60 + (int)(t * 0.8f) % 3 * 4, 8), new Color(255, 240, 170), twinkle);
 		}
 
 		/// <summary>Water effects, spawned from the fountain's top-left tile while a player is near.</summary>

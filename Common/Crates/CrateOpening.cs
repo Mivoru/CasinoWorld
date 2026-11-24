@@ -43,7 +43,7 @@ namespace CasinoWorld.Common.Crates
 			Kind = kind;
 			Stage = CrateLoot.CurrentStage;
 			CratePity pity = player.GetModPlayer<CratePity>();
-			(CrateDrop prize, CrateRarity rarity) = CrateLoot.Roll(kind, Stage, Main.rand, ref pity.SinceRare, ref pity.SinceGold);
+			(CrateDrop prize, CrateRarity rarity) = CrateLoot.Roll(kind, Stage, Main.rand, pity);
 			Prize = prize;
 			PrizeRarity = rarity;
 			PrizeStack = Main.rand.Next(prize.MinStack, prize.MaxStack + 1);

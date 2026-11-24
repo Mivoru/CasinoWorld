@@ -97,7 +97,7 @@ namespace CasinoWorld.Content.NPCs
 
 	/// <summary>
 	/// Runs the prize counter: cosmetics and other customisable items for loyalty tokens.
-	/// Prices are a first pass; 1 token = 10 silver wagered.
+	/// Prices are a first pass; for tokens per bet see CasinoRewards.TokensFor.
 	/// </summary>
 	public class PrizeCashier : CasinoStaff
 	{

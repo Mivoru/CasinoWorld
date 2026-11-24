@@ -15,7 +15,7 @@ namespace CasinoWorld.Common.Games
 		public DateTime Time => new(UtcTicks, DateTimeKind.Utc);
 	}
 
-	public enum CasinoGame : byte { Roulette, Blackjack, Slots }
+	public enum CasinoGame : byte { Roulette, Blackjack, Slots, Arcade }
 
 	/// <summary>
 	/// The casino's leaderboard of biggest wins (net profit of one round): today, the last 7 days and
@@ -97,7 +97,7 @@ namespace CasinoWorld.Common.Games
 			byte game = reader.ReadByte();
 			long amount = reader.ReadInt64();
 			// Basic sanity limit: no single round pays more than 1000 platinum.
-			if (amount <= 0 || amount > 1000L * Coins.Platinum || game > (byte)CasinoGame.Slots)
+			if (amount <= 0 || amount > 1000L * Coins.Platinum || game > (byte)CasinoGame.Arcade)
 				return;
 			Add(new CasinoWin(Main.player[sender].name, amount, game, DateTime.UtcNow.Ticks));
 		}

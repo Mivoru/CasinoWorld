@@ -269,6 +269,20 @@ namespace CasinoWorld.Common.Games.Roulette
 			sb.Draw(wheel, center, null, new Color(30, 16, 10), 0f, wheel.Size() / 2f, 1.03f, SpriteEffects.None, 0f);
 			sb.Draw(wheel, center, null, Color.White, round.WheelAngle, wheel.Size() / 2f, 1f, SpriteEffects.None, 0f);
 
+			// Bulbs around the bowl: they race with the ball and all light up on a win.
+			bool celebrate = round.Phase == RoulettePhase.ShowingResult && round.LastPayout > 0;
+			float race = round.Phase == RoulettePhase.Spinning ? round.BallAngle : Main.GlobalTimeWrappedHourly * 1.2f;
+			for (int k = 0; k < 28; k++) {
+				float ba = k * MathHelper.TwoPi / 28f;
+				float near = Math.Abs(MathHelper.WrapAngle(ba - race));
+				float lit = celebrate ? 0.5f + 0.5f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 14f + k * MathHelper.Pi) : MathHelper.Clamp(1f - near / 0.9f, 0.12f, 1f);
+				Vector2 bp = center + 101f * new Vector2((float)Math.Cos(ba), (float)Math.Sin(ba));
+				Color bulb = Color.Lerp(new Color(70, 44, 24), new Color(255, 228, 130), lit);
+				Fill(sb, new Rectangle((int)bp.X - 2, (int)bp.Y - 2, 5, 5), bulb);
+				if (lit > 0.6f)
+					Fill(sb, new Rectangle((int)bp.X - 5, (int)bp.Y - 5, 11, 11), bulb * 0.2f);
+			}
+
 			// Pocket numbers on the outer rim, turning with the wheel (text stays upright).
 			float step = MathHelper.TwoPi / RouletteRules.Pockets;
 			for (int i = 0; i < RouletteRules.Pockets; i++) {
@@ -294,6 +308,18 @@ namespace CasinoWorld.Common.Games.Roulette
 				float radius = MathHelper.Lerp(74f, 65f, drop) + bounce;
 				Vector2 ball = center + radius * new Vector2((float)Math.Cos(round.BallAngle), (float)Math.Sin(round.BallAngle));
 				Texture2D tex = ballTexture.Value;
+				// Comet tail: long while the ball is fast.
+				if (round.Phase == RoulettePhase.Spinning) {
+					float tail = (1f - round.Progress) * (1f - round.Progress);
+					for (int k = 1; k < 14; k++) {
+						float ta = round.BallAngle + k * 0.07f * (0.15f + tail);
+						Color tc = new Color(255, 240, 200) * (0.35f * (1f - k / 14f));
+						tc.A = 0;
+						sb.Draw(tex, center + radius * new Vector2((float)Math.Cos(ta), (float)Math.Sin(ta)), null, tc, 0f, tex.Size() / 2f, 1f - k * 0.04f, SpriteEffects.None, 0f);
+					}
+					if (drop > 0f)
+						UiFx.Shimmer(new Rectangle((int)ball.X - 6, (int)ball.Y - 6, 12, 12), new Color(255, 230, 160), 3);
+				}
 				sb.Draw(tex, ball + new Vector2(2, 3), null, Color.Black * 0.4f, 0f, tex.Size() / 2f, 1f, SpriteEffects.None, 0f);
 				sb.Draw(tex, ball, null, Color.White, 0f, tex.Size() / 2f, 1f, SpriteEffects.None, 0f);
 			}
@@ -331,8 +357,10 @@ namespace CasinoWorld.Common.Games.Roulette
 			Color inner = region.Color;
 			if (hover)
 				inner = Color.Lerp(inner, Color.White, 0.25f);
-			if (won)
-				inner = Color.Lerp(inner, Gold, 0.55f);
+			if (won) {
+				inner = Color.Lerp(inner, Gold, 0.45f + 0.35f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 9f));
+				UiFx.Shimmer(r, new Color(255, 235, 150), 10);
+			}
 			Fill(sb, new Rectangle(r.X + 1, r.Y + 1, r.Width - 2, r.Height - 2), inner);
 			float scale = region.Label.Length > 3 ? 0.7f : 0.85f;
 			Utils.DrawBorderString(sb, region.Label, r.Center.ToVector2() + new Vector2(0, 3), Color.White, scale, 0.5f, 0.5f);

@@ -98,7 +98,7 @@ namespace CasinoWorld.Content.Items.Weapons
 			Item.useTime = Item.useAnimation = 16;
 			Item.shoot = ModContent.ProjectileType<GalaxyCard>();
 			Item.UseSound = CasinoSounds.CardThrow with { Pitch = 0.3f };
-			Item.shootSpeed = 15f;
+			Item.shootSpeed = 12f;
 			Item.width = 36;
 			Item.height = 34;
 			Item.value = Item.sellPrice(gold: 20);
@@ -177,8 +177,6 @@ namespace CasinoWorld.Content.Items.Armor
 	[AutoloadEquip(EquipType.Head)]
 	public class SpectralFedora : ModItem, IGamblerUpgradeable
 	{
-		public override void SetStaticDefaults() => ArmorIDs.Head.Sets.DrawHatHair[Item.headSlot] = true;
-
 		public override void SetDefaults()
 		{
 			Item.width = 34;
@@ -261,7 +259,7 @@ namespace CasinoWorld.Content.Items.Armor
 	[AutoloadEquip(EquipType.Head)]
 	public class CelestialFedora : ModItem, IGamblerUpgradeable
 	{
-		public override void SetStaticDefaults() => ArmorIDs.Head.Sets.DrawHatHair[Item.headSlot] = true;
+		public override void SetStaticDefaults() => ArmorIDs.Head.Sets.DrawFullHair[Item.headSlot] = true;
 
 		public override void SetDefaults()
 		{

@@ -1,3 +1,4 @@
+using System;
 using CasinoWorld.Common;
 using CasinoWorld.Common.Effects;
 using CasinoWorld.Content.Projectiles.Boss;
@@ -243,24 +244,64 @@ namespace CasinoWorld.Content.NPCs.Enemies
 			NPC.DeathSound = CasinoSounds.SlotMimicDeath;
 		}
 
+		/// <summary>Symbol of the running spin: 1 lemon, 2 bell, 5 seven. The order is fixed, so every client shows the same.</summary>
+		private int Result => new[] { 1, 5, 2, 1, 2, 5 }[((int)NPC.localAI[1] + NPC.whoAmI) % 6];
+
 		public override void PostAI()
 		{
-			// Once awake, every three seconds it pulls its own lever and sprays a fan of hot chips.
+			// Once awake, every three seconds it pulls its own lever; the reels decide the attack.
 			if (NPC.ai[0] == 0f || !NPC.HasValidTarget)
 				return;
-			if (++NPC.localAI[0] == 160)
+			if (++NPC.localAI[0] == 120) {
 				SoundEngine.PlaySound(CasinoSounds.LeverPull, NPC.Center);
-			if (NPC.localAI[0] >= 180) {
-				NPC.localAI[0] = 0;
-				SoundEngine.PlaySound(CasinoSounds.Jackpot with { Volume = 0.5f, Pitch = 0.3f }, NPC.Center);
-				CasinoFx.Ring(NPC.Top, new Color(255, 220, 90), 10, 3f);
-				if (Main.netMode != NetmodeID.MultiplayerClient) {
-					Player target = Main.player[NPC.target];
-					Vector2 aim = (target.Center - NPC.Center).SafeNormalize(Vector2.UnitX);
-					int damage = Main.expertMode ? 24 : 32;
-					for (int k = -2; k <= 2; k++)
-						Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Top, aim.RotatedBy(k * 0.2f) * 6f - Vector2.UnitY * 2f, ModContent.ProjectileType<AllInChip>(), damage, 1f, Main.myPlayer, k % 2 == 0 ? 0 : 1);
-				}
+				SoundEngine.PlaySound(CasinoSounds.ReelSpin with { Volume = 0.5f }, NPC.Center);
+			}
+			if (NPC.localAI[0] is 140 or 155 or 170)
+				SoundEngine.PlaySound(CasinoSounds.ReelStop, NPC.Center);
+			if (NPC.localAI[0] < 185)
+				return;
+			int result = Result;
+			NPC.localAI[0] = 0;
+			NPC.localAI[1]++;
+			Player target = Main.player[NPC.target];
+			Vector2 aim = (target.Center - NPC.Center).SafeNormalize(Vector2.UnitX);
+			bool server = Main.netMode != NetmodeID.MultiplayerClient;
+			int damage = Main.expertMode ? 18 : 24;
+			CasinoFx.Ring(NPC.Top, result == 5 ? new Color(255, 70, 60) : new Color(255, 220, 90), 14, 4f);
+			switch (result) {
+				case 5:   // 777: a ring of chips, every second one slower
+					SoundEngine.PlaySound(CasinoSounds.Jackpot with { Volume = 0.5f, Pitch = 0.3f }, NPC.Center);
+					if (server)
+						for (int k = 0; k < 14; k++)
+							Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, (k * MathHelper.TwoPi / 14).ToRotationVector2() * (k % 2 == 0 ? 6f : 4f), ModContent.ProjectileType<AllInChip>(), damage, 1f, Main.myPlayer, k % 2);
+					break;
+				case 2:   // bells: a leap at the player
+					SoundEngine.PlaySound(CasinoSounds.BossBell with { Volume = 0.5f, Pitch = 0.5f }, NPC.Center);
+					NPC.velocity = new Vector2(Math.Sign(aim.X) * 8f, -9f);
+					NPC.netUpdate = true;
+					break;
+				default:  // lemons: a fan of chips
+					SoundEngine.PlaySound(CasinoSounds.CoinsPayout, NPC.Center);
+					if (server)
+						for (int k = -2; k <= 2; k++)
+							Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Top, aim.RotatedBy(k * 0.2f) * 6f - Vector2.UnitY * 2f, ModContent.ProjectileType<AllInChip>(), damage, 1f, Main.myPlayer, k % 2 == 0 ? 0 : 1);
+					break;
+			}
+		}
+
+		/// <summary>The three reels in the window: spinning before an attack, stopping one after another.</summary>
+		public override void PostDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+		{
+			Texture2D symbols = ModContent.Request<Texture2D>("CasinoWorld/Assets/UI/SlotSymbols").Value;
+			bool awake = NPC.ai[0] != 0f && !NPC.IsABestiaryIconDummy;
+			// The sprite is bottom aligned with the hitbox (vanilla draws it 4 px lower); window centre is 35 px above its bottom.
+			Vector2 window = new Vector2(NPC.Center.X + (NPC.spriteDirection == 1 ? 3f : -3f), NPC.Bottom.Y + 4f + NPC.gfxOffY - 35f) - screenPos;
+			if (NPC.frame.Y == NPC.frame.Height * 3)
+				window.Y -= 2f;
+			for (int k = 0; k < 3; k++) {
+				bool spinning = awake && NPC.localAI[0] > 120 && NPC.localAI[0] < 140 + k * 15;
+				int symbol = spinning ? (int)(Main.GlobalTimeWrappedHourly * 22f + k * 3) % 7 : awake && NPC.localAI[0] >= 140 ? Result : 5;
+				spriteBatch.Draw(symbols, window + new Vector2((k - 1) * 10f, 0), new Rectangle(symbol * 64, 0, 64, 64), awake ? Color.White : drawColor, 0f, new Vector2(32), 0.17f, SpriteEffects.None, 0f);
 			}
 		}
 

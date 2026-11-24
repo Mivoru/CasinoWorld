@@ -17,14 +17,15 @@ namespace CasinoWorld.Common.Upgrades
 
 	/// <summary>
 	/// Upgrade rules. A failed attempt only costs the materials and the fee; the item never loses a level.
-	/// Weapons gain 6 % damage per level (+60 % at +10). Armour gains 1 defence per level and
-	/// 1 Luck per 2 levels. Boost doubles the materials for +15 % chance.
+	/// Weapons gain 3 % damage per level (+30 % at +10). Armour gains 1 defence per level and
+	/// 1 Luck at +5 and +10. Full set and weapon at +10: about x1.45 damage. Boost doubles the materials for +15 % chance.
 	/// Expected materials to reach +10 without boost: sum of Count / Chance over the tiers.
 	/// </summary>
 	public static class UpgradeRules
 	{
 		public const int MaxLevel = 10;
-		public const float DamagePerLevel = 0.06f;
+		public const float DamagePerLevel = 0.03f;
+		public const int LevelsPerLuck = 5;
 		public const float BoostChance = 0.15f;
 
 		private static UpgradeTier[] tiers;
@@ -77,11 +78,16 @@ namespace CasinoWorld.Common.Upgrades
 			if (Level <= 0 || item.damage > 0)
 				return;
 			player.statDefense += Level;
-			player.GetModPlayer<GamblerPlayer>().Luck += Level / 2;
+			player.GetModPlayer<GamblerPlayer>().Luck += Level / UpgradeRules.LevelsPerLuck;
 		}
 
 		public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
 		{
+			// Every piece that can still be upgraded says where.
+			if (Level < UpgradeRules.MaxLevel)
+				tooltips.Add(new TooltipLine(Mod, "CasinoUpgradeHint", Language.GetTextValue(Main.hardMode ? "Mods.CasinoWorld.Upgrade.Where" : "Mods.CasinoWorld.Upgrade.WhereLater", Level, UpgradeRules.MaxLevel)) {
+					OverrideColor = new Color(150, 170, 190)
+				});
 			if (Level <= 0)
 				return;
 
@@ -92,8 +98,8 @@ namespace CasinoWorld.Common.Upgrades
 			}
 
 			string text = item.damage > 0
-				? Language.GetTextValue("Mods.CasinoWorld.Upgrade.WeaponBonus", Level, (int)(UpgradeRules.DamagePerLevel * Level * 100))
-				: Language.GetTextValue("Mods.CasinoWorld.Upgrade.ArmorBonus", Level, Level, Level / 2);
+				? Language.GetTextValue("Mods.CasinoWorld.Upgrade.WeaponBonus", Level, (int)System.Math.Round(UpgradeRules.DamagePerLevel * Level * 100))
+				: Language.GetTextValue("Mods.CasinoWorld.Upgrade.ArmorBonus", Level, Level, Level / UpgradeRules.LevelsPerLuck);
 			tooltips.Add(new TooltipLine(Mod, "CasinoUpgrade", text) { OverrideColor = new Color(120, 220, 255) });
 		}
 
@@ -106,6 +112,19 @@ namespace CasinoWorld.Common.Upgrades
 		public override void LoadData(Item item, TagCompound tag)
 		{
 			Level = tag.ContainsKey("upgradeLevel") ? tag.GetInt("upgradeLevel") : 0;
+		}
+
+		/// <summary>Upgraded gear glows in the inventory: blue from +5, gold at +10.</summary>
+		public override bool PreDrawInInventory(Item item, Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
+		{
+			if (Level < 5)
+				return true;
+			float pulse = 0.35f + 0.2f * (float)System.Math.Sin(Main.GlobalTimeWrappedHourly * 4f);
+			Color glow = (Level >= UpgradeRules.MaxLevel ? new Color(255, 205, 70) : new Color(90, 200, 255)) * pulse;
+			glow.A = 0;
+			for (int k = 0; k < 4; k++)
+				spriteBatch.Draw(Terraria.GameContent.TextureAssets.Item[item.type].Value, position + (k * MathHelper.PiOver2).ToRotationVector2() * 2f, frame, glow, 0f, origin, scale, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0f);
+			return true;
 		}
 
 		public override void NetSend(Item item, BinaryWriter writer) => writer.Write((byte)Level);

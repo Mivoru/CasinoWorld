@@ -8,7 +8,8 @@
 | Maximum bet per round | 20g | 5p |
 | Stake needed for any jackpot item | 10s | 1g |
 | Stake for the full jackpot chance and the second token | 1g | 10g |
-| Slots | Classic slot machines | Video slots |
+| Slots | Classic slot machines, Angler's Bonanza | Video slots |
+| Arcade (Plinko, Slime Derby, Higher or Lower) | Ground and bar floor | Bar floor |
 | Upgrade Machine | No | Yes |
 | Boss fight | No | [The Pit Boss](bosses.md#the-pit-boss) |
 
@@ -35,6 +36,7 @@ Big wins can drop an item. The chance scales with the stake up to the full stake
 | Video slot win of 15x or more | 50% |
 | Video slot win of 50x or more | 100% |
 | Sic Bo, total win of at least 20 times the stake | 100% |
+| Arcade win of 10x / 20x / 100x or more | 10% / 20% / 100% |
 
 | Casino and stage | Pool |
 |---|---|

@@ -16,10 +16,8 @@ namespace CasinoWorld.Common.Games
 	/// <summary>
 	/// Rewards from gambling.
 	///
-	/// Loyalty tokens: one per round played (win or lose), plus one more when the stake reaches the
-	/// casino's FullJackpotStake. About 15-30 tokens a minute: a Lucky Crate (75) every 3-5 minutes,
-	/// the Gamblorghini (200) in 7-13 minutes. (Tokens used to scale with the money staked, which gave
-	/// 1000 tokens per hardmode spin.) Doubling down or splitting in blackjack counts as another round.
+	/// Loyalty tokens: paid per round, win or lose, by stake: 1 below 1 gold, 5 from 1 gold, 10 from
+	/// 1 platinum. Doubling down or splitting in blackjack counts as another round.
 	///
 	/// Jackpots: big wins can drop Gambler weapons and armour from the casino's jackpot pool.
 	/// The chance scales with the stake up to the casino's FullJackpotStake, and stakes below its
@@ -37,6 +35,9 @@ namespace CasinoWorld.Common.Games
 		public const float RouletteStraightJackpot = 0.25f;
 		public const float BlackjackNaturalJackpot = 0.12f;
 
+		/// <summary>Loyalty tokens for one round with the given stake.</summary>
+		public static int TokensFor(long stake) => stake >= Coins.Platinum ? 10 : stake >= Coins.Gold ? 5 : 1;
+
 		/// <summary>Takes a wager and credits loyalty token progress. False if the player cannot pay.</summary>
 		public static bool TryWager(Player player, long amount)
 		{
@@ -49,10 +50,7 @@ namespace CasinoWorld.Common.Games
 				return false;
 			DailyChallenges.Count(player, Challenge.Wagers);
 
-			int tokens = 1;
-			if (SubworldSystem.Current is CasinoSubworld casino && amount >= casino.FullJackpotStake)
-				tokens++;
-			Coins.GiveItem(player, new Item(ModContent.ItemType<LoyaltyToken>(), tokens));
+			Coins.GiveItem(player, new Item(ModContent.ItemType<LoyaltyToken>(), TokensFor(amount)));
 			return true;
 		}
 

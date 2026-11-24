@@ -237,7 +237,7 @@ namespace CasinoWorld.Common.Games.VideoSlots
 		public static readonly int[] OrbValues = { 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 25, 50, 100, 250, 500 };
 		private static readonly int[] OrbWeights = { 300, 220, 160, 120, 90, 70, 55, 40, 30, 20, 14, 6, 3, 1, 1 };
 		// 0-4 fragments and ore (low), 5-8 premiums, 9 scatter, 10 orb.
-		private static readonly int[] BaseWeights = { 52, 50, 48, 44, 40, 30, 24, 20, 14, 8, 6 };
+		private static readonly int[] BaseWeights = { 52, 50, 48, 44, 40, 30, 24, 20, 14, 10, 6 };
 		private static readonly int[] BonusWeights = { 52, 50, 48, 44, 40, 30, 24, 20, 14, 8, 15 };
 		// Total-bet multiples for 8-9, 10-11 and 12+ of a kind.
 		private static readonly double[][] Pays = {
@@ -384,7 +384,7 @@ namespace CasinoWorld.Common.Games.VideoSlots
 		public static readonly int[] FishValues = { 5, 10, 20, 30, 50, 100, 250, 500, 1000 };   // units (1/100 total bet)
 		private static readonly int[] FishWeights = { 400, 260, 140, 80, 50, 30, 12, 4, 1 };
 		// 0-3 bait (low), 4-6 tackle (high), 7 fish, 8 Angler wild, 9 Golden Crate scatter.
-		private static readonly int[] BaseWeights = { 40, 36, 30, 24, 12, 9, 7, 10, 0, 5 };
+		private static readonly int[] BaseWeights = { 40, 36, 30, 24, 12, 9, 7, 10, 0, 6 };
 		private static readonly int[] BonusWeights = { 40, 36, 30, 24, 12, 9, 7, 12, 6, 4 };
 		private static readonly double[][] Pays = {
 			new[] { 5.0, 10, 50 }, new[] { 5.0, 10, 50 }, new[] { 5.0, 15, 60 }, new[] { 5.0, 15, 80 },
@@ -498,7 +498,7 @@ namespace CasinoWorld.Common.Games.VideoSlots
 		private static readonly int[] FeatureWeights = { 30, 30, 25, 15 };
 		private static readonly int[] FeatureSpins = { 12, 12, 10, 10 };
 		// 0-3 low, 4-7 animals (Penguin, Flinx, Wolf, Ice Golem), 8 Ice Mirror wild, 9 Frozen Crate scatter.
-		private static readonly int[] BaseWeights = { 33, 33, 31, 28, 15, 13, 11, 9, 7, 4 };
+		private static readonly int[] BaseWeights = { 33, 33, 31, 28, 15, 13, 11, 9, 7, 5 };
 		private static readonly double[][] Pays = {
 			new[] { 4.0, 10, 40 }, new[] { 4.0, 10, 40 }, new[] { 5.0, 12, 50 }, new[] { 5.0, 15, 60 },
 			new[] { 10.0, 30, 120 }, new[] { 12.0, 40, 150 }, new[] { 15.0, 60, 250 }, new[] { 25.0, 100, 500 }, new[] { 25.0, 100, 500 }, null,
@@ -623,11 +623,11 @@ namespace CasinoWorld.Common.Games.VideoSlots
 	}
 
 	// ======================================================================= Blood Moon Hunter
-	/// <summary>5x4, 1024 ways. Hunter wilds carry multipliers; Blood Shot turns cells wild; trophy hunt upgrades symbols.</summary>
+	/// <summary>5x3, 243 ways. Hunter wilds carry multipliers; Blood Shot turns cells wild; trophy hunt upgrades symbols.</summary>
 	public sealed class BloodMoonSlot : SlotMachine
 	{
 		// 0-3 low, 4-7 high, 8 Hunter wild (reels 2-5), 9 Blood Moon scatter.
-		private static readonly int[] BaseWeights = { 26, 25, 24, 23, 19, 16, 13, 10, 3, 5 };
+		private static readonly int[] BaseWeights = { 26, 25, 24, 23, 19, 16, 13, 10, 3, 6 };
 		private static readonly int[] WildMults = { 1, 2, 3 };
 		private static readonly int[] WildMultWeights = { 70, 20, 10 };
 		// Total-bet multiples per way for 3/4/5 reels: even the smallest win is a real part of the bet.
@@ -785,7 +785,7 @@ namespace CasinoWorld.Common.Games.VideoSlots
 	/// <summary>Pay scales per machine, measured with tools/slotsim (dotnet run -c Release -- tune).</summary>
 	public static class Tuning
 	{
-		public static double LunarGods = 0.515, Angler = 1.61, Boreal = 1.579, BloodMoon = 0.385;
+		public static double LunarGods = 0.364, Angler = 1.150, Boreal = 1.140, BloodMoon = 0.299;
 	}
 
 	public static class SlotGames

@@ -97,6 +97,7 @@ namespace CasinoWorld.Content.Tiles
 			Vector2 origin = new Vector2(i * 16, j * 16) - Main.screenPosition + offScreen;
 			int[] icons = SlotThemes.Icons(Key);
 			float t = Main.GlobalTimeWrappedHourly;
+			DrawAttract(spriteBatch, origin, t + i);
 			// Signature item on the marquee, gently bobbing.
 			DrawIcon(spriteBatch, icons[SlotThemes.ScatterIndex], origin + new Vector2(24, 8 + (float)System.Math.Sin(t * 2 + i) * 1.5f), 14f);
 			// Reel window: three symbols cycling now and then.
@@ -106,6 +107,44 @@ namespace CasinoWorld.Content.Tiles
 				int s = spinning ? (int)(t * 18f + k * 2 + seed) % 4 : (int)(t * 0.6f + seed * 0.37f + k * 1.3f) % 4;
 				DrawIcon(spriteBatch, icons[s], origin + new Vector2(14.7f + k * 8f, 25.6f), 8f);
 			}
+		}
+
+		private static void Px(SpriteBatch sb, Vector2 at, int w, int h, Color c) => sb.Draw(TextureAssets.MagicPixel.Value, new Rectangle((int)at.X, (int)at.Y, w, h), c);
+
+		/// <summary>Each machine lures in its own way: a blinking eye, bubbles, snow, dripping blood.</summary>
+		private void DrawAttract(SpriteBatch sb, Vector2 o, float t)
+		{
+			switch (Key) {
+				case "LunarGods":
+					for (int k = 0; k < 4; k++) {
+						Color[] c = { new(255, 150, 60), new(60, 230, 180), new(255, 110, 220), new(90, 190, 255) };
+						float a = t * 1.5f + k * MathHelper.PiOver2;
+						Px(sb, o + new Vector2(23 + (float)System.Math.Cos(a) * 20, 8 + (float)System.Math.Sin(a) * 6), 3, 3, c[k]);
+					}
+					break;
+				case "Angler":
+					for (int k = 0; k < 4; k++)
+						Px(sb, o + new Vector2(10 + k * 9 + (float)System.Math.Sin(t * 3 + k) * 2, 56 - (t * 9 + k * 7) % 16), 2, 2, new Color(190, 235, 255) * 0.8f);
+					break;
+				case "Boreal":
+					for (int k = 0; k < 6; k++)
+						Px(sb, o + new Vector2((k * 9 + (float)System.Math.Sin(t + k) * 4 + 48) % 46, (t * 8 + k * 11) % 60), 2, 2, Color.White * 0.8f);
+					break;
+				default:
+					for (int k = 0; k < 4; k++) {
+						float f = (t * 0.4f + k * 0.27f) % 1f;
+						Px(sb, o + new Vector2(8 + k * 10, 16 + f * 10), 2, 2 + (int)(f * 4), new Color(190, 10, 20) * (1f - f * 0.6f));
+					}
+					break;
+			}
+		}
+
+		public override void NearbyEffects(int i, int j, bool closer)
+		{
+			if (!closer || Main.tile[i, j].TileFrameX % 54 != 0 || Main.tile[i, j].TileFrameY % 72 != 0)
+				return;
+			if (Main.rand.NextBool(50))
+				Common.Effects.CasinoFx.Spark(new Vector2(i * 16 + Main.rand.Next(48), j * 16 + Main.rand.Next(14)), new Vector2(0, -0.4f), SlotThemes.Accent(Key), 0.8f);
 		}
 
 		private static void DrawIcon(SpriteBatch sb, int type, Vector2 center, float size)

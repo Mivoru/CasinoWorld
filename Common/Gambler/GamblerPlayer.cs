@@ -50,6 +50,9 @@ namespace CasinoWorld.Common.Gambler
 		// Set by Roll when the current hit is a jackpot, used once the hit lands.
 		private bool lastHitJackpot;
 
+		/// <summary>Jackpots landed one after another; each raises the sound, the third is the big moment.</summary>
+		private int jackpotRow;
+
 		/// <summary>House Edge (expert): the first bust every 10 seconds becomes a normal hit.</summary>
 		public bool HouseEdge;
 		private int houseEdgeCooldown;
@@ -97,11 +100,12 @@ namespace CasinoWorld.Common.Gambler
 
 		public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers)
 		{
+			// Side hits (coins, embers, blasts) roll the dice but do not fill the Pot.
 			if (proj.CountsAsClass<GamblerDamageClass>())
-				Roll(target, ref modifiers);
+				Roll(target, ref modifiers, proj.ModProjectile is not (Content.Projectiles.CoinShrapnel or Content.Projectiles.EmberPatch or Content.Projectiles.GamblerBlast));
 		}
 
-		private void Roll(NPC target, ref NPC.HitModifiers modifiers)
+		private void Roll(NPC target, ref NPC.HitModifiers modifiers, bool feedsPot = true)
 		{
 			modifiers.DisableCrit();
 			lastHitJackpot = false;
@@ -112,13 +116,16 @@ namespace CasinoWorld.Common.Gambler
 			GamblerPot pot = Player.GetModPlayer<GamblerPot>();
 			float bustChance = BustChance;
 			if (pot.AllInActive) {
-				jackpotChance = Math.Min(jackpotChance + Content.Buffs.AllIn.JackpotBonus, 0.75f);
-				bustChance = Math.Min(1f - jackpotChance, bustChance + Content.Buffs.AllIn.BustBonus);
+				jackpotChance = Math.Min(jackpotChance + pot.JackpotBonus, 0.75f);
+				bustChance = Math.Min(1f - jackpotChance, bustChance + pot.BustBonus);
 			}
 			jackpotChance += PrefixJackpot;
 
 			float roll = Main.rand.NextFloat();
-			pot.Feed(roll < jackpotChance, roll >= jackpotChance && roll < jackpotChance + bustChance);
+			if (feedsPot)
+				pot.Feed(roll < jackpotChance, roll >= jackpotChance && roll < jackpotChance + bustChance);
+			if (feedsPot && roll >= jackpotChance)
+				jackpotRow = 0;
 			if (Martingale && roll >= jackpotChance)
 				martingaleMisses++;
 			if (roll < jackpotChance) {
@@ -128,7 +135,14 @@ namespace CasinoWorld.Common.Gambler
 				if (HotStreakSet)
 					Player.AddBuff(ModContent.BuffType<Content.Buffs.HotStreak>(), Content.Buffs.HotStreak.Duration);
 				CombatText.NewText(target.Hitbox, new Color(255, 215, 60), Language.GetTextValue("Mods.CasinoWorld.Gambler.Jackpot"), dramatic: true);
-				SoundEngine.PlaySound(CasinoSounds.JackpotProc, target.Center);
+				if (feedsPot)
+					jackpotRow++;
+				SoundEngine.PlaySound(CasinoSounds.JackpotProc with { Pitch = Math.Min(0.8f, 0.2f * jackpotRow), PitchVariance = 0f }, target.Center);
+				if (jackpotRow >= 3) {
+					jackpotRow = 0;
+					if (Player.whoAmI == Main.myPlayer)
+						Effects.JackpotMoment.Trigger();
+				}
 				Games.DailyChallenges.Count(Player, Games.Challenge.Jackpots);
 				for (int k = 0; k < 10; k++)
 					Dust.NewDust(target.position, target.width, target.height, DustID.GoldCoin, Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-5f, -1f));
@@ -153,10 +167,17 @@ namespace CasinoWorld.Common.Gambler
 			}
 		}
 
-		public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone) => JackpotProcs(target, damageDone);
+		public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone)
+		{
+			if (item.CountsAsClass<GamblerDamageClass>())
+				Player.GetModPlayer<GamblerPot>().Tally(damageDone);
+			JackpotProcs(target, damageDone);
+		}
 
 		public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone)
 		{
+			if (proj.CountsAsClass<GamblerDamageClass>())
+				Player.GetModPlayer<GamblerPot>().Tally(damageDone);
 			// Set-bonus projectiles do not trigger further procs.
 			if (proj.type != ModContent.ProjectileType<Content.Projectiles.SpectralCard>() && proj.type != ModContent.ProjectileType<Content.Projectiles.MeteorDie>())
 				JackpotProcs(target, damageDone);

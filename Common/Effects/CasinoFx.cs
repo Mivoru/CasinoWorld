@@ -21,6 +21,13 @@ namespace CasinoWorld.Common.Effects
 		public static int ShardType => ModContent.DustType<CardShard>();
 		public static int SparkType => ModContent.DustType<Spark>();
 
+		/// <summary>Screen shake, unless switched off in the client settings.</summary>
+		public static void Shake(Vector2 at, Vector2 direction, float strength, float vibration, int frames, float falloff, string id)
+		{
+			if (!Main.dedServ && Systems.CasinoClientConfig.Instance.ScreenEffects)
+				Main.instance.CameraModifiers.Add(new PunchCameraModifier(at, direction, strength, vibration, frames, falloff, id));
+		}
+
 		public static void Spark(Vector2 at, Vector2 velocity, Color color, float scale = 1f)
 		{
 			if (Main.dedServ)
@@ -103,7 +110,7 @@ namespace CasinoWorld.Common.Effects
 			Ring(at, hot, 16, radius / 12f, 1.3f);
 			Ring(at, cold, 10, radius / 20f, 1f);
 			if (shake > 0f)
-				Main.instance.CameraModifiers.Add(new PunchCameraModifier(at, Main.rand.NextVector2Unit(), shake, 8f, 14, 1000f, "CasinoExplosion"));
+				Shake(at, Main.rand.NextVector2Unit(), shake, 8f, 14, 1000f, "CasinoExplosion");
 		}
 
 		/// <summary>Afterimage trail from the projectile's old positions (needs TrailCacheLength).</summary>

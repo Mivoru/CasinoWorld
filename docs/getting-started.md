@@ -13,7 +13,7 @@ Stand at the door and press Up (W by default). The interior is a separate dimens
 The doors stay closed while a boss is alive or during an invasion, Pumpkin Moon, Frost Moon, solar eclipse or Old One's Army event.
 
 ## Loyalty Tokens
-<img src="../Content/Items/LoyaltyToken.png" alt=""> Each round you bet on pays 1 **Loyalty Token**, win or lose. A bet at the casino's full stake pays 2. Doubling down or splitting in blackjack counts as another round. Spend tokens at the [Prize Cashier](npcs.md#prize-cashier) and in crafting recipes.
+<img src="../Content/Items/LoyaltyToken.png" alt=""> Each round you bet on pays **Loyalty Tokens**, win or lose: 1 for a bet below 1 gold, 5 from 1 gold and 10 from 1 platinum. Doubling down or splitting in blackjack counts as another round. Spend tokens at the [Prize Cashier](npcs.md#prize-cashier) and in crafting recipes.
 
 ## Becoming a Gambler
 1. Craft a **Lucky Penny** (8 copper or tin bars and 5 tokens), or win a weapon from a casino jackpot or a [crate](crates.md).

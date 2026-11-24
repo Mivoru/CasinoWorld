@@ -22,7 +22,7 @@ namespace CasinoWorld.Common.Crates
 				return;
 
 			bool asCrate = attempt.crate && Main.rand.NextBool(CrateCatchOneIn);
-			bool asPlain = !attempt.crate && itemDrop > 0 && Main.rand.NextBool(PlainCatchOneIn);
+			bool asPlain = !attempt.crate && itemDrop > 0 && itemDrop != attempt.questFish && Main.rand.NextBool(PlainCatchOneIn);
 			if (!asCrate && !asPlain)
 				return;
 

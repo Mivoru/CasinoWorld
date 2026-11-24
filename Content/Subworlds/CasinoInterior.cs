@@ -225,8 +225,10 @@ namespace CasinoWorld.Content.Subworlds
 				Floor<DiceStatue>(124, s);   // centrepiece: golden dice sculpture
 			}
 			else {
-				Floor<CocktailTable>(122, s);
-				Floor<VelvetSofa>(126, s);
+				// Arcade corner.
+				Vanilla(ModContent.TileType<PlinkoCabinet>(), 121, s);
+				Vanilla(ModContent.TileType<DerbyCabinet>(), 124, s);
+				Vanilla(ModContent.TileType<HiLoCabinet>(), 127, s);
 			}
 			OnWall<WallSconce>(139, s, 8);
 			OnWall<PaintingWheel>(50, s, 9);
@@ -235,6 +237,20 @@ namespace CasinoWorld.Content.Subworlds
 			OnWall<PaintingWildCard>(123, s, 6);
 			Pilaster(141, s);
 			Floor<MarblePlanter>(145, s);
+			Floor<CashMachine>(22, s);
+			Floor<VelvetRope>(31, s);
+			Floor<VelvetRope>(114, s);
+			Floor<PalmPlanter>(138, s);
+			OnWall<NightWindow>(13, s, 9);
+			OnWall<NightWindow>(82, s, 13);
+			OnWall<NightWindow>(143, s, 9);
+			OnWall<NeonSuits>(63, s, 16);
+			foreach (int x in new[] { 11, 47, 73, 91, 99 })
+				Hang<VelvetDrape>(x, s);
+			if (modern) {
+				Floor<JackpotTotem>(120, s);
+				Floor<GoldenAce>(129, s);
+			}
 		}
 
 		private static void BarFloor(bool hardmode)
@@ -260,7 +276,7 @@ namespace CasinoWorld.Content.Subworlds
 			// The high rollers casino has a row of themed video slots instead of classic machines.
 			int[] videoSlots = { ModContent.TileType<VideoSlotLunarGods>(), ModContent.TileType<VideoSlotAngler>(), ModContent.TileType<VideoSlotBoreal>(), ModContent.TileType<VideoSlotBloodMoon>() };
 			for (int k = 0; k < 10; k++)
-				Vanilla(hardmode ? videoSlots[k % 4] : ModContent.TileType<SlotMachine>(), 70 + k * 3, s);
+				Vanilla(hardmode ? videoSlots[k % 4] : k is 4 or 5 ? ModContent.TileType<VideoSlotAngler>() : ModContent.TileType<SlotMachine>(), 70 + k * 3, s);
 			Pilaster(101, s);
 
 			Vanilla(ModContent.TileType<BlackjackTable>(), 104, s);
@@ -270,8 +286,16 @@ namespace CasinoWorld.Content.Subworlds
 				Floor<ChampagneTower>(121, s);
 			else
 				Floor<CocktailTable>(121, s);
-			Floor<CocktailTable>(125, s);
+			Floor<ChipDisplay>(125, s);
 			Floor<MarblePlanter>(130, s);
+			OnWall<NightWindow>(61, s, 10);
+			OnWall<NightWindow>(104, s, 13);
+			OnWall<NeonSuits>(89, s, 12);
+			foreach (int x in new[] { 10, 38, 69, 120 })
+				Hang<VelvetDrape>(x, s);
+			Vanilla(ModContent.TileType<HiLoCabinet>(), 139, s);
+			Vanilla(ModContent.TileType<PlinkoCabinet>(), 142, s);
+			Vanilla(ModContent.TileType<DerbyCabinet>(), 145, s);
 			OnWall<PaintingRoyalFlush>(13, s, 9);
 			OnWall<PaintingLuckySevens>(40, s, 7);
 			OnWall<PaintingJackpot>(52, s, 7);
@@ -325,6 +349,12 @@ namespace CasinoWorld.Content.Subworlds
 			Floor<CocktailTable>(119, s);
 			Floor<VelvetSofa>(123, s);
 			Floor<MarblePlanter>(129, s);
+			Floor<PalmPlanter>(139, s);
+			Floor<GoldenAce>(144, s);
+			OnWall<NightWindow>(141, s, 9);
+			OnWall<NeonSuits>(105, s, 11);
+			foreach (int x in new[] { 13, 34, 46, 66, 87, 104, 118 })
+				Hang<VelvetDrape>(x, s);
 			OnWall<PaintingLuckySevens>(41, s, 7);
 			OnWall<PaintingRoyalFlush>(59, s, 8);
 			OnWall<PaintingJackpot>(73, s, 7);

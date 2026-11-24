@@ -46,6 +46,7 @@ namespace CasinoWorld.Common.Upgrades
 		{
 			base.Unload();
 			UpgradeRules.Unload();
+			ArmorEvolution.Unload();
 		}
 
 		protected override void OnClose(Player player)
@@ -112,23 +113,35 @@ namespace CasinoWorld.Common.Upgrades
 				return;
 			}
 
-			int left = Required;
-			for (int k = 0; k < 58 && left > 0; k++) {
-				Item item = player.inventory[k];
-				if (Array.IndexOf(tier.Materials, item.type) < 0)
-					continue;
-				int take = Math.Min(left, item.stack);
-				item.stack -= take;
-				left -= take;
-				if (item.stack <= 0)
-					item.TurnToAir();
-			}
+			ArmorEvolution.Take(player, tier.Materials, Required);
 
 			rolledChance = Chance;
 			Phase = UpgradePhase.Working;
 			Timer = 0;
 			SetMessage(Language.GetTextValue("Mods.CasinoWorld.Upgrade.Working"), new Color(120, 220, 255));
 			SoundEngine.PlaySound(CasinoSounds.UpgradeWork);
+		}
+
+		/// <summary>Turns the armour piece in the slot into the next set's piece; half of its levels stay.</summary>
+		public void TryEvolve(Player player)
+		{
+			if (Phase == UpgradePhase.Working || !ArmorEvolution.TryGet(Slot, out Evolution e))
+				return;
+			if (!ArmorEvolution.CanAfford(player, e)) {
+				SetMessage(Language.GetTextValue("Mods.CasinoWorld.Upgrade.NoMaterials"), Color.OrangeRed);
+				return;
+			}
+			ArmorEvolution.Pay(player, e);
+			int level = Level / 2;
+			Slot = new Item(e.Result);
+			if (Slot.TryGetGlobalItem(out UpgradeGlobalItem g))
+				g.Level = level;
+			Phase = UpgradePhase.Result;
+			LastSucceeded = true;
+			SetMessage(Language.GetTextValue("Mods.CasinoWorld.Upgrade.Evolved", Slot.Name), new Color(255, 215, 60));
+			SoundEngine.PlaySound(CasinoSounds.UpgradeSuccess);
+			SoundEngine.PlaySound(CasinoSounds.RareReveal);
+			Effects.CasinoFx.Ring(player.Center, new Color(255, 215, 90), 24, 5f, 1.2f);
 		}
 
 		protected override void UpdateGame(Player player)
@@ -181,7 +194,7 @@ namespace CasinoWorld.Common.Upgrades
 	public class UpgradePanel : UIElement
 	{
 		public const int PanelWidth = 420;
-		public const int PanelHeight = 330;
+		public const int PanelHeight = 388;
 
 		private static readonly Color Steel = new(36, 42, 56);
 		private static readonly Color SteelDark = new(22, 26, 36);
@@ -195,6 +208,7 @@ namespace CasinoWorld.Common.Upgrades
 		private Rectangle SlotRect => new(Area.X + 24, Area.Y + 56, 64, 64);
 		private Rectangle UpgradeButton => new(Area.X + 24, Area.Bottom - 70, 180, 44);
 		private Rectangle BoostButton => new(Area.X + 216, Area.Bottom - 70, 180, 44);
+		private Rectangle EvolveButton => new(Area.X + 24, Area.Bottom - 124, 372, 44);
 		private Rectangle CloseButton => new(Area.Right - 32, Area.Y + 10, 22, 22);
 
 		public override void Update(GameTime gameTime)
@@ -211,6 +225,8 @@ namespace CasinoWorld.Common.Upgrades
 				System.Close();
 			else if (SlotRect.Contains(mouse))
 				System.ClickSlot();
+			else if (EvolveButton.Contains(mouse))
+				System.TryEvolve(Main.LocalPlayer);
 			else if (UpgradeButton.Contains(mouse))
 				System.TryUpgrade(Main.LocalPlayer);
 			else if (BoostButton.Contains(mouse) && System.Phase != UpgradePhase.Working) {
@@ -258,8 +274,8 @@ namespace CasinoWorld.Common.Upgrades
 				else {
 					bool weapon = sys.Slot.damage > 0;
 					string next = weapon
-						? Text("NextWeapon", level + 1, (int)(UpgradeRules.DamagePerLevel * (level + 1) * 100))
-						: Text("NextArmor", level + 1, level + 1, (level + 1) / 2);
+						? Text("NextWeapon", level + 1, (int)Math.Round(UpgradeRules.DamagePerLevel * (level + 1) * 100))
+						: Text("NextArmor", level + 1, level + 1, (level + 1) / UpgradeRules.LevelsPerLuck);
 					Utils.DrawBorderString(sb, next, new Vector2(x, y + 24), Glow, 0.8f);
 
 					UpgradeTier tier = UpgradeRules.TierFor(level);
@@ -286,6 +302,27 @@ namespace CasinoWorld.Common.Upgrades
 				CasinoDraw.Fill(sb, bar, sys.LastSucceeded ? CasinoDraw.Gold : Color.DimGray);
 
 			Utils.DrawBorderString(sb, sys.Message, new Vector2(a.Center.X, a.Y + 236), sys.MessageColor, 0.9f, 0.5f);
+
+			if (ArmorEvolution.TryGet(sys.Slot, out Evolution evolve)) {
+				bool afford = ArmorEvolution.CanAfford(player, evolve);
+				CasinoDraw.Button(sb, EvolveButton, "", new Color(120, 60, 150), EvolveButton.Contains(mouse), afford && sys.Phase != UpgradePhase.Working, 0.85f);
+				DrawItem(sb, evolve.Result, new Vector2(EvolveButton.X + 24, EvolveButton.Center.Y), 32f);
+				Utils.DrawBorderString(sb, Text("Evolve", sys.Level / 2), new Vector2(EvolveButton.X + 48, EvolveButton.Y + 13), afford ? Color.White : Color.Gray, 0.8f);
+				float ex = EvolveButton.X + 196;
+				void Cost(int type, int count)
+				{
+					if (count <= 0)
+						return;
+					DrawItem(sb, type, new Vector2(ex, EvolveButton.Center.Y), 22f);
+					Utils.DrawBorderString(sb, count.ToString(), new Vector2(ex + 13, EvolveButton.Y + 14), Color.LightGoldenrodYellow, 0.75f);
+					ex += 46;
+				}
+				Cost(evolve.Bars[(int)Main.GlobalTimeWrappedHourly % evolve.Bars.Length], evolve.BarCount);   // alternatives take turns
+				Cost(evolve.Extra, evolve.ExtraCount);
+				Cost(ModContent.ItemType<Content.Items.LoyaltyToken>(), evolve.Tokens);
+				if (EvolveButton.Contains(mouse))
+					Main.instance.MouseText(Text("EvolveHint", Lang.GetItemNameValue(evolve.Result)));
+			}
 
 			bool canUpgrade = !sys.Slot.IsAir && sys.Phase != UpgradePhase.Working && sys.Level < UpgradeRules.MaxLevel;
 			CasinoDraw.Button(sb, UpgradeButton, Text("Upgrade"), new Color(40, 120, 170), UpgradeButton.Contains(mouse), canUpgrade, 1f);

@@ -32,7 +32,7 @@ namespace CasinoWorld.Common.Effects
 
 		public static void Flash(Color color)
 		{
-			if (Main.dedServ)
+			if (Main.dedServ || !Systems.CasinoClientConfig.Instance.ScreenEffects)
 				return;
 			flashColor = color;
 			flashTimer = FlashTicks;

@@ -87,6 +87,17 @@ namespace CasinoWorld.Common.Games.VideoSlots
 		private bool paid;
 		private ReLogic.Utilities.SlotId teaseSound = ReLogic.Utilities.SlotId.Invalid;
 
+		/// <summary>Auto spin: spins left, the chosen number, and the pause between spins.</summary>
+		public int AutoLeft;
+		public int AutoChoice = 1;
+		private int autoWait;
+
+		public void ToggleAuto()
+		{
+			AutoLeft = AutoLeft > 0 ? 0 : AutoSpin.Counts[AutoChoice];
+			autoWait = 0;
+		}
+
 		public bool InBonusRun => inBonusRun;
 		public bool CanSpin => Phase == VideoPhase.Idle && !inBonusRun;
 
@@ -94,6 +105,7 @@ namespace CasinoWorld.Common.Games.VideoSlots
 		{
 			if (Key == key && Machine != null)
 				return;
+			AutoLeft = 0;
 			Key = key;
 			Machine = SlotGames.Create(key, n => Main.rand.Next(n));
 			Machine.PayScale *= Systems.CasinoConfig.Instance.VideoSlotPayout;
@@ -157,6 +169,30 @@ namespace CasinoWorld.Common.Games.VideoSlots
 			SoundEngine.PlaySound(CasinoSounds.LeverPull);
 		}
 
+		/// <summary>Click on the reels: jump to the end of the running animation. The result is already rolled.</summary>
+		public void Skip()
+		{
+			if (Result == null)
+				return;
+			switch (Phase) {
+				case VideoPhase.Spinning:
+					Timer = Math.Max(Timer, StopTick(Machine.Reels - 1) + 3);
+					break;
+				case VideoPhase.Steps:
+					Timer = Math.Max(Timer, StepDuration(CurrentStep));
+					break;
+				case VideoPhase.Intro when Timer > 60:
+					Timer = Math.Max(Timer, Key == "Boreal" ? LotteryTicks : IntroTicks);
+					break;
+				case VideoPhase.Pause:
+					Timer = PauseTicks;
+					break;
+				case VideoPhase.Outro when Timer > 90:
+					Timer = OutroTicks;
+					break;
+			}
+		}
+
 		private void StartSpin()
 		{
 			Result = Machine.Spin();
@@ -173,6 +209,13 @@ namespace CasinoWorld.Common.Games.VideoSlots
 		{
 			if (BigWinTimer > 0)
 				BigWinTimer--;
+			if (CanSpin && AutoLeft > 0 && ++autoWait > 24) {
+				autoWait = 0;
+				long[] chips = CasinoTableGameSystem.Casino?.ChipValues;
+				if (chips != null)
+					TrySpin(player, chips[Math.Clamp(BetIndex, 0, chips.Length - 1)]);
+				AutoLeft = Phase == VideoPhase.Spinning ? AutoLeft - 1 : 0;   // out of coins: stop
+			}
 			if (Phase == VideoPhase.Idle || Result == null)
 				return;
 			Timer++;
@@ -284,6 +327,9 @@ namespace CasinoWorld.Common.Games.VideoSlots
 			if (units >= SlotMachine.Unit * 15) {
 				BigWinTimer = 150;
 				BigWinUnits = units;
+				int tier = units >= SlotMachine.Unit * 100 ? 3 : units >= SlotMachine.Unit * 50 ? 2 : 1;
+				UiFx.Banner(Language.GetTextValue("Mods.CasinoWorld.UI.VideoSlots." + (tier == 3 ? "EpicWin" : tier == 2 ? "MegaWin" : "BigWin")), SlotThemes.Accent(Key), coins, tier);
+				UiFx.Coins_(UiFx.ScreenCenter, 60, 13f);
 				SoundEngine.PlaySound(CasinoSounds.BigWin);
 				CasinoRewards.TryJackpot(player, LastBet, units >= SlotMachine.Unit * 50 ? 1f : 0.5f);
 			}
@@ -330,6 +376,7 @@ namespace CasinoWorld.Common.Games.VideoSlots
 		/// <summary>Window closed: pay this spin and play out all remaining free spins at once.</summary>
 		public void FinishImmediately(Player player)
 		{
+			AutoLeft = 0;
 			if (Result == null || Phase == VideoPhase.Idle)
 				return;
 			Finish(player);

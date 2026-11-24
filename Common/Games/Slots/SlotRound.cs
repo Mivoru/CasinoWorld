@@ -34,7 +34,34 @@ namespace CasinoWorld.Common.Games.Slots
 		public string Message { get; private set; } = "";
 		public Color MessageColor { get; private set; } = Color.White;
 
+		/// <summary>Landing bounce per reel, counts down.</summary>
+		public readonly int[] Bounce = new int[SlotRules.Reels];
+
+		/// <summary>Two equal symbols are in and the third reel is still spinning.</summary>
+		public bool Tension => Phase == SlotPhase.Spinning && Stopped[1] && !Stopped[2] && Result[0] == Result[1];
+		private const int TensionTicks = 80;
+
+		/// <summary>Ticks since the lever was pulled.</summary>
+		public int SpinAge { get; private set; } = 999;
+
+		/// <summary>Spins in a row that paid more than the bet.</summary>
+		public int Streak { get; private set; }
+
+		/// <summary>Reels that are part of the win (for the glow).</summary>
+		public int WinningReels { get; private set; }
+
 		private int timer;
+
+		/// <summary>Auto spin: spins left, the chosen number, and the pause between spins.</summary>
+		public int AutoLeft;
+		public int AutoChoice = 1;
+		private int autoWait;
+
+		public void ToggleAuto()
+		{
+			AutoLeft = AutoLeft > 0 ? 0 : AutoSpin.Counts[AutoChoice];
+			autoWait = 0;
+		}
 
 		public bool CanSpin => Phase != SlotPhase.Spinning;
 
@@ -55,6 +82,8 @@ namespace CasinoWorld.Common.Games.Slots
 			Phase = SlotPhase.Spinning;
 			timer = 0;
 			WinFlash = 0;
+			WinningReels = 0;
+			SpinAge = 0;
 			SetMessage("", Color.White);
 			SoundEngine.PlaySound(CasinoSounds.LeverPull);
 			SoundEngine.PlaySound(CasinoSounds.ReelSpin);
@@ -63,8 +92,18 @@ namespace CasinoWorld.Common.Games.Slots
 
 		public void Update(Player player)
 		{
+			SpinAge++;
 			if (WinFlash > 0)
 				WinFlash--;
+			for (int k = 0; k < Bounce.Length; k++)
+				if (Bounce[k] > 0)
+					Bounce[k]--;
+			if (CanSpin && AutoLeft > 0 && ++autoWait > (WinFlash > 0 ? 80 : 30)) {
+				autoWait = 0;
+				long[] chips = CasinoTableGameSystem.Casino?.ChipValues;
+				bool started = chips != null && TrySpin(player, chips[System.Math.Clamp(BetIndex, 0, chips.Length - 1)]);
+				AutoLeft = started ? AutoLeft - 1 : 0;   // out of coins: stop
+			}
 			if (Phase != SlotPhase.Spinning)
 				return;
 
@@ -73,11 +112,19 @@ namespace CasinoWorld.Common.Games.Slots
 				if (Stopped[k])
 					continue;
 
-				Offset[k] += SpinSpeed;
-				if (timer >= StopTicks[k]) {
+				bool slow = k == 2 && Tension;
+				int before = (int)Offset[k];
+				float left = StopTicks[2] + TensionTicks - timer;
+				Offset[k] += slow ? MathHelper.Lerp(0.08f, SpinSpeed, MathHelper.Clamp(left / TensionTicks, 0f, 1f)) : SpinSpeed;
+				if (slow && (int)Offset[k] != before)
+					SoundEngine.PlaySound(CasinoSounds.CrateTick with { Volume = 0.8f, Pitch = 0.4f - left / TensionTicks * 0.4f });
+				if (timer >= StopTicks[k] + (slow ? TensionTicks : 0)) {
+					Bounce[k] = 14;
 					Stopped[k] = true;
 					Offset[k] = (int)Result[k];
-					SoundEngine.PlaySound(CasinoSounds.ReelStop);
+					SoundEngine.PlaySound(CasinoSounds.ReelStop with { Pitch = k * 0.12f });
+					if (k == 1 && Result[0] == Result[1])
+						SoundEngine.PlaySound(CasinoSounds.SlotTease);
 				}
 			}
 
@@ -88,6 +135,7 @@ namespace CasinoWorld.Common.Games.Slots
 		/// <summary>Called when the window closes mid-spin: stops all reels and pays out at once.</summary>
 		public void FinishImmediately(Player player)
 		{
+			AutoLeft = 0;
 			if (Phase != SlotPhase.Spinning)
 				return;
 			for (int k = 0; k < SlotRules.Reels; k++) {
@@ -104,6 +152,15 @@ namespace CasinoWorld.Common.Games.Slots
 			LastPayout = LastBet * multiplier;
 			Coins.Give(player, LastPayout);
 			CasinoRecords.Report(player, CasinoGame.Slots, LastPayout - LastBet);
+			WinningReels = multiplier <= 0 ? 0 : Result[0] == Result[1] && Result[1] == Result[2] ? 3 : Result[0] == Result[1] ? 2 : 1;
+			Streak = multiplier > 1 ? Streak + 1 : 0;
+			UiFx.Win(LastPayout, LastBet);
+			if (WinningReels == 3 && Result[0] == SlotSymbol.Diamond)
+				SoundEngine.PlaySound(CasinoSounds.DiamondBeam);
+			if (Streak >= 3)
+				SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.6f });
+			if (WinningReels != 3 && Result[0] == Result[1])
+				SoundEngine.PlaySound(CasinoSounds.NearMiss);
 
 			if (multiplier > 1) {
 				SetMessage(Language.GetTextValue("Mods.CasinoWorld.UI.Slots.Win", multiplier, Coins.Format(LastPayout)), Color.LightGreen);

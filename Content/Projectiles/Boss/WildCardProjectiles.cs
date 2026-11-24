@@ -230,7 +230,7 @@ namespace CasinoWorld.Content.Projectiles.Boss
 				float p = Projectile.localAI[0] / Projectile.ai[0];
 				Color line = new Color(255, 60, 60) * (0.25f + 0.35f * p);
 				line.A = 0;
-				Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle((int)(Projectile.Center.X - Main.screenPosition.X) - 1, (int)(Projectile.Center.Y - Main.screenPosition.Y), 3, 1000), line);
+				PixelFx.DropWarning(Main.spriteBatch, Projectile.Center.X - Main.screenPosition.X, Projectile.Center.Y - Main.screenPosition.Y, Projectile.Center.Y - Main.screenPosition.Y + 1000f, line * 2f, Main.GlobalTimeWrappedHourly);
 				Color star = new Color(255, 120, 120) * (0.5f + 0.5f * (float)Math.Sin(Projectile.localAI[0] * 0.5f));
 				star.A = 0;
 				Main.EntitySpriteDraw(TextureAssets.Projectile[Type].Value, Projectile.Center - Main.screenPosition, null, star, 0f, TextureAssets.Projectile[Type].Value.Size() / 2f, 1.6f + p * 0.6f, SpriteEffects.None);
@@ -377,7 +377,7 @@ namespace CasinoWorld.Content.Projectiles.Boss
 			if ((int)Projectile.localAI[1] % 14 == 0) {
 				SoundEngine.PlaySound(CasinoSounds.DiceBounce with { Pitch = -0.6f, Volume = 0.8f }, Projectile.Center);
 				if (!Main.dedServ && Projectile.velocity.Y == 0f) {
-					Main.instance.CameraModifiers.Add(new PunchCameraModifier(Projectile.Center, Vector2.UnitY, 3f, 6f, 10, 900f, "Boxcar"));
+					global::CasinoWorld.Common.Effects.CasinoFx.Shake(Projectile.Center, Vector2.UnitY, 3f, 6f, 10, 900f, "Boxcar");
 					for (int k = 0; k < 8; k++)
 						Dust.NewDustPerfect(Projectile.Bottom + new Vector2(Main.rand.NextFloat(-30, 30), 0), DustID.Smoke, new Vector2(-Projectile.velocity.X * 0.1f, -1.5f), 120, default, 1.4f);
 				}

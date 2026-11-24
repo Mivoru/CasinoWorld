@@ -116,6 +116,7 @@ namespace CasinoWorld.Common.Games
 				CombatText.NewText(player.Hitbox, Color.Gold, "+" + Coins.Format(prize), Winner >= 3);
 				SoundEngine.PlaySound(Winner >= 3 ? CasinoSounds.Jackpot : CasinoSounds.SmallWin);
 				CasinoRecords.Report(player, CasinoGame.Slots, prize - Price);
+				UiFx.Win(prize, Price);
 			}
 			else {
 				SoundEngine.PlaySound(CasinoSounds.BustProc);
@@ -151,6 +152,13 @@ namespace CasinoWorld.Common.Games
 				ui.Draw(Main.spriteBatch, new GameTime());
 				return true;
 			}, InterfaceScaleType.UI));
+		}
+
+		// Also when the server drops the connection: a round must not carry over to another character.
+		public override void OnWorldUnload()
+		{
+			if (IsOpen)
+				Close();
 		}
 
 		public override void PreSaveAndQuit()

@@ -12,8 +12,16 @@ namespace CasinoWorld.Common.Games
 		public const long Gold = 10_000;
 		public const long Platinum = 1_000_000;
 
-		/// <summary>Coins in the main inventory.</summary>
-		public static long Count(Player player) => Utils.CoinsCount(out _, player.inventory);
+		/// <summary>
+		/// All coins the player can pay with: inventory, piggy bank, safe, Defender's Forge and Void Vault,
+		/// the same places Player.BuyItem takes them from (mouse and ammo slots are not among them).
+		/// </summary>
+		public static long Count(Player player)
+			=> Utils.CoinsCount(out _, player.inventory, 58, 57, 56, 55, 54)
+				+ Utils.CoinsCount(out _, player.bank.item)
+				+ Utils.CoinsCount(out _, player.bank2.item)
+				+ Utils.CoinsCount(out _, player.bank3.item)
+				+ Utils.CoinsCount(out _, player.bank4.item);
 
 		/// <summary>Removes coins from the player (inventory, then piggy bank and the like). False if they cannot pay.</summary>
 		public static bool TryTake(Player player, long amount) => amount <= 0 || player.BuyItem(amount);

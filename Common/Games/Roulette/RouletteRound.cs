@@ -52,6 +52,8 @@ namespace CasinoWorld.Common.Games.Roulette
 
 		private int timer;
 		private float wheelStart, ballStart, ballTravel;
+		/// <summary>Spin progress 0..1 (0 when no ball is running).</summary>
+		public float Progress => Phase == RoulettePhase.Spinning ? Math.Min(1f, timer / (float)SpinTicks) : 0f;
 		private int lastTickPocket = -1;
 		private int ticksSinceSound;
 
@@ -196,6 +198,13 @@ namespace CasinoWorld.Common.Games.Roulette
 				Finish(player);
 		}
 
+		/// <summary>Leaving the world before the server answered: the stake goes back to the player who placed it.</summary>
+		public void CancelWaiting(Player player)
+		{
+			if (Phase == RoulettePhase.WaitingForResult)
+				Refund(player);
+		}
+
 		private void AnimateSpin()
 		{
 			float p = Math.Min(1f, timer / (float)SpinTicks);
@@ -209,6 +218,10 @@ namespace CasinoWorld.Common.Games.Roulette
 			// The moment the ball leaves the rim it hops over the metal diamonds.
 			if (lastDrop <= 0f && BallDrop > 0f)
 				SoundEngine.PlaySound(CasinoSounds.RouletteBallBounce);
+
+			// Heartbeat in the last second and a half.
+			if (p > 0.68f && p < 0.97f && timer % 22 == 0)
+				SoundEngine.PlaySound(CasinoSounds.HeartBeat with { Volume = 0.5f + p * 0.4f });
 
 			// Clicks as the ball passes pockets; they slow down with the ball.
 			int pocket = (int)Math.Floor(Modulo(BallAngle - WheelAngle, MathHelper.TwoPi) / PocketAngle);
@@ -230,6 +243,7 @@ namespace CasinoWorld.Common.Games.Roulette
 			LastPayout = RouletteRules.Resolve(lastBets, Result);
 			Coins.Give(player, LastPayout);
 			CasinoRecords.Report(player, CasinoGame.Roulette, LastPayout - LastStake);
+			UiFx.Win(LastPayout, LastStake);
 
 			// A hit on a single number can drop a jackpot item.
 			if (lastBets.TryGetValue(new RouletteBet(RouletteBetType.Straight, Result), out long straightStake))

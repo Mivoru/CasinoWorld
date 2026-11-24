@@ -142,5 +142,12 @@ namespace CasinoWorld.Content.NPCs
 			if (CasinoTravel.InCasino)
 				maxSpawns = 0;
 		}
+
+		// Another mod may raise maxSpawns after us, so the pool is emptied as well.
+		public override void EditSpawnPool(System.Collections.Generic.IDictionary<int, float> pool, NPCSpawnInfo spawnInfo)
+		{
+			if (CasinoTravel.InCasino)
+				pool.Clear();
+		}
 	}
 }

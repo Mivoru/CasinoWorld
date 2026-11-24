@@ -4,13 +4,13 @@
 
 | Rarity | Lucky | High Roller | Contents |
 |---|---|---|---|
-| Common (blue) | 60% | 45% | Supplies: potions, coins, tokens, materials |
+| Common (blue) | 58% | 45% | Supplies: potions, coins, tokens, materials |
 | Uncommon (purple) | 25% | 30% | Useful vanilla gear, coins, tokens |
 | Rare (pink) | 10% | 15% | Gambler accessories, luxury, vanity |
-| Epic (red) | 4% | 8% | Gambler weapons, and Gambler armour before hardmode |
+| Epic (red) | 6% | 8% | Gambler weapons, and Gambler armour before hardmode |
 | Legendary (gold) | 1% | 2% | A golden Gambler weapon, the Gamblorghini, wings or platinum |
 
-**Pity:** the tenth crate in a row without Rare or better gives Rare. The 80th without Legendary gives Legendary. The counters are saved with the character.
+**Pity:** the tenth crate in a row without Rare or better gives Rare. The 25th without Epic or better gives Epic. The 80th without Legendary gives Legendary. The counters are saved with the character.
 
 **Golden weapons** deal 10% more damage and have a gold look. The bonus stacks with reforges and upgrades.
 
@@ -24,7 +24,7 @@
 | After the Moon Lord | Celestial Shell, Ring, Medallion and the base accessories | Stardust Deck, Meteor Dice, Infinity Slot | Golden versions, Royal Flush Wings, Gamblorghini, 8-12p |
 
 ## Where to find them
-- Every vanilla chest holds a Lucky Crate. Gold and locked dungeon chests hold two, one time in four. Worlds made before the mod are filled once on first load.
+- In newly generated worlds, every vanilla chest holds a Lucky Crate. Gold and locked dungeon chests hold two, one time in four. Chests in existing worlds are left alone.
 - Lucky Crates lie on cave floors, and High Roller Crates are scattered through the caverns when the High Rollers casino opens.
 - Fishing: a crate catch becomes a casino crate 1 time in 5 (in hardmode a third of those are High Roller). Any other catch is a Lucky Crate 1 time in 80.
 - Drops from casino [enemies](enemies.md) and [bosses](bosses.md), daily challenges, the Fortune Wheel.

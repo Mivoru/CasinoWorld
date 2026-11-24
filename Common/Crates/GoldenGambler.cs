@@ -69,17 +69,20 @@ namespace CasinoWorld.Common.Crates
 	public class CratePity : ModPlayer
 	{
 		public int SinceRare;
+		public int SinceRed;
 		public int SinceGold;
 
 		public override void SaveData(TagCompound tag)
 		{
 			tag["sinceRare"] = SinceRare;
+			tag["sinceRed"] = SinceRed;
 			tag["sinceGold"] = SinceGold;
 		}
 
 		public override void LoadData(TagCompound tag)
 		{
 			SinceRare = tag.ContainsKey("sinceRare") ? tag.GetInt("sinceRare") : 0;
+			SinceRed = tag.ContainsKey("sinceRed") ? tag.GetInt("sinceRed") : 0;
 			SinceGold = tag.ContainsKey("sinceGold") ? tag.GetInt("sinceGold") : 0;
 		}
 	}

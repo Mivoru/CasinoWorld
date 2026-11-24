@@ -32,7 +32,7 @@ Items: {
 
 	HellfireDice: {
 		DisplayName: Hellfire Dice
-		Tooltip: Throws two burning dice that set enemies on fire
+		Tooltip: Throws two burning dice that set enemies on fire and leave embers where they bounce
 	}
 
 	VaultKey: {
@@ -75,23 +75,24 @@ Items: {
 
 	CroupiersRake: {
 		DisplayName: Croupier's Rake
-		Tooltip: Sweeps out three chips that roll along the floor
+		Tooltip: Sweeps out three chips that roll along the floor. Walls rake them back
 	}
 
 	BankBreaker: {
 		DisplayName: Bank Breaker
-		Tooltip: Blasts a spread of five chips
+		Tooltip: Blasts a spread of five chips that shatter into coins on walls
 	}
 
 	VaultBuster: {
 		DisplayName: Vault Buster
-		Tooltip: Lobs a gold bar that bursts into a shower of coins
+		Tooltip: Lobs a gold bar that slams the ground and bursts into a shower of coins
 	}
 
 	GamblerEmblem: {
 		DisplayName: Gambler Emblem
 		Tooltip: 15% increased gambler damage
 	}
+
 	ChipSlimeBanner: {
 		DisplayName: Chip Slime Banner
 		Tooltip: "{$CommonItemTooltip.BannerBonus}{$Mods.CasinoWorld.NPCs.ChipSlime.DisplayName}"
@@ -163,6 +164,77 @@ Items: {
 			Spend it at the prize counter
 			'''
 		Currency: Loyalty Tokens
+	}
+
+	HighRollerTopHat: {
+		DisplayName: High Roller's Top Hat
+		Tooltip:
+			'''
+			+2 Luck
+			4% increased gambler damage
+			'''
+		SetBonus:
+			'''
+			+3 Luck
+			Jackpots fill the Pot twice as much
+			'''
+	}
+
+	HighRollerTailcoat: {
+		DisplayName: High Roller's Tailcoat
+		Tooltip:
+			'''
+			+2 Luck
+			4% increased gambler damage
+			'''
+	}
+
+	HighRollerTrousers: {
+		DisplayName: High Roller's Trousers
+		Tooltip:
+			'''
+			+1 Luck
+			2% increased gambler damage
+			8% increased movement speed
+			'''
+	}
+
+	PitBossFedora: {
+		DisplayName: Pit Boss's Fedora
+		Tooltip:
+			'''
+			+2 Luck
+			5% increased gambler damage
+			'''
+		SetBonus:
+			'''
+			+3 Luck
+			All In deals a hand one rank better
+			'''
+	}
+
+	PitBossSuit: {
+		DisplayName: Pit Boss's Suit
+		Tooltip:
+			'''
+			+2 Luck
+			5% increased gambler damage
+			'''
+	}
+
+	PitBossShoes: {
+		DisplayName: Pit Boss's Shoes
+		Tooltip:
+			'''
+			+2 Luck
+			5% increased gambler damage
+			8% increased movement speed
+			'''
+	}
+
+	VaultBullion: {
+		DisplayName: Vault Bullion
+		Tooltip: The Pit Boss will not miss it
 	}
 
 	GamblerFedora: {
@@ -289,7 +361,7 @@ Items: {
 			'''
 			<right> to open
 			Loot follows your progress in the world
-			Common 60%, Uncommon 25%, Rare 10%, Epic 4%, Legendary 1%
+			Common 58%, Uncommon 25%, Rare 10%, Epic 6%, Legendary 1%
 			'''
 	}
 
@@ -329,32 +401,32 @@ Items: {
 
 	AceOfSpades: {
 		DisplayName: Ace of Spades
-		Tooltip: Throws a spectral card that homes in and pierces
+		Tooltip: Throws a spectral card that homes in, pierces and passes through walls
 	}
 
 	DoublingDice: {
 		DisplayName: Doubling Dice
-		Tooltip: The die splits in two on its first hit
+		Tooltip: The die splits in two on its first hit, even if that is a wall
 	}
 
 	RouletteRevolver: {
 		DisplayName: Roulette Revolver
-		Tooltip: Every sixth chamber holds a golden jackpot round for triple damage
+		Tooltip: Every sixth chamber holds a golden jackpot round: triple damage, and it explodes on walls
 	}
 
 	StardustDeck: {
 		DisplayName: Stardust Deck
-		Tooltip: Galaxy cards burst into three homing cards on hit
+		Tooltip: Galaxy cards burst into three homing cards on enemies and walls
 	}
 
 	MeteorDice: {
 		DisplayName: Meteor Dice
-		Tooltip: Calls a burning die down from the sky onto your cursor
+		Tooltip: Calls a burning die down from the sky onto your cursor. It leaves the ground on fire
 	}
 
 	InfinitySlot: {
 		DisplayName: Infinity Slot
-		Tooltip: Fires two reel symbols; rarer symbols hit much harder
+		Tooltip: Fires two reel symbols; rarer symbols hit much harder. Each symbol has its own trick against walls
 	}
 
 	SpectralFedora: {
@@ -444,12 +516,12 @@ Items: {
 
 	DealersHand: {
 		DisplayName: Dealer's Hand
-		Tooltip: Deals a stream of cards; every eighth throw is a whole fan
+		Tooltip: Deals a stream of cards that skip off walls; every eighth throw is a whole fan
 	}
 
 	WheelOfFortune: {
 		DisplayName: Wheel of Fortune
-		Tooltip: Throws a roulette disc that explodes red or black when it returns
+		Tooltip: Throws a roulette disc that bursts against walls and explodes red or black when it returns
 	}
 
 	HouseEdge: {
@@ -463,32 +535,32 @@ Items: {
 
 	SnakeEyes: {
 		DisplayName: Snake Eyes
-		Tooltip: Throws a die that bounces and explodes
+		Tooltip: Throws a die that bounces, sticks and blows up under the next enemy
 	}
 
 	RoyalFlush: {
 		DisplayName: Royal Flush
-		Tooltip: Throws five homing cards
+		Tooltip: Throws five homing cards. All five in one enemy complete the flush
 	}
 
 	JackpotCannon: {
 		DisplayName: Jackpot Cannon
-		Tooltip: Fires a heavy chip that ricochets to two more enemies
+		Tooltip: Fires a heavy chip that ricochets to two more enemies. Walls pay out coins
 	}
 
 	LoadedDice: {
 		DisplayName: Loaded Dice
-		Tooltip: Throws a die that bounces along the ground
+		Tooltip: Throws a die that bounces along the ground. Every bounce rolls it again: high rolls hit harder
 	}
 
 	CardDeck: {
 		DisplayName: Deck of Cards
-		Tooltip: Throws a fan of three cards
+		Tooltip: Throws a fan of three cards. Cards that miss stick in walls and cut whoever walks past
 	}
 
 	HighRoller: {
 		DisplayName: High Roller
-		Tooltip: Flicks a chip that ricochets to another enemy
+		Tooltip: Flicks a chip that ricochets to another enemy. It banks off one wall
 	}
 }
 
@@ -497,12 +569,17 @@ DamageClasses.GamblerDamageClass.DisplayName: gambler damage
 Buffs: {
 	AllIn: {
 		DisplayName: All In
-		Description: Everything on the table! +25% jackpot chance, +10% bust chance
+		Description: Everything on the table!
 	}
 
 	MiniSlotBuff: {
 		DisplayName: Mini Slot
 		Description: A tiny slot machine is following you. Sometimes it hits 777
+	}
+
+	Protected: {
+		DisplayName: Protected
+		Description: 6 defense and 5% reduced damage taken
 	}
 
 	HotStreak: {
@@ -513,7 +590,31 @@ Buffs: {
 
 Gambler: {
 	TooltipOdds: "{0}% jackpot chance, {1}% bust chance"
-	AllInReady: "ALL IN! [{0}]"
+	AllInReady: ALL IN! [{0}]
+	AllInUnbound: No All In key! Settings > Controls > Mod Controls
+	TooltipAllIn: Full Pot: press {0} to go All In
+	KeyHelp: Gambler: hits fill the Pot meter. When it is full, press {0} to go ALL IN. Change the key in Settings > Controls > Mod Controls; open the inventory to drag the meter.
+	UnboundHelp: Gambler: you have no key for ALL IN! Set 'All In (Gambler)' in Settings > Controls > Mod Controls, you need it to use a full Pot.
+	MeterHint:
+		'''
+		The Pot: {0}%
+		All In key: {1}
+		Drag to move, right-click to reset. Mod settings can put it under your character.
+		'''
+	AllInBuff: "{0}! +{1}% jackpot chance, +{2}% bust chance. A tenth of your damage is paid out at the end"
+	TripleJackpot: TRIPLE JACKPOT!
+	CashOut: CASHED OUT {0}!
+	Heads: Heads!
+
+	Hands: {
+		Pair: PAIR
+		TwoPair: TWO PAIR
+		Three: THREE OF A KIND
+		FullHouse: FULL HOUSE
+		Four: FOUR OF A KIND
+		RoyalFlush: ROYAL FLUSH!
+	}
+
 	Jackpot: JACKPOT!
 	Bust: bust
 	Saved: edge!
@@ -536,6 +637,9 @@ Tiles: {
 	HighRollerCrateTile.MapEntry: High Roller Crate
 	UndergroundCasinoFacade.MapEntry: High Rollers Casino
 	BlackjackTable.MapEntry: Blackjack Table
+	PlinkoCabinet.MapEntry: Plinko
+	DerbyCabinet.MapEntry: Slime Derby
+	HiLoCabinet.MapEntry: Higher or Lower
 }
 
 WorldGen: {
@@ -548,6 +652,9 @@ WorldGen: {
 
 Upgrade: {
 	Hover: Upgrade Gambler gear
+	Where: Upgrade Machine (High Rollers casino): +{0} of +{1}
+	WhereLater: Can be upgraded in hardmode, at the Upgrade Machine
+	Told: Your Gambler gear can be upgraded up to +10, and armour turned into the next set! Take it to the Upgrade Machine in the High Rollers casino, deep underground. A failed try only costs materials.
 	Title: Upgrade Machine
 	DropHere: Drop item
 	Hint:
@@ -563,6 +670,9 @@ Upgrade: {
 	BoostOff: Boost: off
 	BoostOn: Boost: ON (x2, +15%)
 	NoLoss: A failed upgrade only costs materials. Your item is safe.
+	Evolve: Next set (+{0})
+	EvolveHint: Turns this piece into {0}. Half of its levels stay. Never fails.
+	Evolved: It is now {0}!
 	Working: Upgrading...
 	Success: Success! The item is now +{0}.
 	Fail: Failed. The materials are gone, the item is unharmed.
@@ -610,6 +720,9 @@ Bestiary: {
 	RoyalGuard: The knight of spades guards the deepest card tables. Its shield is a giant playing card.
 	RouletteWraith: The restless spirit of a croupier, still spinning the wheel long after the last bet.
 	LoanShark: Borrow from him once and he will follow you to every beach in the world.
+	Bookie: He takes bets on anything that moves, and on most things that do not.
+	Magician: She used to assist The Wild Card. She knows every trick, and where the bodies reappear.
+	Bouncer: Left the Pit Boss's payroll for fresh air. He still checks everyone at the door.
 	TownGambler: A smooth talker in a purple suit who moved to town the day the casino opened. He has a system.
 	TheWildCard: Every deck has one card that plays by its own rules. This one learned magic, and it never loses.
 	ChipSlime: A poker chip that rolled away from the tables and learned to bite. It still remembers its value.
@@ -619,6 +732,7 @@ Bestiary: {
 
 NPCs: {
 	HowToPlay: How to play
+	Stolen: Pickpocketed!
 
 	Showgirl: {
 		DisplayName: Showgirl
@@ -694,6 +808,113 @@ NPCs: {
 			3: Fresh air! Ugh, too fresh. Back to the slots.
 			4: Lost my shirt in there. Well, not literally. Yet.
 			5: You going in? The bartender makes a mean Golden Chip Fizz.
+		}
+	}
+
+	Bookie: {
+		DisplayName: Bookie
+		Service: Boss bet
+
+		Chat: {
+			0: I've got odds on everything. Rain tomorrow, three to one.
+			1: The Eye of Cthulhu? Fan favourite. Never pays.
+			2: Put your money where your sword is.
+			3: I don't gamble. I just hold the money of people who do.
+			4: A sure thing? There is no such thing. That will be fifty silver.
+			5: Scratch cards are the honest game. You lose fair and square.
+		}
+
+		BetTaken: "{0} it is. Beat any boss before dawn without dying and I owe you {1}."
+		BetRunning: Your bet is on. Beat a boss before dawn, stay alive, and collect {0}.
+		BetTomorrow: One bet a day, friend. Come back after dawn.
+		BetTooLate: The fight is already on! No late bets.
+		BetPoor: The stake is {0}. Come back when you have it.
+		BetWon: The Bookie pays out: {0}!
+		BetLost: You died. The Bookie keeps your stake.
+		BetExpired: Dawn breaks. The Bookie keeps your stake.
+
+		TownNPCMood: {
+			Content: I am content.
+			NoHome: I hate not having a home.
+			FarFromHome: I am too far from home.
+			LoveSpace: I love having so much space.
+			DislikeCrowded: I dislike how crowded I am.
+			HateCrowded: I hate how crowded I am.
+			LikeBiome: I like {BiomeName}.
+			DislikeBiome: I dislike {BiomeName}.
+			LoveNPC: I love {NPCName}.
+			LikeNPC: I like {NPCName}.
+			DislikeNPC: I dislike {NPCName}.
+			LikeNPC_Princess: I like {NPCName}.
+			Princess_LovesNPC: I like {NPCName}.
+		}
+	}
+
+	Magician: {
+		DisplayName: Magician
+		Service: Pick a card
+
+		Chat: {
+			0: I used to be sawn in half twice a night. With that jester, I always checked twice.
+			1: Nothing up my sleeve. Both sleeves, actually. Look.
+			2: The Wild Card cheats. Everyone knows. Nobody ever saw how.
+			3: Is this your card? No? Give me a moment.
+			4: Real magic is leaving the stage before they ask for an encore.
+			5: I can make your coins disappear. The casino does it faster.
+		}
+
+		TrickDone: Pick one... turn it over... {0}! Ten minutes, on the house.
+		TrickTomorrow: One trick a day, darling. Mystery needs rest.
+
+		TownNPCMood: {
+			Content: I am content.
+			NoHome: I hate not having a home.
+			FarFromHome: I am too far from home.
+			LoveSpace: I love having so much space.
+			DislikeCrowded: I dislike how crowded I am.
+			HateCrowded: I hate how crowded I am.
+			LoveBiome: I love {BiomeName}.
+			LikeBiome: I like {BiomeName}.
+			DislikeBiome: I dislike {BiomeName}.
+			LoveNPC: I love {NPCName}.
+			LikeNPC: I like {NPCName}.
+			DislikeNPC: I dislike {NPCName}.
+			LikeNPC_Princess: I like {NPCName}.
+			Princess_LovesNPC: I like {NPCName}.
+		}
+	}
+
+	Bouncer: {
+		DisplayName: Bouncer
+		Service: Hire protection
+
+		Chat: {
+			0: Name's not on the list? You built the place? Alright. Go in.
+			1: I worked for the Pit Boss. He tips in threats.
+			2: Dress code: no slime.
+			3: I throw dice now. Less paperwork than throwing people.
+			4: You got a problem? Good. I got a price list.
+			5: Nobody sneaks past me. Except the bats.
+		}
+
+		GuardHired: "{0}. Ten minutes nobody touches you too hard. Deal."
+		GuardPoor: Protection is {0}. No discounts.
+		PitBossCondition: After The Pit Boss has been defeated
+
+		TownNPCMood: {
+			Content: I am content.
+			NoHome: I hate not having a home.
+			FarFromHome: I am too far from home.
+			LoveSpace: I love having so much space.
+			DislikeCrowded: I dislike how crowded I am.
+			HateCrowded: I hate how crowded I am.
+			LikeBiome: I like {BiomeName}.
+			DislikeBiome: I dislike {BiomeName}.
+			LoveNPC: I love {NPCName}.
+			LikeNPC: I like {NPCName}.
+			HateNPC: I hate {NPCName}.
+			LikeNPC_Princess: I like {NPCName}.
+			Princess_LovesNPC: I like {NPCName}.
 		}
 	}
 
@@ -789,7 +1010,7 @@ NPCs: {
 
 		Chat: {
 			0: Every bet earns loyalty tokens, win or lose. The house is generous like that.
-			1: Ten silver wagered, one token earned. Spend them here on something shiny.
+			1: Bet silver, earn one token. Bet gold, earn five. Bet platinum, earn ten. Spend them here on something shiny.
 			2: The real prizes? Those come from jackpots at the tables, friend.
 			3: No refunds. No exceptions. No eye contact with the bartender.
 		}
@@ -876,7 +1097,7 @@ Crates: {
 UI: {
 	Dice: {
 		Title: Sic Bo
-		Rules: "Small 4-10 / Big 11-17 and Odd / Even pay 1:1 (triples lose). A number pays 1:1, 2:1, 3:1 per die. Any triple pays 30:1."
+		Rules: Small 4-10 / Big 11-17 and Odd / Even pay 1:1 (triples lose). A number pays 1:1, 2:1, 3:1 per die. Any triple pays 30:1.
 		Hint: Place chips on a bet (right click removes one), then roll.
 		Small: SMALL 4-10
 		Big: BIG 11-17
@@ -885,18 +1106,20 @@ UI: {
 		Triple: ANY TRIPLE  30:1
 		Roll: ROLL
 		Repeat: REPEAT
-		Bet: "Bet: {0} / max {1}"
+		Bet: Bet: {0} / max {1}
 		Win: "{0} {1} {2}! You win {3}!"
 		Lose: "{0} {1} {2}. No luck."
 	}
+
 	Scratch: {
 		Title: SCRATCH CARD
-		Rule: "Hold the mouse over a field to scratch. Three of a kind wins! Card: {0}"
+		Rule: Hold the mouse over a field to scratch. Three of a kind wins! Card: {0}
 		RevealAll: Reveal all
 		Close: Collect
-		Won: "Three of a kind! You win {0}!"
+		Won: Three of a kind! You win {0}!
 		Lost: No luck this time.
 	}
+
 	GamblingDisabled: Gambling is turned off on this world (mod settings).
 	ClosedBoss: The casino doors are locked while a boss is on the loose!
 	ClosedEvent: The casino is closed until the invasion is over!
@@ -916,6 +1139,7 @@ UI: {
 		GameRoulette: roulette
 		GameBlackjack: blackjack
 		GameSlots: the slots
+		GameArcade: the arcade
 	}
 
 	Wheel: {
@@ -979,7 +1203,7 @@ UI: {
 		StageHardmode: Loot: hardmode
 		StagePostPlantera: Loot: after Plantera
 		StagePostMoonLord: Loot: after the Moon Lord
-		Pity: Rare or better in at most {0} | Legendary in at most {1}
+		Pity: Rare or better in at most {0} | Epic or better in at most {1} | Legendary in at most {2}
 	}
 
 	VideoSlots: {
@@ -1036,7 +1260,56 @@ UI: {
 		FeatureBloodMoon: Hunter wilds carry x2/x3. Blood Shot turns cells wild. Every 3 wilds removes a low symbol.
 	}
 
+	Win: {
+		Tier1: BIG WIN!
+		Tier2: MEGA WIN!
+		Tier3: JACKPOT!
+		Blackjack: BLACKJACK!
+		Paid: You win {0}!
+		Part: "{0} back."
+	}
+
+	Plinko: {
+		Title: PLINKO
+		Hover: Play Plinko
+		Hint: Pick a risk and drop your chip. The edges pay the most!
+		Drop: DROP
+		Risk0: Low
+		Risk1: Medium
+		Risk2: High
+	}
+
+	Derby: {
+		Title: SLIME DERBY
+		Hover: Bet on the Slime Derby
+		Hint: Click a slime, then start the race!
+		Race: RACE!
+		Won: "{0} wins the race!"
+		Lost: "{0} wins the race."
+		Slime0: Greenie
+		Slime1: Blue Bounce
+		Slime2: Red Rocket
+		Slime3: Purple Rain
+		Slime4: Golden Goo
+	}
+
+	HiLo: {
+		Title: HIGHER OR LOWER
+		Hover: Play Higher or Lower
+		Hint: Guess the next card. Equal wins, ace is low. Cash out before you miss!
+		Deal: DEAL
+		Higher: HIGHER
+		Lower: LOWER
+		CashOut: CASH OUT {0}
+		CashOutNone: CASH OUT
+	}
+
 	Slots: {
+		Tension: ONE MORE!
+		AutoStart: AUTO
+		AutoStop: STOP ({0})
+		Streak: HOT STREAK x{0}
+		WinMarquee: WIN {0}
 		Hover: Play the slots
 		Title: LUCKY SLOTS
 		Spin: SPIN
@@ -1090,8 +1363,11 @@ Projectiles: {
 	PennyCoin.DisplayName: Lucky Penny
 	HellfireDie.DisplayName: Hellfire Die
 	BouncingChip.DisplayName: Chip
+	GamblerBlast.DisplayName: Casino Blast
+	EmberPatch.DisplayName: Ember
+	EmptyWallet.DisplayName: Empty Wallet
 	BetZone.DisplayName: Winning Number
-	GoldBarDrop.DisplayName: Gold Bar
+	GoldBarDrop.DisplayName: Gold Bar Drop
 	GiantCoin.DisplayName: Double or Nothing
 	CoinShockwave.DisplayName: Shockwave
 	RakeChip.DisplayName: Chip
@@ -1110,7 +1386,6 @@ Projectiles: {
 	CherryBomb.DisplayName: Cherry Bomb
 	CroupierBall.DisplayName: Croupier Ball
 	DiamondShard.DisplayName: Diamond Shard
-	GoldBarDrop.DisplayName: Gold Bar Drop
 	GoldRushMarker.DisplayName: Gold Rush Marker
 	LuckySeven.DisplayName: Lucky Seven
 	OrbitChip.DisplayName: Orbit Chip
@@ -1138,20 +1413,52 @@ Projectiles: {
 }
 
 Configs: {
+	CasinoClientConfig: {
+		DisplayName: Casino World (client)
+
+		ScreenEffects: {
+			Label: Screen effects
+			Tooltip: Screen shake, flashes, zoom and the jackpot marquee.
+		}
+
+		PotMeter: {
+			Label: Pot meter
+			Tooltip: Where the Gambler's Pot meter is drawn. On the HUD you can drag it with the inventory open.
+		}
+	}
+
+	PotMeterPlace: {
+		Tooltip: ""
+
+		Hud: {
+			Label: HUD (draggable)
+			Tooltip: ""
+		}
+
+		UnderPlayer: {
+			Label: Under the player
+			Tooltip: ""
+		}
+	}
+
 	CasinoConfig: {
 		DisplayName: Casino World
+
 		GamblingEnabled: {
 			Label: Gambling enabled
 			Tooltip: Off: tables, slots and crates take no bets. The casinos, NPCs and gear stay.
 		}
+
 		VideoSlotPayout: {
 			Label: Video slot payout
 			Tooltip: Multiplies every video slot win. 1.00 is the tuned return of about 97-99 %.
 		}
+
 		Announcements: {
 			Label: Announcements
 			Tooltip: Chat messages about the hardmode casino opening and where to find it.
 		}
+
 		HighStakesNight: {
 			Label: High Stakes Night
 			Tooltip: In hardmode, the card army can raid the world on some nights.
@@ -1164,9 +1471,14 @@ BossChecklist: {
 	WildCardSpawn: Use a [i:CasinoWorld/GoldenChip] at night outside the casinos. Crafted from Loyalty Tokens and gold or platinum bars.
 }
 
-Keybinds: {
-	AllIn.DisplayName: All In (Gambler)
+Census: {
+	TownGambler: Have a surface casino in the world or a Loyalty Token in your inventory
+	Bookie: Have a surface casino in the world and defeat an early boss or enter hardmode
+	Magician: Defeat The Wild Card
+	Bouncer: Have a surface casino in the world in hardmode
 }
+
+Keybinds.AllIn.DisplayName: All In (Gambler)
 
 Prefixes: {
 	JackpotLine: "{0}% jackpot chance"
@@ -1179,7 +1491,8 @@ Prefixes: {
 }
 
 Challenges: {
-	Header: "Today's challenges (new ones every day):"
+	Header: Today's challenges (new ones every dawn):
+	New: A new day: the Prize Cashier has new casino challenges!
 	BlackjackWins: Win {0} rounds of blackjack
 	RouletteWins: Win {0} times at roulette
 	SlotWins: Win {0} times at the slots or scratch cards
@@ -1189,10 +1502,10 @@ Challenges: {
 	VideoBonus: Trigger a video slot bonus
 	Crates: Open {0} casino crates
 	Tokens: tokens
-	Done: "Challenge complete: {0}! +{1} loyalty tokens"
+	Done: Challenge complete: {0}! +{1} loyalty tokens
 	AllDone: All of today's challenges done! The house throws in a crate.
 	Bonus: Finish all three for a free crate.
-	BonusClaimed: All done for today. Come back tomorrow!
+	BonusClaimed: All done for today. Come back after dawn!
 }
 
 Event: {
@@ -1200,8 +1513,8 @@ Event: {
 	Captain: The Guard Captain has come to collect!
 	Won: The Guard Captain falls. High Stakes Night is over, and the house pays out!
 	Dawn: The card army scatters at dawn.
-	Bar: "High Stakes Night: {0}%"
-	BarCaptain: "High Stakes Night: defeat the Guard Captain!"
+	Bar: High Stakes Night: {0}%
+	BarCaptain: High Stakes Night: defeat the Guard Captain!
 }
 
 Handbook: {
@@ -1210,13 +1523,13 @@ Handbook: {
 	Page1Title: The Gambler class
 	Page1Text: Gambler weapons throw cards, dice and chips. They never crit; instead every hit rolls the dice. Jackpot (5% at first): triple damage. Bust (20% at first): half damage. On average it evens out, and Luck from Gambler armour and accessories tips the odds your way: each point gives +1% jackpot and -2% bust.
 	Page2Title: The Pot and All In
-	Page2Text: Your Gambler hits fill the Pot, the meter under your feet. Jackpots fill it fastest, and busts feed it too. It drains when you stop fighting. With a full Pot, press All In (V by default, change it in the controls): a shockwave of cards hits everything around you and for five seconds you get +25% jackpot chance (and +10% bust). Gambler weapons can also get their own reforges: Lucky, Rigged, Loaded, Shady.
+	Page2Text: Your Gambler hits fill the Pot, the casino meter on your screen (drag it with the inventory open, or put it under your feet in the mod settings). Jackpots fill it fastest, and busts feed it too. It drains when you stop fighting. With a full Pot, press All In (V by default, set it in Settings > Controls > Mod Controls): a shockwave hits everything around you and the dealer deals you a poker hand. From a pair (+20% jackpot chance for 5 seconds) to a royal flush (+45% for 8 seconds), better hands last longer, and from a full house up nothing extra goes bust. At the end a tenth of the damage you dealt is paid out as a blast. Gambler weapons can also get their own reforges: Lucky, Rigged, Loaded, Shady.
 	Page3Title: Table games
 	Page3Text: Roulette: place chips on numbers, splits, corners, colours or dozens, then spin. Blackjack: get closer to 21 than the dealer; the dealer stands on 17 and blackjack pays 3 to 2. Every bet earns loyalty tokens, win or lose. Big wins at full stake can drop a jackpot item.
 	Page4Title: Slots and scratch cards
 	Page4Text: The classic slots pay for three of a kind and pairs on the first two reels. The High Rollers casino has four video slots, each with its own bonus: Gates of the Lunar Gods (tumbles and Moon Lord's orbs), Angler's Bonanza (the Angler collects fish cash), Boreal Wilds (an animal lottery picks the bonus) and Blood Moon Hunter (multiplier wilds and a trophy hunt). Scratch cards from the cashier: three of a kind wins.
 	Page5Title: Tokens, prizes and challenges
-	Page5Text: Loyalty tokens buy prizes at the cashier: crates, the Gamblorghini, accessories, vanity. Casino crates open with a spinning reel of prizes. The cashier also has three daily challenges with token rewards, and the Fortune Wheel gives one free spin a day. The upgrade machine improves Gambler weapons and armour for coins, with a risk.
+	Page5Text: Loyalty tokens buy prizes at the cashier: crates, the Gamblorghini, accessories, vanity. Casino crates open with a spinning reel of prizes. The cashier also has three daily challenges with token rewards, and the Fortune Wheel gives one free spin a day. The Upgrade Machine in the High Rollers casino improves Gambler weapons and armour up to +10 for bars and coins; a failed try only costs materials, never the item. It also turns an armour piece into the next set: Gambler, High Roller, Pit Boss, Spectral, Celestial.
 	Page6Title: The bosses
 	Page6Text: The Wild Card (after Skeletron): use a Golden Chip at night outside the casinos. A jester of cards with a shell game, dice tricks and an all-in finale. The Pit Boss (after a mechanical boss): use a Vault Key inside the High Rollers casino. He bets on red or black under your feet, rains gold bars, calls security and flips a giant coin: tails, and he is stunned.
 	Page7Title: High Stakes Night
