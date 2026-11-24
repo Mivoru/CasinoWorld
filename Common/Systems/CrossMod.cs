@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using CasinoWorld.Content.Items;
+using CasinoWorld.Content.Items.Fortuna;
 using CasinoWorld.Content.Items.PitBoss;
 using CasinoWorld.Content.Items.Vanity;
 using CasinoWorld.Content.Items.Accessories;
@@ -62,6 +63,17 @@ namespace CasinoWorld.Common.Systems
 					},
 					["spawnInfo"] = Language.GetText("Mods.CasinoWorld.BossChecklist.PitBossSpawn"),
 					["despawnMessage"] = Language.GetText("Mods.CasinoWorld.Boss.PitBoss.Leave"),
+				});
+
+			// Fortuna: after the Moon Lord (18).
+			checklist.Call("LogBoss", Mod, nameof(Fortuna), 19f, () => CasinoDowned.DownedFortuna, ModContent.NPCType<Fortuna>(),
+				new Dictionary<string, object> {
+					["spawnItems"] = ModContent.ItemType<FatefulCoin>(),
+					["collectibles"] = new List<int> {
+						ModContent.ItemType<FortunaRelicItem>(), ModContent.ItemType<FortunaTrophy>(), ModContent.ItemType<FortunaMask>(),
+					},
+					["spawnInfo"] = Language.GetText("Mods.CasinoWorld.BossChecklist.FortunaSpawn"),
+					["despawnMessage"] = Language.GetText("Mods.CasinoWorld.Boss.Fortuna.Leave"),
 				});
 		}
 	}

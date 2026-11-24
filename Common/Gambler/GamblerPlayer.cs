@@ -65,6 +65,11 @@ namespace CasinoWorld.Common.Gambler
 		public const float MartingaleStep = 0.02f;
 		private int martingaleMisses;
 
+		/// <summary>Fortuna's Blindfold: every tenth gambler hit is a jackpot.</summary>
+		public bool Blindfold;
+		public const int BlindfoldHits = 10;
+		private int blindfoldCount;
+
 		/// <summary>Extra jackpot chance from the held weapon's Gambler prefix (Lucky, Rigged...), set by the prefix.</summary>
 		public float PrefixJackpot;
 
@@ -84,6 +89,7 @@ namespace CasinoWorld.Common.Gambler
 			SpectralSet = false;
 			CelestialSet = false;
 			Martingale = false;
+			Blindfold = false;
 			PrefixJackpot = Content.Prefixes.GamblerPrefix.JackpotOf(Player.HeldItem);
 			// Gambler hits never crit, so crit from vanilla reforges (Keen, Zealous, Godly...) becomes half as much jackpot chance.
 			if (Player.HeldItem.CountsAsClass<GamblerDamageClass>())
@@ -122,6 +128,10 @@ namespace CasinoWorld.Common.Gambler
 			jackpotChance += PrefixJackpot;
 
 			float roll = Main.rand.NextFloat();
+			if (Blindfold && feedsPot && ++blindfoldCount >= BlindfoldHits) {
+				blindfoldCount = 0;
+				roll = -1f;
+			}
 			if (feedsPot)
 				pot.Feed(roll < jackpotChance, roll >= jackpotChance && roll < jackpotChance + bustChance);
 			if (feedsPot && roll >= jackpotChance)

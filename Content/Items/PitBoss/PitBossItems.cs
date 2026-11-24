@@ -183,10 +183,12 @@ namespace CasinoWorld.Content.Items.PitBoss
 
 		public override string Texture => "Terraria/Images/Tiles_" + TileID.MasterTrophyBase;
 
+		protected virtual string StatueTexture => "CasinoWorld/Content/Items/PitBoss/PitBossRelicStatue";
+
 		public override void Load()
 		{
 			if (!Main.dedServ)
-				statue = ModContent.Request<Texture2D>("CasinoWorld/Content/Items/PitBoss/PitBossRelicStatue");
+				statue = ModContent.Request<Texture2D>(StatueTexture);
 		}
 
 		public override void Unload() => statue = null;

@@ -35,6 +35,77 @@ Items: {
 		Tooltip: Throws two burning dice that set enemies on fire and leave embers where they bounce
 	}
 
+	FatefulCoin: {
+		DisplayName: Fateful Coin
+		Tooltip:
+			'''
+			Calls Fortuna, the Last Wheel
+			Cannot be used inside a casino
+			'''
+	}
+
+	FateShard: {
+		DisplayName: Fate Shard
+		Tooltip: "'A splinter of every bet ever made'"
+	}
+
+	FortunaBag: {
+		DisplayName: Treasure Bag (Fortuna)
+		Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+	}
+
+	FortunasBlindfold: {
+		DisplayName: Fortuna's Blindfold
+		Tooltip:
+			'''
+			Every tenth gambler hit is a Jackpot
+			'She never needed to look'
+			'''
+	}
+
+	FortunaMask: {
+		DisplayName: Fortuna Mask
+		Tooltip: ""
+	}
+
+	FortunaTrophy: {
+		DisplayName: Fortuna Trophy
+		Tooltip: ""
+	}
+
+	FortunaRelicItem: {
+		DisplayName: Fortuna Relic
+		Tooltip: ""
+	}
+
+	Ophanim: {
+		DisplayName: Ophanim
+		Tooltip:
+			'''
+			Hold to send a wheel to the cursor
+			It saws through enemies and throws homing chips
+			'''
+	}
+
+	DiceOfDestiny: {
+		DisplayName: Dice of Destiny
+		Tooltip:
+			'''
+			Throws two star dice that burst on impact
+			Doubles burst harder and wider
+			A total of seven releases homing chips
+			'''
+	}
+
+	EyeOfFortune: {
+		DisplayName: Eye of Fortune
+		Tooltip:
+			'''
+			Fires instant golden rays that pass through enemies
+			Every eighth shot is a triple
+			'''
+	}
+
 	VaultKey: {
 		DisplayName: Vault Key
 		Tooltip:
@@ -605,6 +676,8 @@ Gambler: {
 	TripleJackpot: TRIPLE JACKPOT!
 	CashOut: CASHED OUT {0}!
 	Heads: Heads!
+	Doubles: Doubles!
+	LuckySeven: Lucky seven!
 
 	Hands: {
 		Pair: PAIR
@@ -685,6 +758,20 @@ Upgrade: {
 }
 
 Boss: {
+	Fortuna: {
+		Intro: Every house answers to me. Place your life on the table.
+		Leave: Fortuna turns her wheel to someone else.
+		LastBet: LAST BET! Strike while the wheel turns!
+		Jackpot: The wheel stops... JACKPOT!
+		JackpotText: JACKPOT!
+		HouseWins: The wheel stops... the house wins.
+		Awaken: The blindfold tears. Fortune sees you.
+		Death: Impossible... I hold... every... card...
+		Odds: Jackpot {0}%
+		Title: FORTUNA
+		Subtitle: The Last Wheel
+	}
+
 	PitBoss: {
 		Intro: The vault doors swing open... The Pit Boss wants a word.
 		Leave: The Pit Boss cashes out and disappears into the vault.
@@ -714,6 +801,7 @@ Boss: {
 
 Bestiary: {
 	GuardCaptain: Captain of the card guard. He only marches out when the army has lost a hundred men, and he never goes home empty-handed.
+	Fortuna: Wheels within wheels, and a goddess blindfolded at the hub. Every coin ever tossed has landed at her feet.
 	ThePitBoss: He runs the floor of the High Rollers casino from a flying roulette wheel. Nobody leaves his table up, not for long.
 	BrokeGambler: He bet the house, then the horse, then his own heartbeat. He still swears the next spin is the one.
 	LuckyBat: A cave bat that stole a gold coin from a careless miner and refuses to let go.
@@ -954,6 +1042,7 @@ NPCs: {
 
 	TheWildCard.DisplayName: The Wild Card
 	GuardCaptain.DisplayName: Guard Captain
+	Fortuna.DisplayName: Fortuna
 	ThePitBoss.DisplayName: The Pit Boss
 	ChipSlime.DisplayName: Chip Slime
 	CardSoldier.DisplayName: Card Soldier
@@ -1360,6 +1449,19 @@ UI: {
 }
 
 Projectiles: {
+	FateChip.DisplayName: Fate Chip
+	FatePocket.DisplayName: Wheel Pocket
+	FateDie.DisplayName: Fate Die
+	FateReels.DisplayName: Three Reels
+	FateBeam.DisplayName: Gaze of Fortune
+	CurtainCard.DisplayName: Card
+	PotHole.DisplayName: Pot of Gold
+	SwallowedChip.DisplayName: Fate Chip
+	FateBall.DisplayName: Runaway Ball
+	OphanimWheel.DisplayName: Ophanim
+	FortuneChip.DisplayName: Fate Chip
+	DestinyDie.DisplayName: Die of Destiny
+	FortuneRay.DisplayName: Golden Ray
 	PennyCoin.DisplayName: Lucky Penny
 	HellfireDie.DisplayName: Hellfire Die
 	BouncingChip.DisplayName: Chip
@@ -1467,6 +1569,7 @@ Configs: {
 }
 
 BossChecklist: {
+	FortunaSpawn: Use a [i:CasinoWorld/FatefulCoin] anywhere outside the casinos after defeating the Moon Lord.
 	PitBossSpawn: Use a [i:CasinoWorld/VaultKey] inside the High Rollers casino after defeating a mechanical boss.
 	WildCardSpawn: Use a [i:CasinoWorld/GoldenChip] at night outside the casinos. Crafted from Loyalty Tokens and gold or platinum bars.
 }

@@ -861,13 +861,14 @@ namespace CasinoWorld.Content.NPCs.Boss
 		}
 	}
 
-	/// <summary>Remembers whether The Wild Card has been defeated in this world.</summary>
+	/// <summary>Remembers which casino bosses have been defeated in this world.</summary>
 	public class CasinoDowned : ModSystem
 	{
 		public static bool DownedWildCard;
 		public static bool DownedPitBoss;
+		public static bool DownedFortuna;
 
-		public override void ClearWorld() => DownedWildCard = DownedPitBoss = false;
+		public override void ClearWorld() => DownedWildCard = DownedPitBoss = DownedFortuna = false;
 
 		public override void SaveWorldData(Terraria.ModLoader.IO.TagCompound tag)
 		{
@@ -875,6 +876,8 @@ namespace CasinoWorld.Content.NPCs.Boss
 				tag["downedWildCard"] = true;
 			if (DownedPitBoss)
 				tag["downedPitBoss"] = true;
+			if (DownedFortuna)
+				tag["downedFortuna"] = true;
 		}
 
 		// Worlds that beat the old boss (The House) keep their progress.
@@ -882,18 +885,21 @@ namespace CasinoWorld.Content.NPCs.Boss
 		{
 			DownedWildCard = tag.ContainsKey("downedWildCard") || tag.ContainsKey("downedTheHouse");
 			DownedPitBoss = tag.ContainsKey("downedPitBoss");
+			DownedFortuna = tag.ContainsKey("downedFortuna");
 		}
 
 		public override void NetSend(BinaryWriter writer)
 		{
 			writer.Write(DownedWildCard);
 			writer.Write(DownedPitBoss);
+			writer.Write(DownedFortuna);
 		}
 
 		public override void NetReceive(BinaryReader reader)
 		{
 			DownedWildCard = reader.ReadBoolean();
 			DownedPitBoss = reader.ReadBoolean();
+			DownedFortuna = reader.ReadBoolean();
 		}
 	}
 }

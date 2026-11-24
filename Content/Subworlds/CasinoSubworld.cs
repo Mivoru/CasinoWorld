@@ -56,6 +56,7 @@ namespace CasinoWorld.Content.Subworlds
 			SubworldSystem.CopyWorldData(nameof(NPC.downedMoonlord), NPC.downedMoonlord);
 			SubworldSystem.CopyWorldData("CasinoWorldKey", Main.ActiveWorldFileData.UniqueId.ToString());
 			SubworldSystem.CopyWorldData("DownedPitBoss", global::CasinoWorld.Content.NPCs.Boss.CasinoDowned.DownedPitBoss);
+			SubworldSystem.CopyWorldData("DownedFortuna", global::CasinoWorld.Content.NPCs.Boss.CasinoDowned.DownedFortuna);
 		}
 
 		public override void CopySubworldData() => SubworldSystem.CopyWorldData("DownedPitBoss", global::CasinoWorld.Content.NPCs.Boss.CasinoDowned.DownedPitBoss);
@@ -75,6 +76,7 @@ namespace CasinoWorld.Content.Subworlds
 			NPC.downedMoonlord = SubworldSystem.ReadCopiedWorldData<bool>(nameof(NPC.downedMoonlord));
 			Common.Games.CasinoRecords.WorldKey = SubworldSystem.ReadCopiedWorldData<string>("CasinoWorldKey");
 			global::CasinoWorld.Content.NPCs.Boss.CasinoDowned.DownedPitBoss = SubworldSystem.ReadCopiedWorldData<bool>("DownedPitBoss");
+			global::CasinoWorld.Content.NPCs.Boss.CasinoDowned.DownedFortuna = SubworldSystem.ReadCopiedWorldData<bool>("DownedFortuna");
 		}
 
 		public override void OnLoad()

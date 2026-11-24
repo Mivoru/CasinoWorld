@@ -87,6 +87,21 @@ namespace CasinoWorld.Common
 		public static readonly SoundStyle HuntHorn = S("HuntHorn", 0.8f, 0f, 2);
 		public static readonly SoundStyle DiamondBeam = S("DiamondBeam", 0.8f, 0f, 2);
 		public static readonly SoundStyle ElevatorRide = S("ElevatorRide", 0.7f, 0f, 1);
+		public static readonly SoundStyle FortunaVoice = S("FortunaVoice", 1f, 0f, 1);
+		public static readonly SoundStyle FortunaSpin = S("FortunaSpin", 0.9f, 0f, 2);
+		public static readonly SoundStyle FortunaBeam = S("FortunaBeam", 0.9f, 0f, 2);
+		public static readonly SoundStyle FortunaCharge = S("FortunaCharge", 0.9f, 0f, 2);
+		public static readonly SoundStyle FortunaReel = S("FortunaReel", 0.9f, 0f, 4);
+		public static readonly SoundStyle FortunaHole = S("FortunaHole", 1f, 0f, 1);
+		public static readonly SoundStyle FortunaBall = S("FortunaBall", 0.7f, 0.1f, 3);
+		public static readonly SoundStyle FortunaTear = S("FortunaTear", 1f, 0f, 1);
+		public static readonly SoundStyle FortunaDeath = S("FortunaDeath", 1f, 0f, 1);
+		public static readonly SoundStyle OphanimSpin = S("OphanimSpin", 0.6f, 0.1f, 3);
+		public static readonly SoundStyle Achievement = S("Achievement", 0.8f, 0f, 1);
+		public static readonly SoundStyle VipUp = S("VipUp", 0.9f, 0f, 1);
+		public static readonly SoundStyle PokerCheck = S("PokerCheck", 0.8f, 0.1f, 3);
+		public static readonly SoundStyle PokerFold = S("PokerFold", 0.7f, 0.1f, 3);
+		public static readonly SoundStyle DuelToss = S("DuelToss", 0.9f, 0f, 2);
 		public static readonly SoundStyle HookChain = S("HookChain", 0.6f, 0.15f, 3);
 	}
 
@@ -102,6 +117,9 @@ namespace CasinoWorld.Common
 		public static int BonusAngler => MusicLoader.GetMusicSlot(ModContent.GetInstance<CasinoWorld>(), "Assets/Music/BonusAngler");
 		public static int BonusBoreal => MusicLoader.GetMusicSlot(ModContent.GetInstance<CasinoWorld>(), "Assets/Music/BonusBoreal");
 		public static int BonusBlood => MusicLoader.GetMusicSlot(ModContent.GetInstance<CasinoWorld>(), "Assets/Music/BonusBlood");
+		public static int Fortuna => MusicLoader.GetMusicSlot(ModContent.GetInstance<CasinoWorld>(), "Assets/Music/Fortuna");
+		public static int FortunaTwo => MusicLoader.GetMusicSlot(ModContent.GetInstance<CasinoWorld>(), "Assets/Music/FortunaTwo");
+		public static int Penthouse => MusicLoader.GetMusicSlot(ModContent.GetInstance<CasinoWorld>(), "Assets/Music/Penthouse");
 		public static int PitBossTwo => MusicLoader.GetMusicSlot(ModContent.GetInstance<CasinoWorld>(), "Assets/Music/PitBossTwo");
 	}
 }
