@@ -31,7 +31,7 @@ namespace CasinoWorld.Content.NPCs.Boss
 	{
 		public enum State { Intro, Draw, RingToss, FateDice, ThreeReels, Gaze, CardCurtain, PotOfGold, RunawayBall, LastBet, HouseWins, Stunned, Awaken, Leave, Dying }
 
-		public const int BaseLife = 180000;
+		public const int BaseLife = 320000;
 		// Damage taken in normal mode before defense (see Damage).
 		private const int ChipDamage = 96, DieDamage = 120, BeamDamage = 130, ReelDamage = 125, BallDamage = 125;
 
@@ -427,7 +427,10 @@ namespace CasinoWorld.Content.NPCs.Boss
 
 		private void LastBet()
 		{
-			NPC.velocity *= 0.9f;
+			if (NPC.Distance(Target.Center) > 520f)
+				HoverBeside(200f, -240f);
+			else
+				NPC.velocity *= 0.9f;
 			if (At(1)) {
 				betStartLife = NPC.life;
 				betMade = true;
@@ -831,6 +834,9 @@ namespace CasinoWorld.Content.NPCs.Boss
 		{
 			Texture2D icons = Tex(ref iconTex, "Icons");
 			Vector2 at = center + new Vector2(0, CurrentState == State.LastBet ? -272 : -196);
+			// Always on screen, even when she hovers high above the player.
+			at.Y = Math.Max(at.Y, 60f);
+			at.X = MathHelper.Clamp(at.X, 130f, Main.screenWidth - 130f);
 			int icon = -1;
 			float alpha = fade;
 			if (CurrentState == State.Draw && Timer > 4) {

@@ -44,7 +44,7 @@ namespace CasinoWorld.Common.Players
 		public override void OnEnterWorld()
 		{
 			restoreTimer = RestoreDelay;
-			if (CasinoTravel.InCasino)
+			if (CasinoTravel.InCasino || CasinoTravel.InPenthouse)
 				revealTimer = 180;
 
 			if (!receivedBlueprint && !CasinoTravel.InCasino) {

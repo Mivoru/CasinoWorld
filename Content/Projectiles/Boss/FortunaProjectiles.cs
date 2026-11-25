@@ -331,17 +331,17 @@ namespace CasinoWorld.Content.Projectiles.Boss
 			float t = Main.GlobalTimeWrappedHourly;
 			if (Age <= Warn) {
 				float k = Age / Warn;
-				Color c = Color.Lerp(Fortuna.GoldLight, Fortuna.FateRed, k) * (0.25f + 0.5f * k);
-				for (float d = 70f; d < 1500f; d += 36f)
-					PixelFx.Line(sb, from + dir * d, from + dir * (d + 18f), c, 4f);
+				Color c = Color.Lerp(Fortuna.GoldLight, Fortuna.FateRed, k) * (0.45f + 0.55f * k);
+				for (float d = 70f; d < 1700f; d += 36f)
+					PixelFx.Line(sb, from + dir * d, from + dir * (d + 20f), c, 6f);
 				// Arrows to the side it will turn.
 				Vector2 side = dir.RotatedBy(MathHelper.PiOver2 * Math.Sign(Projectile.ai[2]));
-				for (float d = 150f; d < 1200f; d += 150f) {
-					float march = (t * 90f) % 46f;
+				for (float d = 150f; d < 1200f; d += 120f) {
+					float march = (t * 110f) % 60f;
 					Vector2 tip = from + dir * d + side * (14f + march);
-					Color arrow = Fortuna.GoldLight * (0.9f * (1f - march / 46f));
-					PixelFx.Line(sb, tip, tip - side * 12f + dir * 10f, arrow, 4f);
-					PixelFx.Line(sb, tip, tip - side * 12f - dir * 10f, arrow, 4f);
+					Color arrow = new Color(255, 245, 190) * (1f - 0.7f * march / 60f);
+					PixelFx.Line(sb, tip, tip - side * 18f + dir * 16f, arrow, 6f);
+					PixelFx.Line(sb, tip, tip - side * 18f - dir * 16f, arrow, 6f);
 				}
 				return false;
 			}

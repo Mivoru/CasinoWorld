@@ -279,7 +279,7 @@ namespace CasinoWorld.Content.Subworlds
 				Vanilla(hardmode ? videoSlots[k % 4] : k is 4 or 5 ? ModContent.TileType<VideoSlotAngler>() : ModContent.TileType<SlotMachine>(), 70 + k * 3, s);
 			Pilaster(101, s);
 
-			Vanilla(ModContent.TileType<BlackjackTable>(), 104, s);
+			Vanilla(ModContent.TileType<PokerTableTile>(), 104, s);
 			Vanilla(ModContent.TileType<RouletteTable>(), 113, s);
 			OnWall<WallSconce>(111, s, 9);
 			if (modern)
@@ -342,7 +342,7 @@ namespace CasinoWorld.Content.Subworlds
 			Pilaster(85, s);
 
 			Vanilla(ModContent.TileType<RouletteTable>(), 88, s);
-			Vanilla(ModContent.TileType<BlackjackTable>(), 97, s);
+			Vanilla(ModContent.TileType<CoinDuelTable>(), 97, s);
 			for (int k = 0; k < 3; k++)
 				Vanilla(hardmode ? (k == 1 ? ModContent.TileType<VideoSlotBloodMoon>() : ModContent.TileType<VideoSlotLunarGods>()) : ModContent.TileType<SlotMachine>(), 106 + k * 3, s);
 			OnWall<WallSconce>(116, s, 9);
@@ -380,20 +380,21 @@ namespace CasinoWorld.Content.Subworlds
 		{
 			// Ground floor
 			At<PrizeCashier>(21, Floors[0], -1);
+			At<Concierge>(143, Floors[0], -1);
 			At<RouletteCroupier>(32, Floors[0], -1);
 			At<BlackjackDealer>(43, Floors[0], -1);
 			At<RouletteCroupier>(85, Floors[0], -1);
 			At<BlackjackDealer>(94, Floors[0], -1);
 			// Bar floor
 			At<Bartender>(16, Floors[1], 1);
-			At<BlackjackDealer>(111, Floors[1], -1);
+			At<PokerDealer>(111, Floors[1], -1);
 			At<RouletteCroupier>(120, Floors[1], -1);
 			// Cabaret
 			At<Showgirl>(24, Floors[2] - 2, 1);
 			// The pole is the exact centre of the 8-tile stage.
 			NPC.NewNPC(new EntitySource_SpawnNPC(), X(53) * 16, (Floors[2] - 1) * 16, ModContent.NPCType<PoleDancer>(), ai0: 1);
 			At<RouletteCroupier>(95, Floors[2], -1);
-			At<BlackjackDealer>(104, Floors[2], -1);
+			At<PokerDealer>(104, Floors[2], -1);
 			// Easter egg: one visit in three, Togi streams from the slot row upstairs (surface casino).
 			if (!hardmode && Main.rand.NextBool(3))
 				At<Togi>(84, Floors[1], -1);

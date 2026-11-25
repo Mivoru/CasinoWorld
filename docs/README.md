@@ -1,6 +1,6 @@
 # Casino World documentation
 
-Reference for version 0.1, taken from the source code. It is written so each page can become a wiki page.
+Reference for version 0.5, taken from the source code. It is written so each page can become a wiki page.
 
 ## Playing
 - [Getting started](getting-started.md)
@@ -8,6 +8,7 @@ Reference for version 0.1, taken from the source code. It is written so each pag
 - [Games](games.md): roulette, blackjack, Sic Bo, slots, scratch cards, Fortune Wheel, daily challenges
 - [Video slots](video-slots.md)
 - [Crates](crates.md)
+- [The club](club.md): Ledger, achievements, VIP levels, penthouse
 
 ## The Gambler class
 - [How the class works](gambler-class.md): Jackpot, Bust, Luck, the Pot, All In, reforges

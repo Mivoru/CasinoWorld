@@ -17,6 +17,14 @@ namespace CasinoWorld.Common.Net
 		ReportWin,           // client -> casino server: game, net win
 		RecordsSync,         // casino server -> clients: leaderboard
 		RecordsRequest,      // client -> casino server: send me the leaderboard
+		VipLevel,            // both ways: player, VIP level
+		PokerRequest,        // client -> casino server: request, amount
+		PokerView,           // casino server -> client: the table as that player sees it
+		PokerRefused,        // casino server -> client: no seat, buy-in back
+		DuelRequest,         // client -> casino server: request, rival, stake
+		DuelOffers,          // casino server -> clients: open coin duels
+		DuelResult,          // casino server -> clients: who tossed, how it fell
+		DuelRefused,         // casino server -> client: offer gone (or withdrawn), stake back
 	}
 
 	/// <summary>Writes and dispatches the mod's network packets.</summary>
@@ -55,6 +63,38 @@ namespace CasinoWorld.Common.Net
 
 				case CasinoMessage.RecordsSync when Main.netMode == NetmodeID.MultiplayerClient:
 					Games.CasinoRecords.HandleSync(reader);
+					break;
+
+				case CasinoMessage.VipLevel:
+					Club.VipPlayer.HandleSync(reader, sender);
+					break;
+
+				case CasinoMessage.PokerRequest when Main.netMode == NetmodeID.Server:
+					ModContent.GetInstance<Games.Poker.PokerSystem>().HandleRequest(reader, sender);
+					break;
+
+				case CasinoMessage.PokerView when Main.netMode == NetmodeID.MultiplayerClient:
+					ModContent.GetInstance<Games.Poker.PokerSystem>().Receive(Games.Poker.PokerView.Read(reader));
+					break;
+
+				case CasinoMessage.PokerRefused when Main.netMode == NetmodeID.MultiplayerClient:
+					ModContent.GetInstance<Games.Poker.PokerSystem>().Refused(reader.ReadInt64());
+					break;
+
+				case CasinoMessage.DuelRequest when Main.netMode == NetmodeID.Server:
+					ModContent.GetInstance<Games.CoinDuelSystem>().HandleRequest(reader, sender);
+					break;
+
+				case CasinoMessage.DuelOffers when Main.netMode == NetmodeID.MultiplayerClient:
+					ModContent.GetInstance<Games.CoinDuelSystem>().ReceiveOffers(reader);
+					break;
+
+				case CasinoMessage.DuelResult when Main.netMode == NetmodeID.MultiplayerClient:
+					ModContent.GetInstance<Games.CoinDuelSystem>().ReceiveResult(reader);
+					break;
+
+				case CasinoMessage.DuelRefused when Main.netMode == NetmodeID.MultiplayerClient:
+					ModContent.GetInstance<Games.CoinDuelSystem>().Refused(reader.ReadBoolean());
 					break;
 
 				default:

@@ -15,7 +15,7 @@ namespace CasinoWorld.Common.Games
 		public DateTime Time => new(UtcTicks, DateTimeKind.Utc);
 	}
 
-	public enum CasinoGame : byte { Roulette, Blackjack, Slots, Arcade }
+	public enum CasinoGame : byte { Roulette, Blackjack, Slots, Arcade, Poker, Duel }
 
 	/// <summary>
 	/// The casino's leaderboard of biggest wins (net profit of one round): today, the last 7 days and
@@ -70,12 +70,16 @@ namespace CasinoWorld.Common.Games
 
 		// ------------------------------------------------------------------ reporting
 
-		/// <summary>Called by the games on the client that played the round. Only real wins are recorded.</summary>
+		/// <summary>Called by the games on the client that played the round. Only real wins reach the leaderboard.</summary>
 		public static void Report(Player player, CasinoGame game, long netWin)
 		{
-			if (netWin <= 0 || player.whoAmI != Main.myPlayer)
+			if (player.whoAmI != Main.myPlayer)
 				return;
-			DailyChallenges.Count(player, game switch {
+			Club.CasinoStats.Local?.Settled(game, netWin);
+			if (netWin <= 0)
+				return;
+			if (game is not (CasinoGame.Poker or CasinoGame.Duel))
+				DailyChallenges.Count(player, game switch {
 				CasinoGame.Blackjack => Challenge.BlackjackWins,
 				CasinoGame.Roulette => Challenge.RouletteWins,
 				_ => Challenge.SlotWins,
@@ -97,7 +101,7 @@ namespace CasinoWorld.Common.Games
 			byte game = reader.ReadByte();
 			long amount = reader.ReadInt64();
 			// Basic sanity limit: no single round pays more than 1000 platinum.
-			if (amount <= 0 || amount > 1000L * Coins.Platinum || game > (byte)CasinoGame.Arcade)
+			if (amount <= 0 || amount > 1000L * Coins.Platinum || game > (byte)CasinoGame.Duel)
 				return;
 			Add(new CasinoWin(Main.player[sender].name, amount, game, DateTime.UtcNow.Ticks));
 		}

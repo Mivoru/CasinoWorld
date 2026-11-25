@@ -56,3 +56,40 @@ Phases: 1 above 55% life, 2 from 55% to 25%, 3 below 25% (25% faster, bets twice
 **Drops (Normal):** one of Croupier's Rake, Bank Breaker or Vault Buster; 150-220 tokens; 10-14 Vault Bullion; 2-3 High Roller Crates; mask (1/7).
 **Treasure bag (Expert):** the same weapons, 200-280 tokens, 13-18 Vault Bullion, 3-4 High Roller Crates, Insider Info, mask (1/7).
 **Always:** trophy (1/10). **Master:** relic.
+
+## Fortuna, the Last Wheel
+A porcelain goddess inside three turning casino rings. Tier: after the Moon Lord (Boss Checklist 19). Fought anywhere in the main world.
+
+**Summon:** <img src="../Content/Items/Fortuna/FatefulCoin.png" alt=""> Fateful Coin (5 luminite bars, 5 of each fragment, 100 tokens, Ancient Manipulator).
+
+| | Normal | Expert | Master |
+|---|---|---|---|
+| Life (one player) | 320,000 | 448,000 | 571,200 |
+| Contact damage | 110 | 165 | 247 |
+| Defense | 50 | 50 | 50 |
+
+| Hit before defense | Normal | Expert | Master |
+|---|---|---|---|
+| Chips, pockets, cards | 96 | 148 | 211 |
+| Star die, pot | 120 | 186 | 264 |
+| Reels, ball | 125 | 193 | 275 |
+| Beam | 130 | 201 | 286 |
+
+The wheel over her crown stops on an icon before every attack. Attacks come from a shuffled deck, never the same one twice in a row.
+
+| Attack | Phase | How to survive |
+|---|---|---|
+| Ring Toss | 1+ | The pockets fly out in turning rings and come back. Slip between them both ways |
+| Fate Dice | 1+ | Star dice fall on marked spots. The number on the die is how many pairs of chips fly out |
+| Three Reels | 1+ | Columns stop one kind after another. Clover is safe, everything else erupts |
+| Gaze | 1+ | A beam sweeps the way the arrows point; two beams in phase 2, three in phase 3 |
+| Card Curtain | 1+ | Walls of cards from both sides with a gap that moves |
+| Pot of Gold | 2+ | Pulls you in and swallows chips, then pays out in three rings |
+| Runaway Ball | 2+ | A steel ball bounces in a neon frame; its path is drawn ahead |
+| Last Bet | once, at 8% | She is helpless for 5 s. The odds of a jackpot start at 10% and rise 12 points per 1% of her life you take, up to 90%. Jackpot: stunned for about 3 s, +50% damage taken. Otherwise 6 s of fire from every ring |
+
+Phases: 1 above 66% life, 2 from 66% to 33%, 3 below 33% (blindfold torn, 20% faster).
+
+**Drops (Normal):** one of Ophanim, Dice of Destiny or Eye of Fortune; 8-12 Fate Shards; 300-400 tokens; 4-6 High Roller Crates; mask (1/7).
+**Treasure bag (Expert):** the same weapons, 10-15 Fate Shards, 400-500 tokens, 5-7 High Roller Crates, Fortuna's Blindfold, mask (1/7).
+**Always:** trophy (1/10). **Master:** relic. Each weapon can also be made from 18 Fate Shards at the Upgrade Machine.

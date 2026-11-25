@@ -33,6 +33,12 @@ namespace CasinoWorld.Common.Systems
 
 		public override void ModifyLight(int i, int j, int type, ref float r, ref float g, ref float b)
 		{
+			if (type != 0 && CasinoTravel.InPenthouse) {
+				r = System.Math.Max(r, 0.74f);
+				g = System.Math.Max(g, 0.66f);
+				b = System.Math.Max(b, 0.7f);
+				return;
+			}
 			if (type == 0 || SubworldLibrary.SubworldSystem.Current is not Content.Subworlds.CasinoSubworld casino)
 				return;
 			Microsoft.Xna.Framework.Vector3 ambient = casino.Ambient;

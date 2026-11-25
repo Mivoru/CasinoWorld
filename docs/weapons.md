@@ -84,3 +84,15 @@ Model values with typical set Luck and no reforges, upgrades or All In.
 | Pit Boss | 171-182 | |
 | After Plantera | 195-205 | 193 |
 | After the Moon Lord | about 1200 | 1186 |
+| Fortuna | about 1,400 | |
+
+Measured in game on one large target (Celestial set, 30 s): Stardust Deck 2,330, Infinity Slot 3,279, Ophanim and Eye of Fortune about 3,300. The set bonus and damage bonus, which the model leaves out, explain the difference.
+
+## Fortuna's weapons
+All drop from Fortuna or are made from 18 Fate Shards at the Upgrade Machine.
+
+| | Weapon | Damage | Use time | Effect |
+|---|---|---|---|---|
+| <img src="../Content/Items/Fortuna/Ophanim.png" alt=""> | Ophanim | 132 | held | A wheel stays at the cursor, saws every 8 ticks and throws a homing chip three times a second (50%) |
+| <img src="../Content/Items/Fortuna/DiceOfDestiny.png" alt=""> | Dice of Destiny | 190 | 22 | Two star dice that burst (65%); doubles burst wider (110%), a total of seven releases homing chips |
+| <img src="../Content/Items/Fortuna/EyeOfFortune.png" alt=""> | Eye of Fortune | 132 | 9 | Instant piercing ray; every eighth shot is a triple |

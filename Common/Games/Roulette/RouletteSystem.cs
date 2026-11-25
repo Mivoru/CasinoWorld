@@ -53,7 +53,7 @@ namespace CasinoWorld.Common.Games.Roulette
 		public void Spin()
 		{
 			CasinoSubworld casino = Casino;
-			if (casino == null || !Round.TrySpin(Main.LocalPlayer, casino.MaxBet))
+			if (casino == null || !Round.TrySpin(Main.LocalPlayer, Club.VipClub.MaxBet))
 				return;
 
 			if (Main.netMode == NetmodeID.SinglePlayer)

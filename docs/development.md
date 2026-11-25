@@ -7,7 +7,8 @@
 | Folder | Contents |
 |---|---|
 | `Common/Gambler` | Damage class, Jackpot / Bust roll, Pot, All In, meter |
-| `Common/Games` | Roulette, blackjack, slots, video slots, Sic Bo, scratch cards, challenges, leaderboard |
+| `Common/Club` | Statistics, achievements, Ledger, VIP levels |
+| `Common/Games` | Roulette, poker, coin duel, blackjack, slots, video slots, Sic Bo, scratch cards, challenges, leaderboard |
 | `Common/Crates` | Crate loot, opening, world generation, fishing |
 | `Common/Upgrades` | Upgrade Machine and armour evolution |
 | `Common/Systems` | Travel, world entrances, config, High Stakes Night, Boss Checklist |

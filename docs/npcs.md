@@ -34,3 +34,9 @@ Stand at their tables. "How to play" explains the rules.
 - **Guests** (12 per casino) stroll between the tables, each with a generated look.
 - **Togi**, a gambling streamer, plays the upstairs slots of the surface casino on one visit in three.
 - **Casino visitors** step out of the surface casino for some air.
+
+## Concierge
+Stands by the right wall of the ground floor. Sells VIP levels, the Penthouse Key and the casino's furniture. See [The club](club.md).
+
+## Poker Dealer
+Runs the Hold'em table on the bar floor and the Coin Duel table in the cabaret.

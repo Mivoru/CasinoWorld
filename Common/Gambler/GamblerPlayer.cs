@@ -150,10 +150,14 @@ namespace CasinoWorld.Common.Gambler
 				SoundEngine.PlaySound(CasinoSounds.JackpotProc with { Pitch = Math.Min(0.8f, 0.2f * jackpotRow), PitchVariance = 0f }, target.Center);
 				if (jackpotRow >= 3) {
 					jackpotRow = 0;
-					if (Player.whoAmI == Main.myPlayer)
+					if (Player.whoAmI == Main.myPlayer) {
+						Player.GetModPlayer<Club.CasinoStats>().TripleJackpots++;
 						Effects.JackpotMoment.Trigger();
+					}
 				}
 				Games.DailyChallenges.Count(Player, Games.Challenge.Jackpots);
+				if (Player.whoAmI == Main.myPlayer)
+					Player.GetModPlayer<Club.CasinoStats>().JackpotHits++;
 				for (int k = 0; k < 10; k++)
 					Dust.NewDust(target.position, target.width, target.height, DustID.GoldCoin, Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-5f, -1f));
 				Effects.CasinoFx.Ring(target.Center, new Color(255, 220, 90), 14, 4.5f, 1.3f);

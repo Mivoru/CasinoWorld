@@ -145,6 +145,7 @@ namespace CasinoWorld.Content.NPCs
 		{
 			new NPCShop(Type)
 				.Add(new Item(ModContent.ItemType<Items.GamblersHandbook>()) { shopCustomPrice = 10 * 100 })
+				.Add(new Item(ModContent.ItemType<Items.GamblersLedger>()) { shopCustomPrice = 10 * 100 })
 				.Add(new Item(ModContent.ItemType<Items.ScratchCard>()) { shopCustomPrice = 50 * 100 })
 				.Add(new Item(ModContent.ItemType<Items.PlatinumScratchCard>()) { shopCustomPrice = 5 * 10000 }, Condition.Hardmode)
 				.Add(Prize(ModContent.ItemType<Items.Crates.LuckyCrate>(), 75))
@@ -165,6 +166,92 @@ namespace CasinoWorld.Content.NPCs
 				.Add(Prize(ItemID.GoldChandelier, 20))
 				.Add(Prize(ItemID.DiscoBall, 30))
 				.Register();
+		}
+	}
+
+	/// <summary>Runs the Hold'em and Coin Duel tables.</summary>
+	public class PokerDealer : CasinoStaff
+	{
+		private static readonly PersonLook look = new() {
+			Hair = 26, SkinVariant = 1, Skin = new(225, 175, 140), HairColor = new(120, 70, 35),
+			Shirt = new(120, 24, 48), UnderShirt = new(20, 18, 24), Pants = new(25, 25, 30), Shoes = new(15, 15, 15), HeadVanity = ItemID.GreenCap,
+		};
+		protected override PersonLook Look => look;
+
+		protected override int BodyPose(int tick)
+		{
+			int cycle = tick % 420;
+			if (cycle < 60)
+				return (cycle / 7) % 2 == 0 ? PersonDoll.ArmForward : PersonDoll.ArmDown;
+			return cycle is > 200 and < 220 ? PersonDoll.ArmUpForward : -1;
+		}
+
+		protected override string CustomTexture => "CasinoWorld/Content/NPCs/People/BlackjackDealer";
+		protected override int VanillaLook => NPCID.TaxCollector;
+		protected override int ChatLines => 5;
+		protected override string HelpKey => "Mods.CasinoWorld.NPCs.PokerDealer.Help";
+	}
+
+	/// <summary>Sells VIP levels, the penthouse and the casino's own furniture.</summary>
+	public class Concierge : CasinoStaff
+	{
+		// Concierge: silver hair, long midnight coat with gold, white gloves.
+		private static readonly PersonLook look = new() {
+			Hair = 18, SkinVariant = 3, Skin = new(245, 205, 175), HairColor = new(210, 212, 220),
+			Shirt = new(24, 30, 70), UnderShirt = new(235, 195, 90), Pants = new(18, 20, 40), Shoes = new(15, 15, 15),
+		};
+		protected override PersonLook Look => look;
+
+		protected override int BodyPose(int tick)
+		{
+			int cycle = tick % 600;
+			return cycle < 30 ? PersonDoll.ArmForward : cycle is > 300 and < 330 ? PersonDoll.ArmUpForward : -1;
+		}
+
+		protected override string CustomTexture => "CasinoWorld/Content/NPCs/People/PrizeCashier";
+		protected override int VanillaLook => NPCID.Steampunker;
+		protected override int ChatLines => 5;
+
+		private static readonly string[] shops = { "Furniture", "Walls", "Materials" };
+		private static int nextShop;
+
+		public override void SetChatButtons(ref string button, ref string button2)
+		{
+			button = Language.GetTextValue("Mods.CasinoWorld.NPCs.Concierge.Shop" + shops[nextShop]);
+			button2 = Language.GetTextValue("Mods.CasinoWorld.NPCs.Concierge.Club");
+		}
+
+		public override void OnChatButtonClicked(bool firstButton, ref string shopName)
+		{
+			if (firstButton) {
+				shopName = shops[nextShop];
+				nextShop = (nextShop + 1) % shops.Length;   // the next visit to the counter shows the next catalogue
+				return;
+			}
+			Main.npcChatText = "";
+			Main.LocalPlayer.SetTalkNPC(-1);
+			ModContent.GetInstance<Common.Club.LedgerSystem>().Open(Common.Club.LedgerTab.Club, true);
+		}
+
+		public override void AddShops()
+		{
+			var penthouse = new Condition("Mods.CasinoWorld.UI.Vip.PenthouseCondition", () => Common.Club.VipClub.LocalLevel >= Common.Club.VipClub.PenthouseLevel);
+			var member = new Condition("Mods.CasinoWorld.UI.Vip.MemberCondition", () => Common.Club.VipClub.LocalLevel >= 1);
+			var furniture = new NPCShop(Type, "Furniture");
+			furniture.Add(new Item(ModContent.ItemType<Items.PenthouseKey>()) { shopCustomPrice = (int)Common.Club.VipClub.PenthousePrice }, penthouse);
+			var walls = new NPCShop(Type, "Walls");
+			var materials = new NPCShop(Type, "Materials");
+			foreach (Items.Decor.DecorItem decor in Items.Decor.DecorCatalog.All) {
+				NPCShop shop = decor.Kind switch {
+					Items.Decor.DecorKind.Furniture => furniture,
+					Items.Decor.DecorKind.Wall => walls,
+					_ => materials,
+				};
+				shop.Add(new Item(decor.Type) { shopCustomPrice = decor.Price }, member);
+			}
+			furniture.Register();
+			walls.Register();
+			materials.Register();
 		}
 	}
 

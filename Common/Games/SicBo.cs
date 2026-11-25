@@ -59,7 +59,7 @@ namespace CasinoWorld.Common.Games
 		public bool IsOpen => ui?.CurrentState != null;
 		public bool Rolling => Timer >= 0 && Timer < RollTicks;
 		public static long[] Chips => CasinoTableGameSystem.Casino?.ChipValues ?? new long[] { 100, 1000, 10000 };
-		public static long MaxBet => CasinoTableGameSystem.Casino?.MaxBet ?? 100000;
+		public static long MaxBet => Club.VipClub.MaxBet;
 
 		public long Total
 		{

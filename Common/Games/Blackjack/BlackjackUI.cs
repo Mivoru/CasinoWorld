@@ -46,7 +46,7 @@ namespace CasinoWorld.Common.Games.Blackjack
 
 		private static long[] Chips => CasinoTableGameSystem.Casino?.ChipValues ?? new long[] { 100 };
 
-		private static long MaxBet => CasinoTableGameSystem.Casino?.MaxBet ?? 0;
+		private static long MaxBet => Club.VipClub.MaxBet;
 
 		private static string Text(string key, params object[] args) => Language.GetTextValue("Mods.CasinoWorld.UI.Blackjack." + key, args);
 
@@ -286,7 +286,7 @@ namespace CasinoWorld.Common.Games.Blackjack
 		}
 
 		/// <summary>Draws one card from the atlas (or its back), squashed horizontally for the flip and tilted while flying.</summary>
-		private static void DrawCard(SpriteBatch sb, Vector2 pos, int card, bool showBack, float scaleX = 1f, float tilt = 0f)
+		internal static void DrawCard(SpriteBatch sb, Vector2 pos, int card, bool showBack, float scaleX = 1f, float tilt = 0f)
 		{
 			var center = pos + new Vector2(CardW / 2f, CardH / 2f);
 			CasinoDraw.Fill(sb, new Rectangle((int)pos.X + 3, (int)pos.Y + 3, (int)(CardW * scaleX), CardH), Color.Black * 0.3f);

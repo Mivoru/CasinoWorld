@@ -25,6 +25,8 @@ If All In has no key, the meter, weapon tooltips and chat say so.
 ## Multiplayer
 - Casinos run as SubworldLibrary subworlds.
 - Roulette spins are rolled by the server.
+- Hold'em hands are dealt by the server; a client only gets its own cards. Coin duels are tossed by the server.
+- Statistics, achievements and VIP levels belong to each character; the penthouse is shared per world.
 - The leaderboard of biggest wins is shared per world.
 - The High Stakes Night goal grows with the number of players.
 

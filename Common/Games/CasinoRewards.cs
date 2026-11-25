@@ -51,6 +51,10 @@ namespace CasinoWorld.Common.Games
 			DailyChallenges.Count(player, Challenge.Wagers);
 
 			Coins.GiveItem(player, new Item(ModContent.ItemType<LoyaltyToken>(), TokensFor(amount)));
+			if (player.whoAmI == Main.myPlayer && Club.CasinoStats.Local is { } stats) {
+				stats.Wager(amount);
+				stats.TokensEarned += TokensFor(amount);
+			}
 			return true;
 		}
 

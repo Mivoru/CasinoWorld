@@ -203,7 +203,7 @@ namespace CasinoWorld.Content.Items.Fortuna
 		public override void SetDefaults()
 		{
 			base.SetDefaults();
-			Item.damage = 110;
+			Item.damage = 132;
 			Item.knockBack = 2f;
 			Item.useTime = Item.useAnimation = 20;
 			Item.useStyle = ItemUseStyleID.Shoot;
@@ -229,7 +229,7 @@ namespace CasinoWorld.Content.Items.Fortuna
 		public override void SetDefaults()
 		{
 			base.SetDefaults();
-			Item.damage = 185;
+			Item.damage = 190;
 			Item.knockBack = 6f;
 			Item.useTime = Item.useAnimation = 22;
 			Item.shoot = ModContent.ProjectileType<DestinyDie>();
@@ -263,7 +263,7 @@ namespace CasinoWorld.Content.Items.Fortuna
 		public override void SetDefaults()
 		{
 			base.SetDefaults();
-			Item.damage = 120;
+			Item.damage = 132;
 			Item.knockBack = 2f;
 			Item.useTime = Item.useAnimation = 9;
 			Item.useStyle = ItemUseStyleID.Shoot;

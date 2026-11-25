@@ -19,6 +19,8 @@ namespace CasinoWorld.Common.Systems
 		private static int returnWorldId;
 		private static string returnPlayer;   // player file, so another character is not moved there
 
+		public static bool InPenthouse => SubworldSystem.Current is Penthouse;
+
 		public static bool InCasino => SubworldSystem.Current is CasinoSubworld;
 
 		/// <summary>
@@ -63,6 +65,26 @@ namespace CasinoWorld.Common.Systems
 				returnPosition = null;
 		}
 
+		/// <summary>Up to the penthouse; false if the way is closed.</summary>
+		public static bool EnterPenthouse()
+		{
+			if (SubworldSystem.AnyActive())
+				return false;
+			if (!CanEnter(out string reason)) {
+				Main.NewText(Language.GetTextValue(reason), new Color(255, 120, 120));
+				Terraria.Audio.SoundEngine.PlaySound(SoundID.DoorClosed);
+				return false;
+			}
+			returnPosition = Main.LocalPlayer.position;
+			returnWorldId = Main.worldID;
+			returnPlayer = Main.ActivePlayerFileData?.Path;
+			Terraria.Audio.SoundEngine.PlaySound(CasinoSounds.ElevatorRide);
+			if (SubworldSystem.Enter<Penthouse>())
+				return true;
+			returnPosition = null;
+			return false;
+		}
+
 		public static void Exit()
 		{
 			if (InCasino)
@@ -74,6 +96,8 @@ namespace CasinoWorld.Common.Systems
 		{
 			if (InCasino)
 				Exit();
+			else if (InPenthouse)
+				SubworldSystem.Exit();
 			else
 				Enter<SurfaceCasino>();
 		}

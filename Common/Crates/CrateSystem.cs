@@ -226,9 +226,9 @@ namespace CasinoWorld.Common.Crates
 				// The crate rattles harder as the reel slows down; its colour does not give the prize away.
 				float p = Math.Min(1f, opening.Timer / (float)CrateOpening.SpinTicks);
 				var crateAt = new Vector2(a.Center.X, a.Y + 236) + new Vector2((float)Math.Sin(opening.Timer * 0.9f), -Math.Abs((float)Math.Sin(opening.Timer * 0.45f))) * (1f + p * 3f);
-				DrawGlow(sb, new Vector2(a.Center.X, a.Y + 236), KindColor(opening.Kind), 0.8f + p * 0.4f);
+				DrawGlow(sb, new Vector2(a.Center.X, a.Y + 236), KindColor(opening.Kind), 0.7f + p * 0.3f);
 				DrawCrate(sb, opening.Kind, false, crateAt);
-				Utils.DrawBorderString(sb, Text("Opening"), new Vector2(a.Center.X, a.Y + 276), Color.White * 0.8f, 0.85f, 0.5f);
+				Utils.DrawBorderString(sb, Text("Opening"), new Vector2(a.Center.X, a.Y + 278), Color.White * 0.8f, 0.85f, 0.5f);
 				DrawOdds(sb, new Vector2(a.X + 20, a.Bottom - 38), opening.Kind);
 			}
 		}
@@ -261,7 +261,7 @@ namespace CasinoWorld.Common.Crates
 		private static void DrawGlow(SpriteBatch sb, Vector2 center, Color color, float scale)
 		{
 			Texture2D tex = Glow;
-			sb.Draw(tex, center, null, new Color(color.R, color.G, color.B, 0) * 0.7f, 0f, tex.Size() / 2f, scale, SpriteEffects.None, 0f);
+			sb.Draw(tex, center, null, new Color(color.R, color.G, color.B, 0) * 0.3f, 0f, tex.Size() / 2f, scale, SpriteEffects.None, 0f);
 		}
 
 		private static void DrawCrate(SpriteBatch sb, CrateKind kind, bool open, Vector2 center)

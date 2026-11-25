@@ -110,6 +110,10 @@ namespace CasinoWorld.Common.Games
 		{
 			Coins.GiveItem(Player, new Item(ModContent.ItemType<LoyaltyToken>(), Rewards[(int)kind]));
 			Main.NewText(Language.GetTextValue("Mods.CasinoWorld.Challenges.Done", Language.GetTextValue("Mods.CasinoWorld.Challenges." + kind, Targets[(int)kind]), Rewards[(int)kind]), new Color(255, 215, 90));
+			if (Club.CasinoStats.Local is { } stats) {
+				stats.Challenges++;
+				stats.TokensEarned += Rewards[(int)kind];
+			}
 			SoundEngine.PlaySound(CasinoSounds.SmallWin);
 			bool all = true;
 			for (int k = 0; k < 3; k++)

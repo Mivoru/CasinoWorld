@@ -4,7 +4,9 @@ Walk into a working casino, risk your fortune, and become the Gambler: a new cla
 [h2]Two casinos to explore[/h2]
 [list]
 [*]Build the casino on the surface; find the High Rollers casino deep underground in hardmode
-[*]Roulette, blackjack, dice, slots, scratch cards and four video slots with their own bonus games
+[*]Roulette, blackjack, poker, dice, slots, scratch cards and four video slots with their own bonus games
+[*]Texas Hold'em and coin duels with other players, or against the regulars
+[*]VIP club, thirty achievements, and a penthouse to furnish
 [*]Daily challenges, prize crates, a free daily spin of the Fortune Wheel
 [/list]
 
@@ -20,6 +22,7 @@ Walk into a working casino, risk your fortune, and become the Gambler: a new cla
 [list]
 [*]The Wild Card: a jester with a shell game, dice tricks and an all-in finale
 [*]The Pit Boss: red or black? Pick your column before the hall erupts
+[*]Fortuna, the Last Wheel: the final table after the Moon Lord. Her wheel shows every attack before it comes
 [*]High Stakes Night: the card army raids your world
 [/list]
 

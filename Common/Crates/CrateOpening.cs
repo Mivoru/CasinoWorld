@@ -94,6 +94,7 @@ namespace CasinoWorld.Common.Crates
 			Offset = finalOffset;
 			Done = true;
 			Games.Coins.GiveItem(player, CrateLoot.MakeItem(Prize, PrizeStack));
+			Club.CasinoStats.Local?.Crate(PrizeRarity);
 
 			SoundEngine.PlaySound(PrizeRarity >= CrateRarity.Pink ? CasinoSounds.RareReveal : CasinoSounds.SmallWin);
 			if (PrizeRarity == CrateRarity.Gold) {

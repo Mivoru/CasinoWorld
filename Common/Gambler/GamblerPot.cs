@@ -178,6 +178,10 @@ namespace CasinoWorld.Common.Gambler
 			HandAge = 0;
 			Hand = PokerHand.Draw(BetterHands);
 			Cards = Hand.Deal();
+			var stats = Player.GetModPlayer<Club.CasinoStats>();
+			stats.AllIns++;
+			if (Hand.Key == "RoyalFlush")
+				stats.RoyalHands++;
 			Player.AddBuff(ModContent.BuffType<Content.Buffs.AllIn>(), Hand.Ticks);
 			if (Hand.Weight <= 90)
 				SoundEngine.PlaySound(CasinoSounds.RareReveal);

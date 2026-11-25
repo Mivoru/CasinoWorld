@@ -64,7 +64,7 @@ namespace CasinoWorld.Common.Games.Roulette
 
 		private static long[] Chips => RouletteSystem.Casino?.ChipValues ?? new long[] { 100 };
 
-		private static long MaxBet => RouletteSystem.Casino?.MaxBet ?? 0;
+		private static long MaxBet => Club.VipClub.MaxBet;
 
 		private IEnumerable<Region> Layout()
 		{

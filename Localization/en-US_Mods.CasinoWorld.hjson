@@ -2,6 +2,290 @@
 # Please read https://github.com/tModLoader/tModLoader/wiki/Localization to learn more about localization and these files.
 
 Items: {
+	GamblersLedger: {
+		DisplayName: Gambler's Ledger
+		Tooltip: Your statistics, achievements and club membership
+	}
+
+	PenthouseKey: {
+		DisplayName: Penthouse Key
+		Tooltip:
+			'''
+			Takes you to your penthouse and back
+			The penthouse is saved with the world and yours to furnish
+			'''
+	}
+
+	CrystalChandelierItem: {
+		DisplayName: Crystal Chandelier
+		Tooltip: ""
+	}
+
+	WallSconceItem: {
+		DisplayName: Wall Sconce
+		Tooltip: ""
+	}
+
+	CocktailTableItem: {
+		DisplayName: Cocktail Table
+		Tooltip: ""
+	}
+
+	BarCounterItem: {
+		DisplayName: Bar Counter
+		Tooltip: ""
+	}
+
+	BarShelfItem: {
+		DisplayName: Bar Shelf
+		Tooltip: ""
+	}
+
+	BarStoolItem: {
+		DisplayName: Bar Stool
+		Tooltip: ""
+	}
+
+	VelvetSofaItem: {
+		DisplayName: Velvet Sofa
+		Tooltip: ""
+	}
+
+	GrandPianoItem: {
+		DisplayName: Grand Piano
+		Tooltip: ""
+	}
+
+	MarblePlanterItem: {
+		DisplayName: Marble Planter
+		Tooltip: ""
+	}
+
+	NeonBarItem: {
+		DisplayName: Neon Bar
+		Tooltip: ""
+	}
+
+	NeonCabaretItem: {
+		DisplayName: Neon Cabaret
+		Tooltip: ""
+	}
+
+	UplightItem: {
+		DisplayName: Uplight
+		Tooltip: ""
+	}
+
+	MarblePilasterItem: {
+		DisplayName: Marble Pilaster
+		Tooltip: ""
+	}
+
+	PaintingRoyalFlushItem: {
+		DisplayName: "'Royal Flush'"
+		Tooltip: ""
+	}
+
+	PaintingLuckySevensItem: {
+		DisplayName: "'Lucky Sevens'"
+		Tooltip: ""
+	}
+
+	PaintingWheelItem: {
+		DisplayName: "'The Wheel'"
+		Tooltip: ""
+	}
+
+	PaintingWildCardItem: {
+		DisplayName: "'The Wild Card'"
+		Tooltip: ""
+	}
+
+	PaintingVegasNightItem: {
+		DisplayName: "'Vegas Night'"
+		Tooltip: ""
+	}
+
+	PaintingJackpotItem: {
+		DisplayName: "'Jackpot'"
+		Tooltip: ""
+	}
+
+	PaintingGoldenDiceItem: {
+		DisplayName: "'Golden Dice'"
+		Tooltip: ""
+	}
+
+	LedBarCounterItem: {
+		DisplayName: LED Bar Counter
+		Tooltip: ""
+	}
+
+	ModernBackBarItem: {
+		DisplayName: Modern Back Bar
+		Tooltip: ""
+	}
+
+	LoungeChairItem: {
+		DisplayName: Lounge Chair
+		Tooltip: ""
+	}
+
+	GlassTableItem: {
+		DisplayName: Glass Table
+		Tooltip: ""
+	}
+
+	LightColumnItem: {
+		DisplayName: Light Column
+		Tooltip: ""
+	}
+
+	RingPendantItem: {
+		DisplayName: Ring Pendant
+		Tooltip: ""
+	}
+
+	DiceStatueItem: {
+		DisplayName: Dice Statue
+		Tooltip: ""
+	}
+
+	ChampagneTowerItem: {
+		DisplayName: Champagne Tower
+		Tooltip: ""
+	}
+
+	VelvetRopeItem: {
+		DisplayName: Velvet Rope
+		Tooltip: ""
+	}
+
+	GoldenAceItem: {
+		DisplayName: Golden Ace
+		Tooltip: ""
+	}
+
+	PalmPlanterItem: {
+		DisplayName: Palm Planter
+		Tooltip: ""
+	}
+
+	ChipDisplayItem: {
+		DisplayName: Chip Display
+		Tooltip: ""
+	}
+
+	VelvetDrapeItem: {
+		DisplayName: Velvet Drape
+		Tooltip: ""
+	}
+
+	JackpotTotemItem: {
+		DisplayName: Jackpot Totem
+		Tooltip: ""
+	}
+
+	NeonSuitsItem: {
+		DisplayName: Neon Suits
+		Tooltip: ""
+	}
+
+	NightWindowItem: {
+		DisplayName: Skyline Window
+		Tooltip: ""
+	}
+
+	AquariumItem: {
+		DisplayName: Aquarium
+		Tooltip: ""
+	}
+
+	MonumentOfExcessItem: {
+		DisplayName: Monument Of Excess
+		Tooltip: "'It does nothing. It costs a hundred platinum.'"
+	}
+
+	LobbyMarbleWallItem: {
+		DisplayName: Lobby Marble Wall
+		Tooltip: ""
+	}
+
+	EmeraldDamaskWallItem: {
+		DisplayName: Emerald Damask Wall
+		Tooltip: ""
+	}
+
+	VelvetCurtainWallItem: {
+		DisplayName: Velvet Curtain Wall
+		Tooltip: ""
+	}
+
+	WalnutWainscotWallItem: {
+		DisplayName: Walnut Wainscot Wall
+		Tooltip: ""
+	}
+
+	NoirMarbleWallItem: {
+		DisplayName: Noir Marble Wall
+		Tooltip: ""
+	}
+
+	BlackMarbleWallItem: {
+		DisplayName: Black Marble Wall
+		Tooltip: ""
+	}
+
+	LedPanelWallItem: {
+		DisplayName: LED Panel Wall
+		Tooltip: ""
+	}
+
+	WalnutSlatWallItem: {
+		DisplayName: Walnut Slat Wall
+		Tooltip: ""
+	}
+
+	AmethystDamaskWallItem: {
+		DisplayName: Amethyst Damask Wall
+		Tooltip: ""
+	}
+
+	MidnightVelvetWallItem: {
+		DisplayName: Midnight Velvet Wall
+		Tooltip: ""
+	}
+
+	MarbleCheckerFloorItem: {
+		DisplayName: Marble Checker Floor
+		Tooltip: ""
+	}
+
+	BlackWhiteMarbleFloorItem: {
+		DisplayName: Black White Marble Floor
+		Tooltip: ""
+	}
+
+	EmeraldCarpetItem: {
+		DisplayName: Emerald Carpet
+		Tooltip: ""
+	}
+
+	VelvetCarpetItem: {
+		DisplayName: Velvet Carpet
+		Tooltip: ""
+	}
+
+	NoirCarpetItem: {
+		DisplayName: Noir Carpet
+		Tooltip: ""
+	}
+
+	CofferedCeilingItem: {
+		DisplayName: Coffered Ceiling
+		Tooltip: ""
+	}
+
 	GamblersHandbook: {
 		DisplayName: Gambler's Handbook
 		Tooltip: Everything about the casinos, the Gambler class and the bosses
@@ -709,6 +993,8 @@ Tiles: {
 	LuckyCrateTile.MapEntry: Lucky Crate
 	HighRollerCrateTile.MapEntry: High Roller Crate
 	UndergroundCasinoFacade.MapEntry: High Rollers Casino
+	PokerTableTile.MapEntry: Hold'em Table
+	CoinDuelTable.MapEntry: Coin Duel Table
 	BlackjackTable.MapEntry: Blackjack Table
 	PlinkoCabinet.MapEntry: Plinko
 	DerbyCabinet.MapEntry: Slime Derby
@@ -819,6 +1105,35 @@ Bestiary: {
 }
 
 NPCs: {
+	PokerDealer: {
+		DisplayName: Poker Dealer
+		Help: Two cards for you, five on the board, best five count. Fixed limit: one bet before the turn, two bets after, three raises a street. Sit down with the buy-in and stand up whenever you like, your chips leave with you. At the coin table upstairs you can challenge other players.
+
+		Chat: {
+			0: Blinds are in. Are you?
+			1: The Duchess bluffs twice as often as she thinks I notice.
+			2: No string bets, no table talk, no mimics.
+			3: Lou hasn't folded a pair since the Corruption was a meadow.
+			4: A chip and a chair, friend. That's all it takes.
+		}
+	}
+
+	Concierge: {
+		DisplayName: Concierge
+		ShopFurniture: Furniture
+		ShopWalls: Wall decor
+		ShopMaterials: Materials
+		Club: VIP Club
+
+		Chat: {
+			0: Good evening. We do hope the tables have been kind.
+			1: Members enjoy higher limits, and considerably better sofas.
+			2: The penthouse has the finest view in the world. It is the only one we could build.
+			3: Everything you see here can be yours, for a price. Except the pole.
+			4: A gentleman once asked what the Monument does. I told him: it is very heavy.
+		}
+	}
+
 	HowToPlay: How to play
 	Stolen: Pickpocketed!
 
@@ -1168,6 +1483,163 @@ Subworlds: {
 	Generating: Opening the casino...
 	SurfaceCasino.DisplayName: Casino
 	UndergroundCasino.DisplayName: High Rollers Casino
+	Penthouse.DisplayName: Penthouse
+}
+
+Achievements: {
+	Title: Achievement unlocked
+	Unlocked: Achievement unlocked: {0} (+{1} tokens)
+	Reward: +{0} Loyalty Tokens
+
+	FirstBet: {
+		Name: Beginner's Luck
+		Text: Place your first bet
+	}
+
+	Regular: {
+		Name: Regular
+		Text: Play 100 rounds
+	}
+
+	Fixture: {
+		Name: Part of the Furniture
+		Text: Play 1,000 rounds
+	}
+
+	HighStakes: {
+		Name: High Stakes
+		Text: Bet a platinum coin on one round
+	}
+
+	Wagered10: {
+		Name: Rolling
+		Text: Bet ten platinum in total
+	}
+
+	Wagered100: {
+		Name: The Whale
+		Text: Bet a hundred platinum in total
+	}
+
+	BigWin: {
+		Name: Big Night
+		Text: Win a platinum coin in one round
+	}
+
+	HugeWin: {
+		Name: Call Security
+		Text: Win ten platinum in one round
+	}
+
+	Streak5: {
+		Name: On a Roll
+		Text: Win five rounds in a row
+	}
+
+	Streak10: {
+		Name: Untouchable
+		Text: Win ten rounds in a row
+	}
+
+	Roulette: {
+		Name: Little White Ball
+		Text: Win 25 rounds of roulette or Sic Bo
+	}
+
+	Blackjack: {
+		Name: Card Counter
+		Text: Win 50 rounds of blackjack
+	}
+
+	Slots: {
+		Name: Lever Arm
+		Text: Win 100 slot spins
+	}
+
+	Arcade: {
+		Name: Arcade Rat
+		Text: Win 25 arcade games
+	}
+
+	Poker: {
+		Name: Shark
+		Text: Win 10 pots at the Hold'em table
+	}
+
+	FullHouse: {
+		Name: Full Boat
+		Text: Win a pot with a full house or better
+	}
+
+	Duel: {
+		Name: Heads or Tails
+		Text: Win 10 coin duels
+	}
+
+	Crates10: {
+		Name: Unboxing
+		Text: Open 10 crates
+	}
+
+	Crates100: {
+		Name: Crate Addict
+		Text: Open 100 crates
+	}
+
+	Legendary: {
+		Name: Gold!
+		Text: Find a Legendary in a crate
+	}
+
+	Hits100: {
+		Name: Lucky Hits
+		Text: Land 100 Jackpot hits in combat
+	}
+
+	Hits2500: {
+		Name: Statistically Impossible
+		Text: Land 2,500 Jackpot hits in combat
+	}
+
+	Triple: {
+		Name: Triple Jackpot
+		Text: Land three Jackpots in a row
+	}
+
+	Royal: {
+		Name: Royal Treatment
+		Text: Be dealt a Royal Flush by All In
+	}
+
+	Challenges: {
+		Name: Daily Grind
+		Text: Complete 10 daily challenges
+	}
+
+	WildCard: {
+		Name: Trumped
+		Text: Defeat The Wild Card
+	}
+
+	PitBoss: {
+		Name: House Rules
+		Text: Defeat The Pit Boss
+	}
+
+	Fortuna: {
+		Name: Beat the House
+		Text: Defeat Fortuna, the Last Wheel
+	}
+
+	Penthouse: {
+		Name: Moving Up
+		Text: Visit your penthouse
+	}
+
+	Diamond: {
+		Name: Diamond Hands
+		Text: Become a Diamond member
+	}
 }
 
 Coins: {
@@ -1184,6 +1656,120 @@ Crates: {
 }
 
 UI: {
+	Vip: {
+		Level0: Guest
+		Level1: Silver
+		Level2: Gold
+		Level3: Platinum
+		Level4: Diamond
+		Perks1: A badge over your head, a drink on the house at every visit, and the casino's furniture catalogue.
+		Perks2: Doubled limits at roulette, blackjack, Sic Bo and the coin duel.
+		Perks3: Tripled limits. The Penthouse Key is for sale.
+		Perks4: Five times the limits, and the badge nobody can miss.
+		Locked2: Hardmode only
+		Locked3: After Plantera
+		Locked4: After the Moon Lord
+		Member: Member
+		Top: You are at the very top. There is nothing left to buy.
+		NoMoney: Come back with {0}.
+		Welcome: Welcome, {0}!
+		Bought1: Welcome to the club. Your drink is waiting.
+		Bought2: Gold suits you. The tables will take bigger bets now.
+		Bought3: Platinum! May I show you the penthouse?
+		Bought4: Diamond. We will name a cocktail after you.
+		Join: Join {0} ({1})
+		Where: Levels are sold by the Concierge on the ground floor of the casino.
+		Drink: A drink on the house, as always.
+		PenthouseCondition: Platinum members only
+		MemberCondition: Club members only
+	}
+
+	Ledger: {
+		Title: "{0}'s Ledger"
+		TabStats: Statistics
+		TabAchievements: Achievements
+		TabClub: VIP Club
+		Life: Lifetime
+		ByGame: By game
+		Rounds: Rounds played
+		Wagered: Total wagered
+		Net: Net result
+		BiggestWin: Biggest win
+		BiggestStake: Biggest bet
+		BestStreak: Longest winning streak
+		Crates: Crates opened
+		Legendary: Legendary finds
+		JackpotHits: Jackpot hits
+		Triples: Triple Jackpots
+		AllIns: All Ins
+		Challenges: Daily challenges
+		PokerBest: Best winning poker hand
+		Bosses: Wild Card / Pit Boss / Fortuna
+		RoundsWon: "{0} rounds, {1}% won"
+		Tokens: "{0} tokens"
+		Unlocked: "{0} of {1} unlocked   (page {2} / {3})"
+	}
+
+	Poker: {
+		Hover: Texas Hold'em
+		Title: Texas Hold'em
+		Hint: Fixed limit, four seats. Free seats are played by the regulars.
+		Stakes: Bets {0} before the turn, {1} after. The house takes 5% of the pot.
+		Waiting: Shuffling...
+		Sit: Sit down ({0})
+		Rebuy: Buy more chips ({0})
+		Full: The table is full. Your coins are back.
+		Fold: Fold
+		Check: Check
+		Call: Call {0}
+		Bet: Bet {0}
+		Raise: Raise {0}
+		AllIn: All in
+		Pot: Pot {0}
+		Balance: Balance: {0}
+		YourTurn: Your turn
+		Won: You win {0}!
+		Lost: You lose {0}
+		DidFold: folds
+		DidCheck: checks
+		DidCall: calls
+		DidBet: bets
+		DidRaise: raises
+		DidSmall: small blind
+		DidBig: big blind
+		DidWin: wins
+		Hand0: High card
+		Hand1: Pair
+		Hand2: Two pair
+		Hand3: Three of a kind
+		Hand4: Straight
+		Hand5: Flush
+		Hand6: Full house
+		Hand7: Four of a kind
+		Hand8: Straight flush
+	}
+
+	Duel: {
+		Hover: Coin Duel
+		Title: Coin Duel
+		Rules: Player against player: winner takes both stakes, no fee. Against the house: 1.96 times the stake.
+		Hint: Leave a stake on the table, or take up someone else's.
+		HintSolo: Nobody else is here. The house will toss with you.
+		Offers: Open duels
+		NoOffers: No challengers right now.
+		Accept: Match {0}
+		Offer: Offer {0}
+		Withdraw: Take the stake back
+		TossHouse: Toss against the house ({0})
+		Offered: Your {0} is on the table.
+		Withdrawn: Your stake is back.
+		Gone: That offer is gone. Your stake is back.
+		Versus: You against {0}...
+		House: the house
+		Won: You beat {0} and take {1}!
+		Lost: You lose the toss against {0}.
+	}
+
 	Dice: {
 		Title: Sic Bo
 		Rules: Small 4-10 / Big 11-17 and Odd / Even pay 1:1 (triples lose). A number pays 1:1, 2:1, 3:1 per die. Any triple pays 30:1.
@@ -1229,6 +1815,8 @@ UI: {
 		GameBlackjack: blackjack
 		GameSlots: the slots
 		GameArcade: the arcade
+		GamePoker: poker
+		GameDuel: the coin duel
 	}
 
 	Wheel: {
@@ -1637,4 +2225,6 @@ Handbook: {
 	Page6Text: The Wild Card (after Skeletron): use a Golden Chip at night outside the casinos. A jester of cards with a shell game, dice tricks and an all-in finale. The Pit Boss (after a mechanical boss): use a Vault Key inside the High Rollers casino. He bets on red or black under your feet, rains gold bars, calls security and flips a giant coin: tails, and he is stunned.
 	Page7Title: High Stakes Night
 	Page7Text: In hardmode, after a mechanical boss, some nights the card army raids the surface. Defeat enough of them and the Guard Captain marches out; beat him for crates, tokens and maybe a Vault Key. Dawn ends the raid. The raid can be switched off in the mod settings, as can gambling itself.
+	Page8Title: The Club and the Last Wheel
+	Page8Text: Your Ledger keeps statistics and thirty achievements that pay tokens. The Concierge on the ground floor sells VIP levels (badge, free drink, higher limits), the casino's furniture and, for Platinum members, the key to your own penthouse. Upstairs the Hold'em table seats four, with regulars in the free chairs, and the Coin Duel lets players bet against each other. After the Moon Lord, craft a Fateful Coin to face Fortuna. The wheel over her crown shows every attack before it comes. At the end she makes one Last Bet: hurt her while the wheel turns to raise the odds of a jackpot.
 }

@@ -12,3 +12,4 @@
 | <img src="../Content/Items/PitBoss/InsiderInfo.png" alt=""> | Insider Info (Expert) | +6% jackpot chance, the Pot fills 30% faster | The Pit Boss treasure bag |
 | <img src="../Content/Items/Accessories/RoyalFlushWings.png" alt=""> | Royal Flush Wings | Flight (time 160, speed 8), +1 Luck | 20 Souls of Flight, 10 ectoplasm, 400 tokens (Mythril Anvil); legendary crates |
 | <img src="../Content/Items/Accessories/GolexWatch.png" alt=""> | Golex | Shows movement speed (works from the inventory) | Prize Cashier, 150 tokens; crates |
+| <img src="../Content/Items/Fortuna/FortunasBlindfold.png" alt=""> | Fortuna's Blindfold (Expert) | Every tenth gambler hit is a Jackpot | Fortuna treasure bag |
