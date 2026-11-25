@@ -186,6 +186,32 @@ namespace CasinoWorld.Common.Systems
 		private static Rectangle CasinoDrawShrink(Rectangle r, int by) => new(r.X + by, r.Y + by, r.Width - by * 2, r.Height - by * 2);
 	}
 
+	/// <summary>
+	/// Life, damage and defense changed at spawn (raids, golden slimes) are not part of vanilla's NPC sync. Clients compute
+	/// contact damage and hits themselves, so they need them.
+	/// </summary>
+	public class ArmyStats : GlobalNPC
+	{
+		public override bool AppliesToEntity(NPC npc, bool lateInstantiation) => lateInstantiation && (HighStakesNight.IsArmy(npc.type) || npc.type == ModContent.NPCType<GuardCaptain>());
+
+		public override void SendExtraAI(NPC npc, Terraria.ModLoader.IO.BitWriter bitWriter, BinaryWriter writer)
+		{
+			writer.Write(npc.lifeMax);
+			writer.Write(npc.life);
+			writer.Write((short)npc.damage);
+			writer.Write((short)npc.defense);
+		}
+
+		public override void ReceiveExtraAI(NPC npc, Terraria.ModLoader.IO.BitReader bitReader, BinaryReader reader)
+		{
+			npc.lifeMax = reader.ReadInt32();
+			npc.life = reader.ReadInt32();
+			npc.damage = reader.ReadInt16();
+			npc.defense = npc.defDefense = reader.ReadInt16();
+			npc.defDamage = npc.damage;
+		}
+	}
+
 	/// <summary>Raid spawns: lots of card army enemies at night on the surface, kills count to the goal.</summary>
 	public class HighStakesSpawns : GlobalNPC
 	{

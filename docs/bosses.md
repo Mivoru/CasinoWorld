@@ -64,7 +64,7 @@ A porcelain goddess inside three turning casino rings. Tier: after the Moon Lord
 
 | | Normal | Expert | Master |
 |---|---|---|---|
-| Life (one player) | 320,000 | 448,000 | 571,200 |
+| Life (one player) | 480,000 | 672,000 | 856,800 |
 | Contact damage | 110 | 165 | 247 |
 | Defense | 50 | 50 | 50 |
 
@@ -74,6 +74,14 @@ A porcelain goddess inside three turning casino rings. Tier: after the Moon Lord
 | Star die, pot | 120 | 186 | 264 |
 | Reels, ball | 125 | 193 | 275 |
 | Beam | 130 | 201 | 286 |
+
+Measured kill times (immortal player, near perfect aim, so a real fight takes longer):
+
+| Equipment | Normal | Expert | Master |
+|---|---|---|---|
+| Celestial set only, Infinity Slot | 221 s | 327 s | 415 s |
+| Everything upgraded, with All In | 62 s (Infinity Slot, 5 accessories) | 80 s (Eye of Fortune, 6) | 90 s (Eye of Fortune, 6) |
+| Zenith, Solar set, 6 accessories | not measured | 44 s | 52 s |
 
 The wheel over her crown stops on an icon before every attack. Attacks come from a shuffled deck, never the same one twice in a row.
 

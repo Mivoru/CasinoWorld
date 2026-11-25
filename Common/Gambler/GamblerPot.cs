@@ -71,8 +71,10 @@ namespace CasinoWorld.Common.Gambler
 
 		public static ModKeybind AllInKey { get; private set; }
 
-		/// <summary>The bound key, or null when the player has none.</summary>
-		public static string KeyName => !Main.dedServ && AllInKey?.GetAssignedKeys() is { Count: > 0 } keys ? keys[0] : null;
+		/// <summary>The bound key, or null when the player has none (or the input profile does not know the key).</summary>
+		public static string KeyName => !Main.dedServ && AllInKey != null && PlayerInput.CurrentProfile?.InputModes.GetValueOrDefault(InputMode.Keyboard)?.KeyStatus.GetValueOrDefault(AllInFullName) is { Count: > 0 } keys ? keys[0] : null;
+
+		private const string AllInFullName = "CasinoWorld/AllIn";
 
 		public float Pot;
 		/// <summary>Pot gain multiplier from equipment, reset every tick.</summary>

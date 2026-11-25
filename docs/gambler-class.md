@@ -67,5 +67,12 @@ Change in damage by jackpot chance (`tools/gambler_fates.py`, All In included):
 | 35% | -9% | 0% | +4% |
 | 41% | -14% | 0% | +5% |
 
+Measured in game with Infinity Slot against 50 defense (average of three 30 s runs, about 10% noise each):
+
+| Build | No Fate | Control | Dealer | Fool |
+|---|---|---|---|---|
+| Celestial set only (18% jackpot, no All In) | 2,300 | 2,660 | 2,320 | 2,550 |
+| Everything upgraded, 6 accessories, All In (41% jackpot) | 14,630 | 9,300 | 15,590 | 16,380 |
+
 ## Hot Streak
 Gambler set bonus: after a jackpot, +10% Gambler damage for four seconds.

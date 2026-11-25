@@ -31,7 +31,7 @@ namespace CasinoWorld.Content.NPCs.Boss
 	{
 		public enum State { Intro, Draw, RingToss, FateDice, ThreeReels, Gaze, CardCurtain, PotOfGold, RunawayBall, LastBet, HouseWins, Stunned, Awaken, Leave, Dying }
 
-		public const int BaseLife = 320000;
+		public const int BaseLife = 480000;
 		// Damage taken in normal mode before defense (see Damage).
 		private const int ChipDamage = 96, DieDamage = 120, BeamDamage = 130, ReelDamage = 125, BallDamage = 125;
 
