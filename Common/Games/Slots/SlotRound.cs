@@ -63,6 +63,8 @@ namespace CasinoWorld.Common.Games.Slots
 			autoWait = 0;
 		}
 
+		public long Owed => Phase == SlotPhase.Spinning ? LastBet * SlotRules.Payout(Result[0], Result[1], Result[2]) : 0;
+
 		public bool CanSpin => Phase != SlotPhase.Spinning;
 
 		public bool TrySpin(Player player, long bet)

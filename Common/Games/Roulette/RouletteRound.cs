@@ -59,6 +59,12 @@ namespace CasinoWorld.Common.Games.Roulette
 
 		public long TotalBet => Bets.Values.Sum();
 
+		public long Owed => Phase switch {
+			RoulettePhase.WaitingForResult => LastStake,
+			RoulettePhase.Spinning => RouletteRules.Resolve(lastBets, Result),
+			_ => 0,
+		};
+
 		public bool CanEditBets => Phase is RoulettePhase.Betting or RoulettePhase.ShowingResult;
 
 		public void AddChip(RouletteBet bet, long chip, long maxBet)

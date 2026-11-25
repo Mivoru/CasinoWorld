@@ -49,6 +49,8 @@ namespace CasinoWorld.Common.Games.Arcade
 
 		private bool Certain(bool up) => Wins(Rank(card), up) == 13;
 
+		public override long Owed => running ? (long)(stake * pot) : 0;
+
 		private void Deal()
 		{
 			long bet = Bet;

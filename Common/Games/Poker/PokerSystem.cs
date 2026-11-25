@@ -358,6 +358,17 @@ namespace CasinoWorld.Common.Games.Poker
 			Send(Request.Act, (long)action);
 		}
 
+		/// <summary>The stack in front of the player and a buy-in on its way; chips in the pot of a running hand are lost.</summary>
+		public override long Owed
+		{
+			get {
+				if (settled)
+					return 0;
+				PokerView view = View;
+				return pendingBuyIn + (view is { Me: >= 0 } ? Math.Max(0, view.Mine.Stack - pendingCost) : 0);
+			}
+		}
+
 		protected override void OnClose(Player player) => Settle(player);
 
 		/// <summary>Leaves the table with whatever is in front of the player (a running hand is folded).</summary>

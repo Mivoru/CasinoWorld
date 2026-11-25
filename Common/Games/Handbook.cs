@@ -14,7 +14,7 @@ namespace CasinoWorld.Common.Games
 	/// <summary>The Gambler's Handbook: an in-game guide to the casinos, the class and the bosses.</summary>
 	public class HandbookSystem : ModSystem
 	{
-		public const int Pages = 9;
+		public const int Pages = 10;
 		private UserInterface ui;
 		public int Page;
 

@@ -16,7 +16,7 @@ using Terraria.UI;
 
 namespace CasinoWorld.Common.Club
 {
-	public enum LedgerTab { Stats, Achievements, Club }
+	public enum LedgerTab { Stats, Achievements, Contracts, Club, Fates }
 
 	/// <summary>The Gambler's Ledger window: statistics, achievements and the VIP club.</summary>
 	public class LedgerSystem : ModSystem
@@ -49,6 +49,7 @@ namespace CasinoWorld.Common.Club
 			state.Append(panel);
 			ui.SetState(state);
 			Tab = tab;
+			LedgerPages.Reset();
 			AtConcierge = atConcierge;
 			SoundEngine.PlaySound(SoundID.MenuOpen);
 		}
@@ -95,9 +96,12 @@ namespace CasinoWorld.Common.Club
 
 		private static int Pages => (Achievements.All.Length + PerPage - 1) / PerPage;
 
+		private static readonly int TabCount = Enum.GetValues<LedgerTab>().Length;
+
 		private Rectangle Area => GetDimensions().ToRectangle();
+		private Rectangle Page => new(Area.X + 24, Area.Y + 96, Area.Width - 48, Area.Height - 160);
 		private Rectangle CloseButton => new(Area.Right - 34, Area.Y + 12, 22, 22);
-		private Rectangle TabRect(int k) => new(Area.X + 24 + k * 170, Area.Y + 52, 162, 34);
+		private Rectangle TabRect(int k) => new(Area.X + 24 + k * 147, Area.Y + 52, 142, 34);
 		private Rectangle Prev => new(Area.X + 24, Area.Bottom - 52, 90, 34);
 		private Rectangle Next => new(Area.Right - 114, Area.Bottom - 52, 90, 34);
 		private Rectangle Buy => new(Area.Center.X - 160, Area.Bottom - 60, 320, 42);
@@ -118,7 +122,7 @@ namespace CasinoWorld.Common.Club
 				S.Close();
 				return;
 			}
-			for (int k = 0; k < 3; k++)
+			for (int k = 0; k < TabCount; k++)
 				if (TabRect(k).Contains(m)) {
 					S.Tab = (LedgerTab)k;
 					SoundEngine.PlaySound(CasinoSounds.CardFlip with { Volume = 0.6f });
@@ -128,6 +132,10 @@ namespace CasinoWorld.Common.Club
 				S.Page += Next.Contains(m) ? 1 : -1;
 				SoundEngine.PlaySound(SoundID.MenuTick);
 			}
+			else if (S.Tab == LedgerTab.Contracts)
+				LedgerPages.ClickContracts(Page, m, S.AtConcierge);
+			else if (S.Tab == LedgerTab.Fates)
+				LedgerPages.ClickFates(Page, m);
 			else if (S.Tab == LedgerTab.Club && S.AtConcierge && Buy.Contains(m) && VipClub.LocalLevel < VipClub.MaxLevel)
 				Main.NewText(VipClub.BuyNext(Main.LocalPlayer), CasinoDraw.Gold);
 		}
@@ -139,14 +147,16 @@ namespace CasinoWorld.Common.Club
 			CasinoStats stats = Main.LocalPlayer.GetModPlayer<CasinoStats>();
 			CasinoDraw.Panel(sb, a);
 			Utils.DrawBorderString(sb, Text("Title", Main.LocalPlayer.name), new Vector2(a.X + 24, a.Y + 18), CasinoDraw.Gold, 1.1f);
-			for (int k = 0; k < 3; k++)
+			for (int k = 0; k < TabCount; k++)
 				CasinoDraw.Button(sb, TabRect(k), Text("Tab" + (LedgerTab)k), (int)S.Tab == k ? CasinoDraw.ButtonGold : CasinoDraw.FeltDark, TabRect(k).Contains(m), true, 0.9f);
 			CasinoDraw.Button(sb, CloseButton, "X", CasinoDraw.Red, CloseButton.Contains(m), true, 0.8f);
-			var page = new Rectangle(a.X + 24, a.Y + 96, a.Width - 48, a.Height - 160);
+			Rectangle page = Page;
 			switch (S.Tab) {
 				case LedgerTab.Stats: DrawStats(sb, page, stats); break;
 				case LedgerTab.Achievements: DrawAchievements(sb, page, stats, m); break;
+				case LedgerTab.Contracts: LedgerPages.DrawContracts(sb, page, m, S.AtConcierge); break;
 				case LedgerTab.Club: DrawClub(sb, page, m); break;
+				case LedgerTab.Fates: LedgerPages.DrawFates(sb, page, m); break;
 			}
 		}
 

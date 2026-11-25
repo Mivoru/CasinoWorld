@@ -4,7 +4,12 @@
 Items: {
 	GamblersLedger: {
 		DisplayName: Gambler's Ledger
-		Tooltip: Your statistics, achievements and club membership
+		Tooltip: Your statistics, achievements, contracts and club membership
+	}
+
+	MarkedInvitation: {
+		DisplayName: Marked Invitation
+		Tooltip: Calls the card army at night: starts High Stakes Night
 	}
 
 	PenthouseKey: {
@@ -1487,6 +1492,21 @@ Subworlds: {
 }
 
 Achievements: {
+	Contract: {
+		Name: Under Contract
+		Text: Complete a contract
+	}
+
+	AllContracts: {
+		Name: House Favorite
+		Text: Complete every contract
+	}
+
+	Raid: {
+		Name: Head of Security
+		Text: Help defeat the Guard Captain three times
+	}
+
 	Title: Achievement unlocked
 	Unlocked: Achievement unlocked: {0} (+{1} tokens)
 	Reward: +{0} Loyalty Tokens
@@ -1689,6 +1709,8 @@ UI: {
 		TabStats: Statistics
 		TabAchievements: Achievements
 		TabClub: VIP Club
+		TabContracts: Contracts
+		TabFates: Fates
 		Life: Lifetime
 		ByGame: By game
 		Rounds: Rounds played
@@ -1796,6 +1818,8 @@ UI: {
 	}
 
 	GamblingDisabled: Gambling is turned off on this world (mod settings).
+	OwedPaid: The house keeps its books: {0} from a round that was cut off has been returned to you.
+	OwedItems: The house returns what you left in its machines.
 	ClosedBoss: The casino doors are locked while a boss is on the loose!
 	ClosedEvent: The casino is closed until the invasion is over!
 	NoSummonsInside: The house does not allow that in here.
@@ -2108,7 +2132,22 @@ Configs: {
 
 		ScreenEffects: {
 			Label: Screen effects
-			Tooltip: Screen shake, flashes, zoom and the jackpot marquee.
+			Tooltip: All screen effects at once. The switches below turn off single kinds.
+		}
+
+		ScreenShake: {
+			Label: Screen shake
+			Tooltip: Shaking on explosions and boss attacks.
+		}
+
+		Flashes: {
+			Label: Flashes
+			Tooltip: Flashing light, win light shows and the jackpot marquee.
+		}
+
+		CameraZoom: {
+			Label: Camera zoom
+			Tooltip: The short zoom on a Triple Jackpot.
 		}
 
 		PotMeter: {
@@ -2199,13 +2238,160 @@ Challenges: {
 	BonusClaimed: All done for today. Come back after dawn!
 }
 
+Contracts: {
+	Accepted: Contract accepted: {0}
+	Paid: "{0}: paid!"
+	Died: You fell in that fight, so it does not count for the contract.
+	Ambush: They were waiting for you!
+	Complete: Contract complete: {0}. See the Concierge for your pay.
+	StepDone: Next: {0}
+	Distance: "{0} feet"
+	Ready: Ready
+	Running: Active
+	DoneMark: Done
+	LockedMark: Locked
+	Pay: Pays {0} tokens and:
+	PayChoice: Pays {0} tokens and one of these:
+	PayAgain: Again for {0} tokens
+	Claim: Collect
+	Abandon: Abandon
+	Accept: Accept
+	AtConcierge: The Concierge in the casino hands out contracts and pays for them.
+	OneAtATime: One contract at a time.
+
+	LostShipment: {
+		Name: Lost Shipment
+		Text: A crate of house money went missing in the caverns. Follow the arrow, and expect company.
+		Locked: ""
+		Step0: Find the shipment and beat {0} of the thieves
+	}
+
+	HouseRules: {
+		Name: House Rules
+		Text: Show that you know the tables. The house dresses its regulars.
+		Locked: ""
+		Step0: Win {0} rounds of roulette
+		Step1: Win {0} rounds of blackjack
+		Step2: Win {0} arcade rounds
+	}
+
+	Debts: {
+		Name: Bad Debts
+		Text: Some guests left without paying. They wander the surface at night.
+		Locked: ""
+		Step0: Defeat {0} Broke Gamblers or Loan Sharks
+	}
+
+	ColdDeck: {
+		Name: Cold Deck
+		Text: A marked deck is passed from the ice to the sand. Break both ends of the trade.
+		Locked: ""
+		Step0: Beat {0} smugglers in the snow
+		Step1: Beat {0} smugglers in the desert
+	}
+
+	JokersWild: {
+		Name: Jokers Wild
+		Text: The Wild Card laughs at the house. Win the game without folding.
+		Locked: Skeletron must fall first.
+		Step0: Defeat The Wild Card without dying
+	}
+
+	BigScore: {
+		Name: The Big Score
+		Text: A patron wants to see a real winning streak.
+		Locked: For hardmode.
+		Step0: Land {0} jackpot hits
+		Step1: Win {0} at the tables
+	}
+
+	HellLedger: {
+		Name: Hell's Ledger
+		Text: A croupier took the books down to the underworld. Bring down the guards.
+		Locked: For hardmode.
+		Step0: Beat {0} of the guards in the underworld
+	}
+
+	Raid: {
+		Name: Casino Security
+		Text: The card army is coming. Hold the surface and put down its captain.
+		Locked: A mechanical boss must fall first.
+		Step0: Defeat the Guard Captain on High Stakes Night
+	}
+
+	VaultAudit: {
+		Name: Vault Audit
+		Text: The Pit Boss has not let anyone count the vault. Persuade the Boss.
+		Locked: A mechanical boss must fall first.
+		Step0: Go All In {0} times
+		Step1: Defeat The Pit Boss without dying
+	}
+
+	JungleMarker: {
+		Name: Jungle Marker
+		Text: An old debt is buried under the jungle, and its keepers are awake.
+		Locked: Plantera must fall first.
+		Step0: Beat {0} keepers in the underground jungle
+		Step1: Open {0} crates
+	}
+
+	StarDebt: {
+		Name: Star Debt
+		Text: The wraiths took their winnings to the sky. Collect.
+		Locked: The Moon Lord must fall first.
+		Step0: Beat {0} Roulette Wraiths in space
+		Step1: Land {0} jackpot hits
+	}
+
+	FortunesFavor: {
+		Name: Fortune's Favor
+		Text: Face the Last Wheel again, and do not let her see you fall.
+		Locked: Fortuna must fall first.
+		Step0: Defeat Fortuna without dying
+	}
+}
+
+Fates: {
+	Locked: Fates open once Fortuna has been defeated.
+	LockedMark: Locked
+	InFight: Not during a boss fight.
+	NoShards: That Fate costs {0} Fate Shards.
+	Active: Active
+	Wear: Choose
+	Buy: "{0} Fate Shards"
+	Hint: One Fate at a time; click again to take it off. Fate Shards: {0}
+
+	Control: {
+		Name: Fate of Control
+		Gain: Normal hits deal 50% more damage.
+		Loss: Jackpots only deal double damage.
+	}
+
+	Dealer: {
+		Name: Fate of the Dealer
+		Gain: The Pot fills 50% faster and All In lasts 50% longer.
+		Loss: Outside All In you deal 10% less damage.
+	}
+
+	Fool: {
+		Name: Fate of the Fool
+		Gain: Jackpots deal 3.25 times the damage.
+		Loss: At least 12% of your hits bust, and a bust costs you 12 life (at most once a second).
+	}
+}
+
 Event: {
 	Start: High Stakes Night! The card army is raiding the world!
 	Captain: The Guard Captain has come to collect!
 	Won: The Guard Captain falls. High Stakes Night is over, and the house pays out!
 	Dawn: The card army scatters at dawn.
-	Bar: High Stakes Night: {0}%
-	BarCaptain: High Stakes Night: defeat the Guard Captain!
+	StartDoubleOrNothing: Double or Nothing! The card army raids in force, and the house pays twice!
+	StartGolden: Golden Night! The card army marches in gold!
+	NameStandard: High Stakes Night
+	NameDoubleOrNothing: Double or Nothing
+	NameGolden: Golden Night
+	Bar: "{0}: {1}%"
+	BarCaptain: "{0}: defeat the Guard Captain!"
 }
 
 Handbook: {
@@ -2226,5 +2412,7 @@ Handbook: {
 	Page7Title: High Stakes Night
 	Page7Text: In hardmode, after a mechanical boss, some nights the card army raids the surface. Defeat enough of them and the Guard Captain marches out; beat him for crates, tokens and maybe a Vault Key. Dawn ends the raid. The raid can be switched off in the mod settings, as can gambling itself.
 	Page8Title: The Club and the Last Wheel
-	Page8Text: Your Ledger keeps statistics and thirty achievements that pay tokens. The Concierge on the ground floor sells VIP levels (badge, free drink, higher limits), the casino's furniture and, for Platinum members, the key to your own penthouse. Upstairs the Hold'em table seats four, with regulars in the free chairs, and the Coin Duel lets players bet against each other. After the Moon Lord, craft a Fateful Coin to face Fortuna. The wheel over her crown shows every attack before it comes. At the end she makes one Last Bet: hurt her while the wheel turns to raise the odds of a jackpot.
+	Page8Text: Your Ledger keeps statistics and achievements that pay tokens. The Concierge on the ground floor sells VIP levels (badge, free drink, higher limits), the casino's furniture and, for Platinum members, the key to your own penthouse. Upstairs the Hold'em table seats four, with regulars in the free chairs, and the Coin Duel lets players bet against each other. After the Moon Lord, craft a Fateful Coin to face Fortuna. The wheel over her crown shows every attack before it comes. At the end she makes one Last Bet: hurt her while the wheel turns to raise the odds of a jackpot.
+	Page9Title: Contracts and Fates
+	Page9Text: The Concierge hands out contracts, one at a time, on the Contracts page of your Ledger. Each sends you somewhere: to the tables, into the world, against a boss. The first time it pays tokens and an item of your choice, after that half the tokens. A Marked Invitation from the Prize Cashier calls High Stakes Night at once. Some raids are Double or Nothing, some are golden. Once Fortuna has fallen, Fate Shards buy Fates: ways to play that give something and take something.
 }

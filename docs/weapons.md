@@ -86,7 +86,19 @@ Model values with typical set Luck and no reforges, upgrades or All In.
 | After the Moon Lord | about 1200 | 1186 |
 | Fortuna | about 1,400 | |
 
-Measured in game on one large target (Celestial set, 30 s): Stardust Deck 2,330 to 2,440, Meteor Dice about 2,860 (average of three runs), Infinity Slot 2,990 to 3,280, Ophanim and Eye of Fortune about 3,300. The set bonus and damage bonus, which the model leaves out, explain the difference.
+### Measured in game
+30 s on one large target that stands still, 50 defense (Fortuna's), perfect aim. One run each, about 10% noise.
+
+| Weapon | Celestial set only | +10, Lucky, golden, 5 accessories | the same with All In | 6 expert accessories | the same with All In |
+|---|---|---|---|---|---|
+| Stardust Deck | 1,530 | 5,990 | 7,350 | 7,280 | 9,460 |
+| Meteor Dice | 2,720 | 7,990 | 9,370 | 9,130 | 12,710 |
+| Infinity Slot | 2,940 | 8,130 | 10,440 | 10,850 | 15,520 |
+| Ophanim | 2,580 | 8,490 | 11,280 | 11,310 | 13,790 |
+| Dice of Destiny | 2,390 | 7,910 | 8,520 | 8,320 | 11,900 |
+| Eye of Fortune | 2,370 | 8,240 | 12,300 | 11,120 | 14,470 |
+
+Vanilla in the same test with the best reforges and six accessories: Zenith (Solar set) 22,970, S.D.M.G. (Vortex set, chlorophyte bullets) 5,430.
 
 ## Fortuna's weapons
 All drop from Fortuna or are made from 18 Fate Shards at the Upgrade Machine.

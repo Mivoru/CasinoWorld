@@ -41,12 +41,31 @@ Any Gambler weapon can roll these in addition to vanilla prefixes.
 
 | Prefix | Damage | Speed | Knockback | Jackpot chance |
 |---|---|---|---|---|
-| Lucky | +12% | +5% | | +4% |
+| Lucky | +12% | +6% | | +4% |
 | Rigged | +5% | | | +6% |
 | Loaded | +15% | | +10% | |
 | Shady | | +10% | | +2% |
 | Cursed | -10% | | | -3% |
 | Unlucky | | | | -4% |
+
+## Fates
+After Fortuna, on the Fates page of the Ledger. Each costs 15 Fate Shards once; one at a time is active, switching is free outside boss fights.
+
+| Fate | Gives | Takes |
+|---|---|---|
+| Control | Normal hits +50% | Jackpots deal x2 instead of x3 |
+| Dealer | Pot fills 50% faster, All In lasts 50% longer | -10% damage outside All In |
+| Fool | Jackpots deal x3.25 | At least 12% busts; a bust costs 12 life, at most once a second |
+
+Change in damage by jackpot chance (`tools/gambler_fates.py`, All In included):
+
+| Jackpot chance | Control | Dealer | Fool |
+|---|---|---|---|
+| 10% | +14% | +2% | +3% |
+| 18% | +7% | +1% | +2% |
+| 24% | 0% | 0% | +2% |
+| 35% | -9% | 0% | +4% |
+| 41% | -14% | 0% | +5% |
 
 ## Hot Streak
 Gambler set bonus: after a jackpot, +10% Gambler damage for four seconds.

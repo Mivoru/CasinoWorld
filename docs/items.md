@@ -12,6 +12,7 @@ Weapons, armour and accessories have their own pages: [Weapons](weapons.md), [Ar
 | <img src="../Content/Items/ScratchCard.png" alt=""> | Scratch Card | Scratch game, prizes up to 50g | Prize Cashier (50s) |
 | <img src="../Content/Items/PlatinumScratchCard.png" alt=""> | Platinum Scratch Card | Scratch game | Prize Cashier (5g, hardmode) |
 | <img src="../Content/Items/GoldenChip.png" alt=""> | Golden Chip | Summons The Wild Card at night | 10 gold or platinum bars, 5 bones, 50 tokens (Work Bench); the Gambler (8g) or Prize Cashier (150 tokens) after Skeletron |
+| <img src="../Content/Items/MarkedInvitation.png" alt=""> | Marked Invitation | Starts High Stakes Night, at night in hardmode after a mechanical boss | 5 Souls of Night, 5 silk, 30 tokens (Mythril Anvil); Prize Cashier, 60 tokens |
 | <img src="../Content/Items/PitBoss/VaultKey.png" alt=""> | Vault Key | Summons The Pit Boss in the High Rollers casino, after a mechanical boss | 6 hallowed bars, 3 Souls of Fright, Might or Sight, 60 tokens (Mythril Anvil); Guard Captain (1/2) |
 | <img src="../Content/Items/PitBoss/VaultBullion.png" alt=""> | Vault Bullion | Material of the Pit Boss set | The Pit Boss |
 | <img src="../Content/Items/WildCardBag.png" alt=""> | Treasure Bag (The Wild Card) | Expert loot | The Wild Card |

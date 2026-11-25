@@ -227,7 +227,7 @@ namespace CasinoWorld.Common.Games
 
 		private static void DrawRays(SpriteBatch sb)
 		{
-			if (bannerTier < 1 || !CasinoClientConfig.Instance.ScreenEffects)
+			if (bannerTier < 1 || !CasinoClientConfig.Flashing)
 				return;
 			float t = Main.GlobalTimeWrappedHourly;
 			PixelFx.Burst(sb, bannerAt, bannerColor * (0.5f * BannerAlpha), t * 0.6f, 4 + bannerTier * 2);

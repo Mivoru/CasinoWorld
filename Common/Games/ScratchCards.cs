@@ -75,6 +75,8 @@ namespace CasinoWorld.Common.Games
 
 		public bool IsOpen => ui?.CurrentState != null;
 
+		public long Owed => IsOpen && !Paid && Winner >= 0 ? Price * ScratchRules.Multipliers[Winner] : 0;
+
 		public override void Load()
 		{
 			if (!Main.dedServ)

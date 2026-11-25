@@ -44,7 +44,7 @@ Attacks come from a shuffled deck: each one once, then it is shuffled again, and
 | Attack | Phase | How to survive |
 |---|---|---|
 | Chip Spray | 1+ | Arcs of bouncing chips; every second chip leads you, so change direction |
-| Place Your Bets | 1+ | The whole hall splits into red and black columns. The ball rolls to the winner and the winning colour glows for 0.75 s before it erupts floor to ceiling. Stand in the losing colour |
+| Place Your Bets | 1+ | The whole hall splits into red columns with diamonds and black columns with spades. The ball rolls to the winner and the winning colour glows for 0.75 s before it erupts floor to ceiling. Stand in the losing colour |
 | Gold Rush | 1+ | Bars fall from the ceiling. Follow the lines and landing marks |
 | Security | 1+ | Calls Royal Guards, at most two alive |
 | Cash Out | 1+ | Two or three charges along a marked lane that locks about half a second ahead. Leave the lane vertically |

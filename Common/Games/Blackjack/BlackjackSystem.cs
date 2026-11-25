@@ -9,6 +9,8 @@ namespace CasinoWorld.Common.Games.Blackjack
 	{
 		public BlackjackRound Round { get; } = new();
 
+		public override long Owed => Round.Owed;
+
 		protected override int TableTileType => ModContent.TileType<BlackjackTable>();
 
 		protected override UIState CreateState() => new BlackjackUIState();

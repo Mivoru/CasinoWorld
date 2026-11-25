@@ -98,6 +98,9 @@ namespace CasinoWorld.Common.Games.VideoSlots
 			autoWait = 0;
 		}
 
+		/// <summary>The rolled spin while it is unpaid, and the bet for free spins still to come.</summary>
+		public long Owed => Result == null || Phase == VideoPhase.Idle ? 0 : (paid ? 0 : Coins(Result.Win)) + (Machine.InBonus ? LastBet : 0);
+
 		public bool InBonusRun => inBonusRun;
 		public bool CanSpin => Phase == VideoPhase.Idle && !inBonusRun;
 
@@ -397,6 +400,8 @@ namespace CasinoWorld.Common.Games.VideoSlots
 	{
 		public VideoSlotRound Round { get; } = new();
 		private int machineType = -1;
+
+		public override long Owed => Round.Owed;
 
 		protected override int TableTileType => machineType;
 

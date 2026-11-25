@@ -38,6 +38,8 @@ namespace CasinoWorld.Common.Games.Arcade
 		public override bool Busy => timer >= 0 && timer < CountdownTicks + RaceTicks;
 		protected override int TableTileType => ModContent.TileType<DerbyCabinet>();
 
+		public override long Owed => timer >= 0 && !paid && Pick == winner ? stake * Pays[winner] / 10 : 0;
+
 		private void Start()
 		{
 			long bet = Bet;

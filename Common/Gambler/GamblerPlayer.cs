@@ -126,6 +126,12 @@ namespace CasinoWorld.Common.Gambler
 				bustChance = Math.Min(1f - jackpotChance, bustChance + pot.BustBonus);
 			}
 			jackpotChance += PrefixJackpot;
+			FatePlayer fates = Player.GetModPlayer<FatePlayer>();
+			Fate fate = fates.Active;
+			if (fate == Fate.Fool)
+				bustChance = Math.Min(1f - jackpotChance, Math.Max(bustChance, FatePlayer.FoolBust));
+			else if (fate == Fate.Dealer && !pot.AllInActive)
+				modifiers.SourceDamage *= FatePlayer.DealerDamage;
 
 			float roll = Main.rand.NextFloat();
 			if (Blindfold && feedsPot && ++blindfoldCount >= BlindfoldHits) {
@@ -140,7 +146,7 @@ namespace CasinoWorld.Common.Gambler
 				martingaleMisses++;
 			if (roll < jackpotChance) {
 				martingaleMisses = 0;
-				modifiers.SourceDamage *= JackpotMultiplier;
+				modifiers.SourceDamage *= fate switch { Fate.Control => FatePlayer.ControlJackpot, Fate.Fool => FatePlayer.FoolJackpot, _ => JackpotMultiplier };
 				lastHitJackpot = true;
 				if (HotStreakSet)
 					Player.AddBuff(ModContent.BuffType<Content.Buffs.HotStreak>(), Content.Buffs.HotStreak.Duration);
@@ -171,6 +177,8 @@ namespace CasinoWorld.Common.Gambler
 			}
 			else if (roll < jackpotChance + bustChance) {
 				modifiers.SourceDamage *= BustMultiplier;
+				if (feedsPot)
+					fates.FoolBusted();
 				CombatText.NewText(target.Hitbox, Color.Gray, Language.GetTextValue("Mods.CasinoWorld.Gambler.Bust"));
 				for (int k = 0; k < 4; k++) {
 					Dust d = Dust.NewDustDirect(target.position, target.width, target.height, DustID.Smoke, 0, -1f, 150, default, 0.9f);
@@ -179,6 +187,8 @@ namespace CasinoWorld.Common.Gambler
 				if (Main.rand.NextBool(3))   // not on every bust, it would get tiring
 					SoundEngine.PlaySound(CasinoSounds.BustProc, target.Center);
 			}
+			else if (fate == Fate.Control)
+				modifiers.SourceDamage *= FatePlayer.ControlNormal;
 		}
 
 		public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone)

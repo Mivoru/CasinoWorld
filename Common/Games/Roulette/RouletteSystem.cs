@@ -24,6 +24,8 @@ namespace CasinoWorld.Common.Games.Roulette
 		// Results of other players, shown above their table once their spin animation is over.
 		private readonly List<(Point16 table, int number, int delay)> spectatorResults = new();
 
+		public override long Owed => Round.Owed;
+
 		protected override int TableTileType => ModContent.TileType<RouletteTable>();
 
 		protected override UIState CreateState() => new RouletteUIState();

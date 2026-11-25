@@ -71,6 +71,18 @@ namespace CasinoWorld.Common.Games
 			}
 		}
 
+		public long Owed
+		{
+			get {
+				long win = 0;
+				if (Rolling)
+					foreach (DiceBet bet in Enum.GetValues<DiceBet>())
+						if (Bets.TryGetValue(bet, out long stake))
+							win += DiceRules.Payout(bet, Dice, stake);
+				return win;
+			}
+		}
+
 		public override void Load()
 		{
 			if (!Main.dedServ)

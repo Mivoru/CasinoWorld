@@ -17,7 +17,7 @@ namespace CasinoWorld.Common.Games.VideoSlots
 	/// </summary>
 	public partial class VideoSlotPanel
 	{
-		private static bool Strong => CasinoClientConfig.Instance.ScreenEffects;
+		private static bool Strong => CasinoClientConfig.Flashing;
 
 		private float bonusFade;               // 0 base game .. 1 free spins
 		private float[] charge = new float[4];  // Lunar pillars

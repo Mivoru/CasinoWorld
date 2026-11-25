@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using CasinoWorld.Common.Systems;
 using CasinoWorld.Content.Tiles;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.GameInput;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
@@ -41,8 +43,26 @@ namespace CasinoWorld.Common.Players
 
 		private bool toldUpgrade;
 
+		// Left over from rounds that a crash or a lost connection cut off (see Escrow); paid on entering a world.
+		private long owed;
+		private List<Item> owedItems = new();
+
+		private void PayOwed()
+		{
+			if (owed <= 0 && owedItems.Count == 0)
+				return;
+			string coins = Games.Coins.Format(owed);
+			Games.Coins.Give(Player, owed);
+			foreach (Item item in owedItems)
+				Games.Coins.GiveItem(Player, item);
+			Main.NewText(owed > 0 ? Language.GetTextValue("Mods.CasinoWorld.UI.OwedPaid", coins) : Language.GetTextValue("Mods.CasinoWorld.UI.OwedItems"), new Color(255, 215, 90));
+			owed = 0;
+			owedItems.Clear();
+		}
+
 		public override void OnEnterWorld()
 		{
+			PayOwed();
 			restoreTimer = RestoreDelay;
 			if (CasinoTravel.InCasino || CasinoTravel.InPenthouse)
 				revealTimer = 180;
@@ -64,11 +84,25 @@ namespace CasinoWorld.Common.Players
 			tag["receivedBlueprint"] = receivedBlueprint;
 			tag["visitedUnderground"] = VisitedUnderground;
 			tag["toldUpgrade"] = toldUpgrade;
+
+			bool playing = Player == Main.ActivePlayerFileData?.Player;
+			long coins = owed + (playing ? Games.Escrow.Coins : 0);
+			var items = new List<Item>(owedItems);
+			if (playing)
+				items.AddRange(Games.Escrow.Items);
+			if (coins > 0)
+				tag["owed"] = coins;
+			if (items.Count > 0)
+				tag["owedItems"] = items.ConvertAll(ItemIO.Save);
 		}
 
 		public override void LoadData(TagCompound tag)
 		{
 			toldUpgrade = tag.GetBool("toldUpgrade");
+			owed = tag.GetLong("owed");
+			owedItems = new List<Item>();
+			foreach (TagCompound item in tag.GetList<TagCompound>("owedItems"))
+				owedItems.Add(ItemIO.Load(item));
 			receivedBlueprint = tag.ContainsKey("receivedBlueprint") && tag.GetBool("receivedBlueprint");
 			VisitedUnderground = tag.ContainsKey("visitedUnderground") && tag.GetBool("visitedUnderground");
 		}

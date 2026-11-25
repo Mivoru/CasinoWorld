@@ -44,6 +44,9 @@ namespace CasinoWorld.Common.Games
 		public string Message = "";
 		public Color MessageColor = Color.White;
 
+		/// <summary>An open offer, or a match the server has not answered.</summary>
+		public override long Owed => myStake + matchedStake;
+
 		public bool Offering => myStake > 0;
 		public bool Tossing => TossTimer >= 0 && TossTimer < TossTicks;
 

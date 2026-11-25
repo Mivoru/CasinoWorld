@@ -54,6 +54,16 @@ namespace CasinoWorld.Common.Games.Arcade
 
 		private static int Pocket(int path) => System.Numerics.BitOperations.PopCount((uint)path);
 
+		public override long Owed
+		{
+			get {
+				long total = 0;
+				foreach (Ball b in balls.ToArray())   // saving runs on another thread
+					total += b.Stake * Percent(b.Risk, Pocket(b.Path)) / 100;
+				return total;
+			}
+		}
+
 		private void Drop()
 		{
 			long bet = Bet;

@@ -53,6 +53,9 @@ namespace CasinoWorld.Common.Games
 		/// <summary>Runs every frame on the client, also while the window is closed.</summary>
 		protected virtual void UpdateGame(Player player) { }
 
+		/// <summary>Coins the running round owes the local player if it never finishes (see Escrow).</summary>
+		public virtual long Owed => 0;
+
 		/// <summary>Called when the window closes; a running round must settle here.</summary>
 		protected virtual void OnClose(Player player) { }
 

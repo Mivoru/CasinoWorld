@@ -92,6 +92,7 @@ namespace CasinoWorld.Common.Gambler
 		public int[] Cards = new int[5];
 		public int HandAge;
 		private long dealt;
+		private int handTicks = 300;
 		private bool wasActive;
 
 		public bool Full => Pot >= Max;
@@ -106,7 +107,7 @@ namespace CasinoWorld.Common.Gambler
 		{
 			get {
 				int index = Player.FindBuffIndex(ModContent.BuffType<Content.Buffs.AllIn>());
-				return index < 0 ? 0f : Player.buffTime[index] / (float)(Hand?.Ticks ?? 300);
+				return index < 0 ? 0f : Player.buffTime[index] / (float)Math.Max(1, handTicks);
 			}
 		}
 
@@ -182,7 +183,8 @@ namespace CasinoWorld.Common.Gambler
 			stats.AllIns++;
 			if (Hand.Key == "RoyalFlush")
 				stats.RoyalHands++;
-			Player.AddBuff(ModContent.BuffType<Content.Buffs.AllIn>(), Hand.Ticks);
+			handTicks = Player.GetModPlayer<FatePlayer>().Active == Fate.Dealer ? (int)(Hand.Ticks * FatePlayer.DealerTime) : Hand.Ticks;
+			Player.AddBuff(ModContent.BuffType<Content.Buffs.AllIn>(), handTicks);
 			if (Hand.Weight <= 90)
 				SoundEngine.PlaySound(CasinoSounds.RareReveal);
 			// Opening shockwave: three times the held gambler weapon's damage around the player.

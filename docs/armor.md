@@ -11,7 +11,7 @@
 Pieces can also be turned into the next set at the [Upgrade Machine](upgrade-machine.md#turning-a-set-into-the-next). From the High Roller set on, crafting needs the Upgrade Machine.
 
 ## Gambler set
-**Set bonus:** +3 Luck; jackpots start a Hot Streak (+10% Gambler damage for 4 s). Dropped by surface casino jackpots and crates.
+**Set bonus:** +3 Luck; jackpots start a Hot Streak (+10% Gambler damage for 4 s). Dropped by surface casino jackpots and crates; the Prize Cashier sells it for 60, 80 and 60 tokens.
 
 | | Piece | Defense | Bonuses |
 |---|---|---|---|

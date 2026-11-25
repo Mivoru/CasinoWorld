@@ -62,6 +62,9 @@ namespace CasinoWorld.Common.Crates
 			SoundEngine.PlaySound(CasinoSounds.CrateOpen);
 		}
 
+		/// <summary>The rolled prize while the strip still runs.</summary>
+		public Item Owed => Active && !Done ? CrateLoot.MakeItem(Prize, PrizeStack) : null;
+
 		public void Update(Player player)
 		{
 			if (!Active || Done)

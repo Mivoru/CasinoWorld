@@ -25,6 +25,8 @@ namespace CasinoWorld.Common.Net
 		DuelOffers,          // casino server -> clients: open coin duels
 		DuelResult,          // casino server -> clients: who tossed, how it fell
 		DuelRefused,         // casino server -> client: offer gone (or withdrawn), stake back
+		ContractAmbush,      // client -> server: contract, step, how many
+		StartRaid,           // client -> server: Marked Invitation used
 	}
 
 	/// <summary>Writes and dispatches the mod's network packets.</summary>
@@ -95,6 +97,15 @@ namespace CasinoWorld.Common.Net
 
 				case CasinoMessage.DuelRefused when Main.netMode == NetmodeID.MultiplayerClient:
 					ModContent.GetInstance<Games.CoinDuelSystem>().Refused(reader.ReadBoolean());
+					break;
+
+				case CasinoMessage.ContractAmbush when Main.netMode == NetmodeID.Server:
+					Club.Ambush.Handle(reader, sender);
+					break;
+
+				case CasinoMessage.StartRaid when Main.netMode == NetmodeID.Server:
+					if (HighStakesNight.CanStart)
+						HighStakesNight.Start();
 					break;
 
 				default:

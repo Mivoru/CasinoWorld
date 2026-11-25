@@ -19,5 +19,19 @@ namespace CasinoWorld.Common.Systems
 		/// <summary>Screen shake, flashes, zoom and the jackpot marquee.</summary>
 		[DefaultValue(true)]
 		public bool ScreenEffects;
+
+		/// <summary>The three kinds of screen effect one by one; all of them need ScreenEffects.</summary>
+		[DefaultValue(true)]
+		public bool ScreenShake;
+
+		[DefaultValue(true)]
+		public bool Flashes;
+
+		[DefaultValue(true)]
+		public bool CameraZoom;
+
+		public static bool Shaking => Instance.ScreenEffects && Instance.ScreenShake;
+		public static bool Flashing => Instance.ScreenEffects && Instance.Flashes;
+		public static bool Zooming => Instance.ScreenEffects && Instance.CameraZoom;
 	}
 }

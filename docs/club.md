@@ -1,10 +1,30 @@
 # The club
 
 ## Gambler's Ledger
-<img src="../Content/Items/GamblersLedger.png" alt=""> Every character gets one; the Prize Cashier sells more. Three pages: statistics (overall and by game), achievements, and the VIP club. Everything belongs to the character.
+<img src="../Content/Items/GamblersLedger.png" alt=""> Every character gets one; the Prize Cashier sells more. Five pages: statistics (overall and by game), achievements, contracts, the VIP club and [Fates](gambler-class.md#fates). Everything belongs to the character.
 
 ## Achievements
-Thirty goals that pay 10 to 150 Loyalty Tokens once each: rounds played, money bet and won, streaks, every game, crates, jackpots in combat, daily challenges, the three bosses, the penthouse and the Diamond level.
+Thirty-three goals that pay 10 to 200 Loyalty Tokens once each: rounds played, money bet and won, streaks, every game, crates, jackpots in combat, daily challenges, the three bosses, the penthouse and the Diamond level.
+
+## Contracts
+Handed out and paid by the Concierge, one at a time. The first time a contract pays tokens and one item of your choice, after that half the tokens. They are a sure way to the weapons that otherwise depend on luck.
+
+| Contract | Needs | Task | Tokens | One of |
+|---|---|---|---|---|
+| Lost Shipment | | Follow the arrow into the caverns, beat 6 in an ambush | 60 | Loaded Dice, Deck of Cards, High Roller |
+| House Rules | | Win 3 roulette, 3 blackjack and 5 arcade rounds | 50 | Gambler's Fedora, Vest, Shoes |
+| Bad Debts | | Defeat 10 Broke Gamblers or Loan Sharks | 40 | Four-Leaf Clover, Ace Up the Sleeve |
+| Cold Deck | | Ambushes of 6 in the snow and in the desert | 60 | Chip Chain Hook, Golex, 3 Lucky Crates |
+| Jokers Wild | Skeletron | Defeat The Wild Card without dying | 80 | Jackpot Lever, Dealer's Hand, Wheel of Fortune |
+| The Big Score | hardmode | 150 jackpot hits, then win 1p at the tables | 100 | Martingale Medallion, High Roller's Ring, Dealer's Visor |
+| Hell's Ledger | hardmode | Ambush of 8 in the underworld | 100 | Snake Eyes, Royal Flush, Jackpot Cannon |
+| Casino Security | mechanical boss | Defeat the Guard Captain | 120 | 12 Vault Bullion, 2 Vault Keys, 4 High Roller Crates |
+| Vault Audit | mechanical boss | Go All In 5 times, then The Pit Boss without dying | 150 | Croupier's Rake, Bank Breaker, Vault Buster |
+| Jungle Marker | Plantera | Ambush of 10 in the underground jungle, then open 3 crates | 150 | Ace of Spades, Doubling Dice, Roulette Revolver |
+| Star Debt | Moon Lord | Ambush of 12 in space, then 300 jackpot hits | 250 | Stardust Deck, Meteor Dice, Infinity Slot |
+| Fortune's Favor | Fortuna | Defeat Fortuna without dying | 300 | 18 Fate Shards |
+
+Steps count in order. An ambush starts on arrival and comes up to four enemies at a time.
 
 ## VIP levels
 Sold by the **Concierge** on the ground floor, one after another.

@@ -13,6 +13,9 @@ namespace CasinoWorld.Common.Gambler
 
 		public override bool GetEffectInheritance(DamageClass damageClass) => false;
 
+		// Without this no reforge, vanilla or ours, can be rolled on a Gambler weapon.
+		public override bool GetPrefixInheritance(DamageClass damageClass) => damageClass == Generic;
+
 		public override bool UseStandardCritCalcs => false;
 	}
 }

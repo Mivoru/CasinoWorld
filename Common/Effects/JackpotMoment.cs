@@ -55,7 +55,7 @@ namespace CasinoWorld.Common.Effects
 
 		public override void ModifyTransformMatrix(ref Terraria.Graphics.SpriteViewMatrix Transform)
 		{
-			if (timer > 0 && CasinoClientConfig.Instance.ScreenEffects)
+			if (timer > 0 && CasinoClientConfig.Zooming)
 				Transform.Zoom *= 1f + 0.06f * (float)Math.Sin(Math.PI * timer / Length);
 		}
 
@@ -74,7 +74,7 @@ namespace CasinoWorld.Common.Effects
 			int age = Length - timer;
 			float alpha = Math.Min(1f, Math.Min(age / 10f, timer / 30f));
 			int w = Main.screenWidth, h = Main.screenHeight;
-			if (CasinoClientConfig.Instance.ScreenEffects) {
+			if (CasinoClientConfig.Flashing) {
 				Texture2D px = TextureAssets.MagicPixel.Value;
 				const int Step = 44;
 				int n = 0;

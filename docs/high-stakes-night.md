@@ -3,6 +3,7 @@
 A raid by the card army on the surface.
 
 - **When:** hardmode, after a mechanical boss. Each nightfall has a 1 in 10 chance.
+- **Marked Invitation:** starts it at once, at night. 5 Souls of Night, 5 silk and 30 tokens (Mythril Anvil), or 60 tokens from the Prize Cashier.
 - **Goal:** defeat 100 army enemies, plus 25 for each player after the first. The bar is at the bottom right.
 - **End:** beat the Guard Captain, or wait for dawn. Progress is saved with the world.
 - Can be switched off in the [settings](settings.md).
@@ -16,6 +17,13 @@ A raid by the card army on the surface.
 | Slot Mimic | 0.08 |
 
 Card Soldiers and Chip Slimes have four times the life, 2.5 times the damage and +14 defense during the raid.
+
+## Kinds of raid
+| Raid | Chance | Army and captain | Reward |
+|---|---|---|---|
+| High Stakes Night | 50% | as above | as below |
+| Double or Nothing | 25% | +50% life, +15% damage, glow red | Captain drops crates and tokens twice |
+| Golden Night | 25% | +20% life, plated in gold, more Slot Mimics | Four times the coins, a token from every fourth kill |
 
 ## Guard Captain
 A giant Royal Guard that arrives when the goal is reached, with the same shield and spade volley.

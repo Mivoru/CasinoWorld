@@ -6,8 +6,8 @@
 ## Layout
 | Folder | Contents |
 |---|---|
-| `Common/Gambler` | Damage class, Jackpot / Bust roll, Pot, All In, meter |
-| `Common/Club` | Statistics, achievements, Ledger, VIP levels |
+| `Common/Gambler` | Damage class, Jackpot / Bust roll, Pot, All In, Fates, meter |
+| `Common/Club` | Statistics, achievements, contracts, Ledger, VIP levels |
 | `Common/Games` | Roulette, poker, coin duel, blackjack, slots, video slots, Sic Bo, scratch cards, challenges, leaderboard |
 | `Common/Crates` | Crate loot, opening, world generation, fishing |
 | `Common/Upgrades` | Upgrade Machine and armour evolution |
@@ -24,4 +24,4 @@
 | `/casinovip` | Builds the High Rollers entrance where you stand |
 
 ## Keeping these docs correct
-Numbers are copied from the code. When you change a value, update the matching page: weapons and armour in `Content/Items`, odds in `GamblerPlayer` and `GamblerPot`, crates in `CrateLoot`, upgrades in `GamblerUpgrades` and `ArmorEvolution`, bosses in `Content/NPCs/Boss`, the raid in `HighStakesNight`.
+Numbers are copied from the code. When you change a value, update the matching page: weapons and armour in `Content/Items`, odds in `GamblerPlayer` and `GamblerPot`, crates in `CrateLoot`, upgrades in `GamblerUpgrades` and `ArmorEvolution`, bosses in `Content/NPCs/Boss`, the raid in `HighStakesNight`, contracts in `ContractBook`, Fates in `FatePlayer`. Every game that takes a stake must report what it owes in `Owed` (see `Escrow`).

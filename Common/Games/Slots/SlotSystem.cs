@@ -10,6 +10,8 @@ namespace CasinoWorld.Common.Games.Slots
 	{
 		public SlotRound Round { get; } = new();
 
+		public override long Owed => Round.Owed;
+
 		protected override int TableTileType => ModContent.TileType<SlotMachine>();
 
 		protected override Point TableSize => new(SlotMachine.Width, SlotMachine.Height);

@@ -58,6 +58,18 @@ namespace CasinoWorld.Common.Games.Blackjack
 		public string Message { get; private set; } = "";
 		public Color MessageColor { get; private set; } = Color.White;
 
+		/// <summary>Stakes on the table while a round is open.</summary>
+		public long Owed
+		{
+			get {
+				long total = 0;
+				if (!CanBet)
+					for (int k = 0; k < Hands.Count; k++)
+						total += Hands[k].Bet;
+				return total;
+			}
+		}
+
 		public bool CanBet => Phase is BlackjackPhase.Betting or BlackjackPhase.Result;
 
 		private BlackjackHand Current => ActiveHand < Hands.Count ? Hands[ActiveHand] : null;

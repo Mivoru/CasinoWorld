@@ -281,6 +281,9 @@ namespace CasinoWorld.Content.Tiles.Interior
 				spriteBatch.Draw(pixel, new Rectangle((int)center.X - 6 + k, (int)center.Y - Height * 8 - 2 + k * 2, 12 - k * 2, 2), new Color(255, 215, 80));
 		}
 
+		/// <summary>The rolled prize while the wheel still turns.</summary>
+		public static Item Owed => spinTimer <= 0 ? null : Prizes[spinResult] == 0 ? new Item(ModContent.ItemType<LuckyCrate>()) : new Item(ModContent.ItemType<LoyaltyToken>(), Prizes[spinResult]);
+
 		/// <summary>Advances the local spin and pays out when it stops.</summary>
 		public static void UpdateSpin()
 		{

@@ -24,7 +24,7 @@ namespace CasinoWorld.Common.Effects
 		/// <summary>Screen shake, unless switched off in the client settings.</summary>
 		public static void Shake(Vector2 at, Vector2 direction, float strength, float vibration, int frames, float falloff, string id)
 		{
-			if (!Main.dedServ && Systems.CasinoClientConfig.Instance.ScreenEffects)
+			if (!Main.dedServ && Systems.CasinoClientConfig.Shaking)
 				Main.instance.CameraModifiers.Add(new PunchCameraModifier(at, direction, strength, vibration, frames, falloff, id));
 		}
 

@@ -12,7 +12,10 @@
 | Setting | Default | Effect |
 |---|---|---|
 | Pot meter | HUD | HUD (draggable) or under the player |
-| Screen effects | On | Screen shake, flashes, zoom and the Triple Jackpot lights |
+| Screen effects | On | All screen effects at once |
+| Screen shake | On | Shaking on explosions and boss attacks |
+| Flashes | On | Flashing light, win light shows, the Triple Jackpot lights |
+| Camera zoom | On | The zoom on a Triple Jackpot |
 
 ## Controls
 | Key | Default |
@@ -27,6 +30,7 @@ If All In has no key, the meter, weapon tooltips and chat say so.
 - Roulette spins are rolled by the server.
 - Hold'em hands are dealt by the server; a client only gets its own cards. Coin duels are tossed by the server.
 - Statistics, achievements and VIP levels belong to each character; the penthouse is shared per world.
+- A crash or a lost connection in the middle of a round costs nothing that was saved: open stakes, wins already rolled and items inside machines come back on the next join. Chips already in a poker pot are lost, and so are free spins still to come after a crash (the bet comes back).
 - The leaderboard of biggest wins is shared per world.
 - The High Stakes Night goal grows with the number of players.
 

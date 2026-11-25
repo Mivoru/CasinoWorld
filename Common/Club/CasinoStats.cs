@@ -29,7 +29,7 @@ namespace CasinoWorld.Common.Club
 		public int[] CrateRarities = new int[5];
 		public int JackpotHits, TripleJackpots, AllIns, RoyalHands, Challenges, TokensEarned;
 		public int BestPokerHand = -1, DuelWins, PokerPots;
-		public int WildCardKills, PitBossKills, FortunaKills;
+		public int WildCardKills, PitBossKills, FortunaKills, RaidWins, Contracts;
 		public bool LedgerGiven;
 
 		public readonly HashSet<string> Unlocked = new();
@@ -97,7 +97,7 @@ namespace CasinoWorld.Common.Club
 		private void WatchBosses()
 		{
 			foreach (NPC npc in Main.ActiveNPCs)
-				if (npc.ModNPC is TheWildCard or ThePitBoss or Fortuna && npc.playerInteraction[Player.whoAmI])
+				if (npc.ModNPC is TheWildCard or ThePitBoss or Fortuna or Content.NPCs.Enemies.GuardCaptain && npc.playerInteraction[Player.whoAmI])
 					watched[npc.whoAmI] = npc.type;
 			if (watched.Count == 0)
 				return;
@@ -112,6 +112,8 @@ namespace CasinoWorld.Common.Club
 					WildCardKills++;
 				else if (type == ModContent.NPCType<ThePitBoss>())
 					PitBossKills++;
+				else if (type == ModContent.NPCType<Content.NPCs.Enemies.GuardCaptain>())
+					RaidWins++;
 				else
 					FortunaKills++;
 			}
@@ -120,8 +122,11 @@ namespace CasinoWorld.Common.Club
 		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 		{
 			// The server tracks interaction; mark it here as well so clients know.
-			if (target.boss && Player.whoAmI == Main.myPlayer)
+			if ((target.boss || target.ModNPC is Content.NPCs.Enemies.GuardCaptain) && Player.whoAmI == Main.myPlayer) {
 				target.playerInteraction[Player.whoAmI] = true;
+				if (target.ModNPC is TheWildCard or ThePitBoss or Fortuna or Content.NPCs.Enemies.GuardCaptain)
+					watched[target.whoAmI] = target.type;   // a single hit can kill before the next update
+			}
 		}
 
 		public override void PostUpdate()
@@ -147,7 +152,7 @@ namespace CasinoWorld.Common.Club
 		public override void SaveData(TagCompound tag)
 		{
 			tag["longs"] = new List<long> { Wagered, WonTotal, LostTotal, BiggestWin, BiggestStake };
-			tag["ints"] = new[] { Rounds, Streak, BestStreak, JackpotHits, TripleJackpots, AllIns, RoyalHands, Challenges, TokensEarned, BestPokerHand, DuelWins, PokerPots, WildCardKills, PitBossKills, FortunaKills };
+			tag["ints"] = new[] { Rounds, Streak, BestStreak, JackpotHits, TripleJackpots, AllIns, RoyalHands, Challenges, TokensEarned, BestPokerHand, DuelWins, PokerPots, WildCardKills, PitBossKills, FortunaKills, RaidWins, Contracts };
 			tag["gameRounds"] = GameRounds;
 			tag["gameWins"] = GameWins;
 			tag["gameNet"] = new List<long>(GameNet);
@@ -166,6 +171,7 @@ namespace CasinoWorld.Common.Club
 			(Rounds, Streak, BestStreak, JackpotHits, TripleJackpots) = (I(0), I(1), I(2), I(3), I(4));
 			(AllIns, RoyalHands, Challenges, TokensEarned, BestPokerHand) = (I(5), I(6), I(7), I(8), I(9, -1));
 			(DuelWins, PokerPots, WildCardKills, PitBossKills, FortunaKills) = (I(10), I(11), I(12), I(13), I(14));
+			(RaidWins, Contracts) = (I(15), I(16));
 			Copy(tag.GetIntArray("gameRounds"), GameRounds = new int[Games]);
 			Copy(tag.GetIntArray("gameWins"), GameWins = new int[Games]);
 			Copy(tag.GetIntArray("crates"), CrateRarities = new int[5]);
@@ -232,6 +238,9 @@ namespace CasinoWorld.Common.Club
 			new("Challenges", 40, 10, s => s.Challenges, Of<GamblersHandbook>()),
 			new("WildCard", 50, 1, s => s.WildCardKills, Of<Content.Items.Vanity.WildCardTrophy>()),
 			new("PitBoss", 80, 1, s => s.PitBossKills, Of<Content.Items.PitBoss.PitBossTrophy>()),
+			new("Contract", 30, 1, s => s.Contracts, Of<GamblersLedger>()),
+			new("AllContracts", 200, 12, s => s.Player.GetModPlayer<ContractPlayer>().Done.Count, Of<GamblersLedger>()),
+			new("Raid", 60, 3, s => s.RaidWins, Of<Content.Items.MarkedInvitation>()),
 			new("Fortuna", 150, 1, s => s.FortunaKills, Of<Content.Items.Fortuna.FortunaTrophy>()),
 			new("Penthouse", 100, 1, s => Bit(s.Player.GetModPlayer<VipPlayer>().VisitedPenthouse), Of<PenthouseKey>()),
 			new("Diamond", 150, 4, s => Level(s), Vanilla(ItemID.Diamond)),

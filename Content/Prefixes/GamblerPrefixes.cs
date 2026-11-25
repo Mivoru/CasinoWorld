@@ -56,7 +56,7 @@ namespace CasinoWorld.Content.Prefixes
 	public class Lucky : GamblerPrefix
 	{
 		protected override float Damage => 0.12f;
-		protected override float Speed => 0.05f;
+		protected override float Speed => 0.06f;   // 5 % rounds away on use time 9 and 10, and the prefix could not be rolled there
 		public override float Jackpot => 0.04f;
 		protected override float Value => 1.9f;
 	}

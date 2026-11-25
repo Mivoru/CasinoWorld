@@ -331,7 +331,7 @@ namespace CasinoWorld.Common.Games.Slots
 		/// <summary>Three diamonds: the room goes dark and a beam links them.</summary>
 		private void DrawDiamondShow(SpriteBatch sb, SlotRound round)
 		{
-			if (round.WinFlash <= 0 || round.WinningReels != 3 || round.Result[0] != SlotSymbol.Diamond || !Systems.CasinoClientConfig.Instance.ScreenEffects)
+			if (round.WinFlash <= 0 || round.WinningReels != 3 || round.Result[0] != SlotSymbol.Diamond || !Systems.CasinoClientConfig.Flashing)
 				return;
 			float p = (float)Math.Sin(Math.PI * round.WinFlash / 90f);
 			Rectangle a = ReelBox(0), b = ReelBox(2);
