@@ -265,8 +265,11 @@ namespace CasinoWorld.Content.Projectiles
 	}
 
 	/// <summary>Burning die falling from the sky; explodes on impact (radius 5 tiles). ai[0] = target height.</summary>
+	/// <summary>Falling die. ai[0] = height to explode at. ai[1] = 1 when thrown by the weapon: the explosion then hits again after the impact.</summary>
 	public class MeteorDie : GamblerShot
 	{
+		public bool FromWeapon => Projectile.ai[1] == 1f;
+
 		public override string Texture => "CasinoWorld/Content/Projectiles/ExplodingDie";
 		protected override Color Tint => new(255, 190, 120);
 		protected override float DrawScale => 1.8f;
@@ -311,6 +314,8 @@ namespace CasinoWorld.Content.Projectiles
 				Projectile.tileCollide = false;
 				Projectile.alpha = 255;
 				Projectile.Resize(160, 160);
+				if (FromWeapon)
+					Projectile.ResetLocalNPCHitImmunity();
 			}
 		}
 

@@ -193,7 +193,7 @@ namespace CasinoWorld.Common.Gambler
 			if (proj.CountsAsClass<GamblerDamageClass>())
 				Player.GetModPlayer<GamblerPot>().Tally(damageDone);
 			// Set-bonus projectiles do not trigger further procs.
-			if (proj.type != ModContent.ProjectileType<Content.Projectiles.SpectralCard>() && proj.type != ModContent.ProjectileType<Content.Projectiles.MeteorDie>())
+			if (proj.type != ModContent.ProjectileType<Content.Projectiles.SpectralCard>() && proj.ModProjectile is not Content.Projectiles.MeteorDie { FromWeapon: false })
 				JackpotProcs(target, damageDone);
 		}
 

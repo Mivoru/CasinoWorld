@@ -776,7 +776,7 @@ Items: {
 
 	MeteorDice: {
 		DisplayName: Meteor Dice
-		Tooltip: Calls a burning die down from the sky onto your cursor. It leaves the ground on fire
+		Tooltip: Calls a burning die down from the sky onto your cursor. It hits on impact and again when it explodes, and leaves the ground on fire
 	}
 
 	InfinitySlot: {

@@ -59,7 +59,7 @@ All weapons deal Gambler damage and can be upgraded at the [Upgrade Machine](upg
 | Doubling Dice | Splits into two half-damage dice on its first hit | Splits too, for 70% of the usual halves |
 | Roulette Revolver | Every sixth shot is a golden round with triple damage | The golden round explodes, 40% damage |
 | Stardust Deck | Bursts into three homing cards (35% each) | Bursts too, for 70% of that |
-| Meteor Dice | Calls a burning die onto the cursor, large explosion | Leaves three embers (1/8 damage) |
+| Meteor Dice | Calls a burning die onto the cursor; the impact and the large explosion each hit for full damage | Leaves three embers (1/8 damage) |
 | Infinity Slot | Two reel symbols per shot; rarer symbols hit harder | See below |
 
 ### Infinity Slot symbols
@@ -86,7 +86,7 @@ Model values with typical set Luck and no reforges, upgrades or All In.
 | After the Moon Lord | about 1200 | 1186 |
 | Fortuna | about 1,400 | |
 
-Measured in game on one large target (Celestial set, 30 s): Stardust Deck 2,330, Infinity Slot 3,279, Ophanim and Eye of Fortune about 3,300. The set bonus and damage bonus, which the model leaves out, explain the difference.
+Measured in game on one large target (Celestial set, 30 s): Stardust Deck 2,330 to 2,440, Meteor Dice about 2,860 (average of three runs), Infinity Slot 2,990 to 3,280, Ophanim and Eye of Fortune about 3,300. The set bonus and damage bonus, which the model leaves out, explain the difference.
 
 ## Fortuna's weapons
 All drop from Fortuna or are made from 18 Fate Shards at the Upgrade Machine.

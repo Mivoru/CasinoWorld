@@ -129,7 +129,7 @@ namespace CasinoWorld.Content.Items.Weapons
 		{
 			Vector2 target = Main.MouseWorld;
 			Vector2 start = target + new Vector2(Main.rand.Next(-200, 200), -700);
-			Projectile.NewProjectile(source, start, (target - start).SafeNormalize(Vector2.UnitY) * Item.shootSpeed, type, damage, knockback, player.whoAmI, target.Y);
+			Projectile.NewProjectile(source, start, (target - start).SafeNormalize(Vector2.UnitY) * Item.shootSpeed, type, damage, knockback, player.whoAmI, target.Y, 1f);
 			return false;
 		}
 	}
