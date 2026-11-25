@@ -20,16 +20,16 @@ namespace CasinoWorld.Common.Gambler
 	/// <summary>
 	/// Fates: after Fortuna a Gambler picks one way to play, bought once with Fate Shards and switched for free outside
 	/// boss fights. Each gives and takes; measured in tools/gambler_fates.py against no Fate.
-	/// Control: jackpots only double, every normal hit deals 50 % more. Good at low Luck, worse at high Luck.
+	/// Control: jackpots deal 2.25x, every normal hit deals 50 % more. Good at low Luck, worse at high Luck.
 	/// Dealer: the Pot fills 50 % faster and All In lasts 50 % longer, but outside All In damage is 10 % lower.
-	/// Fool: jackpots deal 3.25x, but at least 12 % of hits bust and a bust hurts you.
+	/// Fool: jackpots deal 3.1x, but at least 12 % of hits bust and a bust hurts you.
 	/// </summary>
 	public class FatePlayer : ModPlayer
 	{
 		public const int Price = 15;
-		public const float ControlJackpot = 2f, ControlNormal = 1.5f;
+		public const float ControlJackpot = 2.25f, ControlNormal = 1.5f;
 		public const float DealerGain = 0.5f, DealerTime = 1.5f, DealerDamage = 0.9f;
-		public const float FoolJackpot = 3.25f, FoolBust = 0.12f;
+		public const float FoolJackpot = 3.1f, FoolBust = 0.12f;
 		private const int FoolHurt = 12, FoolCooldown = 60;
 
 		public readonly HashSet<Fate> Owned = new();

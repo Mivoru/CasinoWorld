@@ -2,7 +2,7 @@
 
 A tModLoader (Terraria 1.4.4) mod that adds two working casinos, a complete **Gambler** class, casino enemies, two bosses and a hardmode raid. Walk through the door, bet vanilla coins at real tables, and carry your luck into combat.
 
-> **Status:** version 0.6.1, in development. Balance and art are still changing.
+> **Status:** version 0.6.2, in development. Balance and art are still changing.
 
 ## Highlights
 

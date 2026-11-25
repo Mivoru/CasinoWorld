@@ -58,7 +58,7 @@ All weapons deal Gambler damage and can be upgraded at the [Upgrade Machine](upg
 | Ace of Spades | Homing spectral card, up to 3 hits | Passes through walls |
 | Doubling Dice | Splits into two half-damage dice on its first hit | Splits too, for 70% of the usual halves |
 | Roulette Revolver | Every sixth shot is a golden round with triple damage | The golden round explodes, 40% damage |
-| Stardust Deck | Bursts into three homing cards (35% each) | Bursts too, for 70% of that |
+| Stardust Deck | Bursts into three homing cards (35% each); ignores 25 defense | Bursts too, for 70% of that |
 | Meteor Dice | Calls a burning die onto the cursor; the impact and the large explosion each hit for full damage | Leaves three embers (1/8 damage) |
 | Infinity Slot | Two reel symbols per shot; rarer symbols hit harder | See below |
 
@@ -91,7 +91,7 @@ Model values with typical set Luck and no reforges, upgrades or All In.
 
 | Weapon | Celestial set only | +10, Lucky, golden, 5 accessories | the same with All In | 6 expert accessories | the same with All In |
 |---|---|---|---|---|---|
-| Stardust Deck | 1,530 | 5,990 | 7,350 | 7,280 | 9,460 |
+| Stardust Deck | 1,870 | not remeasured | not remeasured | not remeasured | 10,310 |
 | Meteor Dice | 2,720 | 7,990 | 9,370 | 9,130 | 12,710 |
 | Infinity Slot | 2,940 | 8,130 | 10,440 | 10,850 | 15,520 |
 | Ophanim | 2,580 | 8,490 | 11,280 | 11,310 | 13,790 |

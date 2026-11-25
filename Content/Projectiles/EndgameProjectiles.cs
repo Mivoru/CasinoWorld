@@ -225,6 +225,7 @@ namespace CasinoWorld.Content.Projectiles
 		{
 			base.SetDefaults();
 			Projectile.width = Projectile.height = 16;
+			Projectile.ArmorPenetration = 25;
 			Projectile.penetrate = 1;
 			Projectile.extraUpdates = 1;
 		}

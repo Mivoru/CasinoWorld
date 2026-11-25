@@ -53,26 +53,26 @@ After Fortuna, on the Fates page of the Ledger. Each costs 15 Fate Shards once; 
 
 | Fate | Gives | Takes |
 |---|---|---|
-| Control | Normal hits +50% | Jackpots deal x2 instead of x3 |
+| Control | Normal hits +50% | Jackpots deal x2.25 instead of x3 |
 | Dealer | Pot fills 50% faster, All In lasts 50% longer | -10% damage outside All In |
-| Fool | Jackpots deal x3.25 | At least 12% busts; a bust costs 12 life, at most once a second |
+| Fool | Jackpots deal x3.1 | At least 12% busts; a bust costs 12 life, at most once a second |
 
 Change in damage by jackpot chance (`tools/gambler_fates.py`, All In included):
 
 | Jackpot chance | Control | Dealer | Fool |
 |---|---|---|---|
-| 10% | +14% | +2% | +3% |
-| 18% | +7% | +1% | +2% |
-| 24% | 0% | 0% | +2% |
-| 35% | -9% | 0% | +4% |
-| 41% | -14% | 0% | +5% |
+| 10% | +17% | +2% | +1% |
+| 18% | +11% | +1% | -1% |
+| 24% | +5% | 0% | -1% |
+| 35% | -4% | 0% | 0% |
+| 41% | -7% | 0% | +1% |
 
-Measured in game with Infinity Slot against 50 defense (average of three 30 s runs, about 10% noise each):
+Measured in game with Infinity Slot against 50 defense (average of two 30 s runs, about 10% noise each; the model leaves out defense):
 
 | Build | No Fate | Control | Dealer | Fool |
 |---|---|---|---|---|
-| Celestial set only (18% jackpot, no All In) | 2,300 | 2,660 | 2,320 | 2,550 |
-| Everything upgraded, 6 accessories, All In (41% jackpot) | 14,630 | 9,300 | 15,590 | 16,380 |
+| Celestial set only (18% jackpot, no All In) | 2,350 | 2,910 | 2,320 | 2,460 |
+| Everything upgraded, 6 accessories, All In (41% jackpot) | 15,820 | 10,870 | 14,180 | 16,710 |
 
 ## Hot Streak
 Gambler set bonus: after a jackpot, +10% Gambler damage for four seconds.

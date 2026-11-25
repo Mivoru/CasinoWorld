@@ -1,6 +1,6 @@
 # Casino World: complete documentation
 
-Reference for version 0.6.1, taken from the source code.
+Reference for version 0.6.2, taken from the source code.
 
 Generated from the separate pages by `tools/build_docs.py`; edit those, not this file.
 
@@ -536,26 +536,26 @@ After Fortuna, on the Fates page of the Ledger. Each costs 15 Fate Shards once; 
 
 | Fate | Gives | Takes |
 |---|---|---|
-| Control | Normal hits +50% | Jackpots deal x2 instead of x3 |
+| Control | Normal hits +50% | Jackpots deal x2.25 instead of x3 |
 | Dealer | Pot fills 50% faster, All In lasts 50% longer | -10% damage outside All In |
-| Fool | Jackpots deal x3.25 | At least 12% busts; a bust costs 12 life, at most once a second |
+| Fool | Jackpots deal x3.1 | At least 12% busts; a bust costs 12 life, at most once a second |
 
 Change in damage by jackpot chance (`tools/gambler_fates.py`, All In included):
 
 | Jackpot chance | Control | Dealer | Fool |
 |---|---|---|---|
-| 10% | +14% | +2% | +3% |
-| 18% | +7% | +1% | +2% |
-| 24% | 0% | 0% | +2% |
-| 35% | -9% | 0% | +4% |
-| 41% | -14% | 0% | +5% |
+| 10% | +17% | +2% | +1% |
+| 18% | +11% | +1% | -1% |
+| 24% | +5% | 0% | -1% |
+| 35% | -4% | 0% | 0% |
+| 41% | -7% | 0% | +1% |
 
-Measured in game with Infinity Slot against 50 defense (average of three 30 s runs, about 10% noise each):
+Measured in game with Infinity Slot against 50 defense (average of two 30 s runs, about 10% noise each; the model leaves out defense):
 
 | Build | No Fate | Control | Dealer | Fool |
 |---|---|---|---|---|
-| Celestial set only (18% jackpot, no All In) | 2,300 | 2,660 | 2,320 | 2,550 |
-| Everything upgraded, 6 accessories, All In (41% jackpot) | 14,630 | 9,300 | 15,590 | 16,380 |
+| Celestial set only (18% jackpot, no All In) | 2,350 | 2,910 | 2,320 | 2,460 |
+| Everything upgraded, 6 accessories, All In (41% jackpot) | 15,820 | 10,870 | 14,180 | 16,710 |
 
 <a id="gambler-class--hot-streak"></a>
 
@@ -636,7 +636,7 @@ All weapons deal Gambler damage and can be upgraded at the [Upgrade Machine](#pa
 | Ace of Spades | Homing spectral card, up to 3 hits | Passes through walls |
 | Doubling Dice | Splits into two half-damage dice on its first hit | Splits too, for 70% of the usual halves |
 | Roulette Revolver | Every sixth shot is a golden round with triple damage | The golden round explodes, 40% damage |
-| Stardust Deck | Bursts into three homing cards (35% each) | Bursts too, for 70% of that |
+| Stardust Deck | Bursts into three homing cards (35% each); ignores 25 defense | Bursts too, for 70% of that |
 | Meteor Dice | Calls a burning die onto the cursor; the impact and the large explosion each hit for full damage | Leaves three embers (1/8 damage) |
 | Infinity Slot | Two reel symbols per shot; rarer symbols hit harder | See below |
 
@@ -675,7 +675,7 @@ Model values with typical set Luck and no reforges, upgrades or All In.
 
 | Weapon | Celestial set only | +10, Lucky, golden, 5 accessories | the same with All In | 6 expert accessories | the same with All In |
 |---|---|---|---|---|---|
-| Stardust Deck | 1,530 | 5,990 | 7,350 | 7,280 | 9,460 |
+| Stardust Deck | 1,870 | not remeasured | not remeasured | not remeasured | 10,310 |
 | Meteor Dice | 2,720 | 7,990 | 9,370 | 9,130 | 12,710 |
 | Infinity Slot | 2,940 | 8,130 | 10,440 | 10,850 | 15,520 |
 | Ophanim | 2,580 | 8,490 | 11,280 | 11,310 | 13,790 |

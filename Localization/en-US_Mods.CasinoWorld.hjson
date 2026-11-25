@@ -776,7 +776,11 @@ Items: {
 
 	StardustDeck: {
 		DisplayName: Stardust Deck
-		Tooltip: Galaxy cards burst into three homing cards on enemies and walls
+		Tooltip:
+			'''
+			Galaxy cards burst into three homing cards on enemies and walls
+			Ignores 25 enemy defense
+			'''
 	}
 
 	MeteorDice: {
@@ -2364,7 +2368,7 @@ Fates: {
 	Control: {
 		Name: Fate of Control
 		Gain: Normal hits deal 50% more damage.
-		Loss: Jackpots only deal double damage.
+		Loss: Jackpots only deal 2.25 times the damage.
 	}
 
 	Dealer: {
@@ -2375,7 +2379,7 @@ Fates: {
 
 	Fool: {
 		Name: Fate of the Fool
-		Gain: Jackpots deal 3.25 times the damage.
+		Gain: Jackpots deal 3.1 times the damage.
 		Loss: At least 12% of your hits bust, and a bust costs you 12 life (at most once a second).
 	}
 }
