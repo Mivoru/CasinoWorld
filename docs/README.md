@@ -1,6 +1,6 @@
 # Casino World documentation
 
-Reference for version 0.6.2, taken from the source code. It is written so each page can become a wiki page.
+Reference for version 0.6.3, taken from the source code. It is written so each page can become a wiki page.
 
 ## Playing
 - [Getting started](getting-started.md)

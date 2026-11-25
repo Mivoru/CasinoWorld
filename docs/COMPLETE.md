@@ -1,6 +1,6 @@
 # Casino World: complete documentation
 
-Reference for version 0.6.2, taken from the source code.
+Reference for version 0.6.3, taken from the source code.
 
 Generated from the separate pages by `tools/build_docs.py`; edit those, not this file.
 
