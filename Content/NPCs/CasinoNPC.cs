@@ -149,7 +149,11 @@ namespace CasinoWorld.Content.NPCs
 
 		public override bool PreAI(NPC npc)
 		{
-			if (npc.townNPC && CasinoTravel.InCasino && Main.netMode != NetmodeID.MultiplayerClient) {
+			// SubworldLibrary marks the casino as current the moment the door is used, while the rest of that
+			// tick still updates the main world's NPCs, and it then saves the main world. Main.gameMenu turns
+			// true at the same moment, so it tells the trip apart from a casino that has really loaded.
+			// Without it this removed every town NPC of the main world.
+			if (npc.townNPC && CasinoTravel.InCasino && !Main.gameMenu && Main.netMode != NetmodeID.MultiplayerClient) {
 				npc.active = false;
 				if (Main.netMode == NetmodeID.Server)
 					NetMessage.SendData(MessageID.SyncNPC, number: npc.whoAmI);
