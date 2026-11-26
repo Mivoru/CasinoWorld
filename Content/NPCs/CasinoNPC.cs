@@ -134,9 +134,30 @@ namespace CasinoWorld.Content.NPCs
 		}
 	}
 
-	/// <summary>Freezes time and blocks enemy spawns inside casinos.</summary>
+	/// <summary>Freezes time and blocks enemy and town NPC spawns inside casinos.</summary>
 	public class CasinoSpawnBlocker : GlobalNPC
 	{
+		// A casino is a fresh world with no town NPCs, so vanilla would move the Guide, town pets and other
+		// mods' town NPCs in at the spawn point. Their town AI then crashed in the walled hall.
+		public override void Load() => Terraria.On_Main.UpdateTime_SpawnTownNPCs += SkipInCasino;
+
+		private static void SkipInCasino(Terraria.On_Main.orig_UpdateTime_SpawnTownNPCs orig)
+		{
+			if (!CasinoTravel.InCasino)
+				orig();
+		}
+
+		public override bool PreAI(NPC npc)
+		{
+			if (npc.townNPC && CasinoTravel.InCasino && Main.netMode != NetmodeID.MultiplayerClient) {
+				npc.active = false;
+				if (Main.netMode == NetmodeID.Server)
+					NetMessage.SendData(MessageID.SyncNPC, number: npc.whoAmI);
+				return false;
+			}
+			return true;
+		}
+
 		public override void EditSpawnRate(Player player, ref int spawnRate, ref int maxSpawns)
 		{
 			if (CasinoTravel.InCasino)

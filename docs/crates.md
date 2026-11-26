@@ -33,8 +33,8 @@
 
 | Stage | Lucky Crate | High Roller Crate |
 |---|---|---|
-| Early | 1g 25s | |
-| After Skeletron | 2g | |
-| Hardmode | 6g | 7g 50s |
-| After Plantera | 14g | 16g |
-| After the Moon Lord | 45g | 50g |
+| Early | 2g 50s | |
+| After Skeletron | 3g 50s | |
+| Hardmode | 7g | 8g |
+| After Plantera | 15g | 17g |
+| After the Moon Lord | 48g | 52g |
