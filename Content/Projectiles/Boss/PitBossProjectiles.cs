@@ -230,6 +230,9 @@ namespace CasinoWorld.Content.Projectiles.Boss
 		{
 			SoundEngine.PlaySound(SoundID.Item52 with { Pitch = -0.3f }, Projectile.Center);
 			CasinoFx.Ring(Projectile.Bottom, new Color(255, 210, 90), 10, 3.5f, 1.1f);
+			Particles.Impact(Projectile.Bottom, new Color(255, 210, 90), 2, 12);
+			for (int k = 0; k < Particles.N(3); k++)
+				Particles.Smoke(Projectile.Bottom + new Vector2(Main.rand.NextFloat(-14, 14), -4), new Vector2(Main.rand.NextFloat(-2f, 2f), -0.6f), new Color(160, 140, 110), 30);
 			for (int k = 0; k < 10; k++)
 				Dust.NewDustPerfect(Projectile.Bottom, DustID.GoldCoin, Main.rand.NextVector2Circular(4, 2) - Vector2.UnitY * 2, 0, default, 1.2f);
 			return true;
@@ -311,6 +314,9 @@ namespace CasinoWorld.Content.Projectiles.Boss
 			if (!Main.dedServ)
 				global::CasinoWorld.Common.Effects.CasinoFx.Shake(Projectile.Center, Vector2.UnitY, 10f, 8f, 25, 1500f, "GiantCoin");
 			CasinoFx.Ring(Projectile.Bottom, new Color(255, 220, 90), 24, 9f, 1.4f);
+			CasinoFx.Shockwave(Projectile.Bottom, new Color(255, 220, 90), 360f, 0f, false);
+			SoundEngine.PlaySound(CasinoSounds.ImpactBass, Projectile.Center);
+			ScreenFx.HitStop(3);
 			if (Tails) {
 				if (Main.npc[(int)Projectile.ai[0]].ModNPC is ThePitBoss boss && Main.netMode != NetmodeID.MultiplayerClient)
 					boss.CoinTails();

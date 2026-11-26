@@ -69,6 +69,7 @@ namespace CasinoWorld.Content.NPCs.Boss
 		private float LifeRatio => NPC.life / (float)NPC.lifeMax;
 		public int Phase => LifeRatio > 0.6f ? 1 : LifeRatio > 0.25f ? 2 : 3;
 		private float previousTimer;
+		private int shownPhase;   // phase whose cinematic has played (client side)
 
 		/// <summary>True on the one tick in which the timer passes a mark. The timer steps by 1.25 in phase 3, so exact comparisons can miss.</summary>
 		private bool At(float mark) => previousTimer < mark && Timer >= mark;
@@ -165,6 +166,8 @@ namespace CasinoWorld.Content.NPCs.Boss
 
 		public override void AI()
 		{
+			if (!Main.dedServ)
+				react.Update();
 			if (NPC.target < 0 || NPC.target == 255 || Target.dead || !Target.active)
 				NPC.TargetClosest();
 
@@ -181,6 +184,21 @@ namespace CasinoWorld.Content.NPCs.Boss
 
 			NPC.dontTakeDamage = CurrentState is State.Intro or State.ShellGame or State.Leave;
 			Lighting.AddLight(NPC.Center, Phase == 3 ? new Vector3(0.9f, 0.2f, 0.25f) : new Vector3(0.6f, 0.3f, 0.8f));
+			if (shownPhase == 0)
+				shownPhase = Phase;
+			if (Phase > shownPhase && CurrentState is not (State.Intro or State.Leave or State.ShellGame)) {
+				shownPhase = Phase;
+				if (!Main.dedServ) {
+					Color main = Phase == 3 ? new Color(255, 70, 70) : new Color(200, 120, 255);
+					CasinoFx.PhaseCinematic(NPC.Center, main, new Color(255, 210, 90), CasinoSounds.WildCardCackle);
+					react.Flash(1f);
+					react.Squash(1.25f, 0.8f);
+					react.Shake(4f, 40);
+					for (int k = 0; k < Particles.N(16); k++)   // the deck bursts out of his sleeves
+						Particles.Card(NPC.Center, Main.rand.NextVector2Circular(9f, 9f) - Vector2.UnitY * 3f, 80);
+					SoundEngine.PlaySound(CasinoSounds.CardShatter, NPC.Center);
+				}
+			}
 
 			previousTimer = Timer;
 			Timer += Speed;
@@ -215,8 +233,15 @@ namespace CasinoWorld.Content.NPCs.Boss
 				if (!Main.dedServ)
 					BossTitle.Show("Mods.CasinoWorld.Boss.WildCard.Title", "Mods.CasinoWorld.Boss.WildCard.Subtitle", new Color(255, 200, 80));
 			}
+			if (Timer < 80)
+				CasinoFx.ChargeIn(NPC.Center, new Color(200, 120, 255), 190f, Timer / 80f);
 			if (At(80)) {
 				SoundEngine.PlaySound(CasinoSounds.BossBell, NPC.Center);
+				SoundEngine.PlaySound(CasinoSounds.WildCardCackle, NPC.Center);
+				CasinoFx.Shockwave(NPC.Center, new Color(200, 120, 255), 380f, 6f);
+				for (int k = 0; k < Particles.N(12); k++)
+					Particles.Card(NPC.Center, Main.rand.NextVector2Circular(8f, 8f) - Vector2.UnitY * 2f, 80);
+				ScreenFx.Focus(NPC.Center, 50, 0.3f);
 				CasinoFx.Ring(NPC.Center, new Color(255, 210, 90), 24, 7f, 1.4f);
 				CasinoFx.Ring(NPC.Center, new Color(200, 120, 255), 16, 4f, 1.2f);
 				if (!Main.dedServ)
@@ -347,7 +372,15 @@ namespace CasinoWorld.Content.NPCs.Boss
 				NPC.Center = ShellCardPosition(RealCard, ShellTotalTicks);
 				NPC.alpha = 0;
 				SoundEngine.PlaySound(CasinoSounds.BossBust, NPC.Center);
+				SoundEngine.PlaySound(CasinoSounds.CardShatter, NPC.Center);
 				CasinoFx.Ring(NPC.Center, new Color(255, 230, 120), 18, 5f, 1.3f);
+				CasinoFx.Hit(NPC.Center, new Color(255, 230, 120), 2f, false);
+				if (!Main.dedServ) {
+					react.Flash(0.9f);
+					react.Squash(0.8f, 1.25f);
+				}
+				for (int k = 0; k < Particles.N(10); k++)
+					Particles.Card(NPC.Center, Main.rand.NextVector2Circular(7f, 7f), 70);
 				if (!Main.dedServ)
 					CombatText.NewText(NPC.Hitbox, new Color(255, 230, 120), Language.GetTextValue("Mods.CasinoWorld.Boss.WildCard.Found"), true);
 				SetState(State.Stunned);
@@ -368,6 +401,8 @@ namespace CasinoWorld.Content.NPCs.Boss
 			NPC.velocity *= 0.9f;
 			if (Main.rand.NextBool(4))
 				Dust.NewDustPerfect(NPC.Top + new Vector2(Main.rand.NextFloat(-20, 20), -10), DustID.GoldFlame, new Vector2(0, -1), 0, default, 1.2f).noGravity = true;
+			if (Main.rand.NextBool(8))   // dizzy stars
+				Particles.Star(NPC.Top + new Vector2(Main.rand.NextFloat(-30, 30), Main.rand.NextFloat(-20, 0)), new Color(255, 230, 120), 22);
 			if (Timer > (Phase == 3 ? 120 : 170))
 				SetState(State.Hover);
 		}
@@ -382,8 +417,11 @@ namespace CasinoWorld.Content.NPCs.Boss
 		private void Pickup()
 		{
 			FlyTo(Target.Center + new Vector2(0, -320f), 9f, 18f);
+			if (Timer < 20)
+				CasinoFx.ChargeIn(NPC.Center, PhaseColor, 120f, Timer / 20f);
 			if (At(20) || (Phase == 3 && At(80))) {
 				SoundEngine.PlaySound(CasinoSounds.CardBridge, NPC.Center);
+				CasinoFx.Glint(NPC.Center, PhaseColor);
 				int columns = Phase == 1 ? 9 : 12;
 				float offset = Main.rand.NextFloat(0, 70f);
 				for (int k = 0; k < columns; k++) {
@@ -417,6 +455,9 @@ namespace CasinoWorld.Content.NPCs.Boss
 						CombatText.NewText(new Rectangle(NPC.Hitbox.X, NPC.Hitbox.Y - 30, NPC.width, 10), new Color(255, 80, 80), Language.GetTextValue("Mods.CasinoWorld.Boss.WildCard.Doubles"), true);
 				}
 				CasinoFx.Ring(NPC.Center, sum == 7 ? new Color(255, 220, 90) : PhaseColor, 14, 4f, 1.2f);
+				CasinoFx.Glint(NPC.Center + new Vector2(0, -50), sum == 7 ? new Color(255, 220, 90) : PhaseColor);
+				if (dieA == dieB)
+					CasinoFx.Hit(NPC.Center, new Color(255, 80, 80), 1f);
 				SoundEngine.PlaySound(CasinoSounds.BossBell with { Pitch = (sum - 7) * 0.05f }, NPC.Center);
 				diceSum = sum;
 				if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -480,10 +521,14 @@ namespace CasinoWorld.Content.NPCs.Boss
 			NPC.velocity *= 0.92f;
 			if (At(20)) {
 				SoundEngine.PlaySound(CasinoSounds.Jackpot with { Volume = 0.6f }, NPC.Center);
+				CasinoFx.Shockwave(NPC.Center, new Color(255, 220, 90), 240f, 3f, false);
+				SoundEngine.PlaySound(CasinoSounds.EnergyBurst, NPC.Center);
 				float start = Main.rand.NextFloat(MathHelper.TwoPi);
 				for (int k = 0; k < 7; k++)
 					Shoot(NPC.Center, Vector2.UnitX.RotatedBy(start + k * MathHelper.TwoPi / 7) * 6f, ModContent.ProjectileType<LuckySeven>(), CardDamage);
 			}
+			if (Timer < 20)
+				CasinoFx.ChargeIn(NPC.Center, new Color(255, 220, 90), 150f, Timer / 20f);
 			if (Timer > 110)
 				FinishAttack();
 		}
@@ -496,18 +541,36 @@ namespace CasinoWorld.Content.NPCs.Boss
 				// Wind up: back off from the player, eyes flare.
 				Vector2 away = (NPC.Center - Target.Center).SafeNormalize(Vector2.UnitY);
 				FlyTo(Target.Center + away * 280f, 9f, 10f);
+				CasinoFx.ChargeIn(NPC.Center, PhaseColor, 130f, cycle / 22f);
+				if (cycle < Speed) {
+					if (Counter == 0)
+						CasinoFx.Warn(NPC, 30);
+					if (!Main.dedServ)
+						react.Shake(2f, 20);
+				}
+				if (cycle >= 12 && cycle - Speed < 12)
+					CasinoFx.Glint(NPC.Center + new Vector2(0, -20), PhaseColor);
 			}
 			else if (previousTimer - Counter * 46 < 22) {
 				SoundEngine.PlaySound(SoundID.Item74 with { Pitch = 0.4f }, NPC.Center);
 				SoundEngine.PlaySound(CasinoSounds.BossBell with { Volume = 0.6f, Pitch = 0.4f }, NPC.Center);
 				CasinoFx.Ring(NPC.Center, PhaseColor, 12, 5f, 1.2f);
+				SoundEngine.PlaySound(CasinoSounds.Whoosh, NPC.Center);
 				NPC.velocity = (Target.Center - NPC.Center).SafeNormalize(Vector2.UnitY) * (Phase == 3 ? 21f : 18f);
+				CasinoFx.Hit(NPC.Center - NPC.velocity * 2f, PhaseColor, 0.8f, false);
+				if (!Main.dedServ)
+					react.Squash(1.3f, 0.78f);
 			}
 			else if (cycle < 46) {
 				NPC.velocity *= 0.97f;
 				if (Main.rand.NextBool(2))
 					Dust.NewDustPerfect(NPC.Center, DustID.PurpleTorch, -NPC.velocity * 0.2f, 0, default, 1.6f).noGravity = true;
 				CasinoFx.Spark(NPC.Center + Main.rand.NextVector2Circular(30, 30), -NPC.velocity * 0.1f, PhaseColor, 1f);
+				if (NPC.velocity.Length() > 10f && (int)Timer % 3 == 0)
+					Particles.Smear(NPC.Center - NPC.velocity.SafeNormalize(Vector2.UnitX) * 24f, NPC.velocity, PhaseColor, 9);
+				if (NPC.velocity.Length() > 8f)
+					for (int k = 0; k < Particles.N(2); k++)
+						Particles.Spark(NPC.Center + Main.rand.NextVector2Circular(28, 28), -NPC.velocity * 0.35f, Color.White, 10, 1.4f);
 			}
 			else {
 				Counter++;
@@ -521,8 +584,13 @@ namespace CasinoWorld.Content.NPCs.Boss
 			NPC.velocity *= 0.9f;
 			if (Timer <= Speed)
 				SoundEngine.PlaySound(SoundID.Roar with { Pitch = 0.4f, Volume = 0.6f }, NPC.Center);
+			if (Timer <= Speed)
+				CasinoFx.Warn(NPC, 40);
+			if (Timer < 20)
+				CasinoFx.ChargeIn(NPC.Center, new Color(255, 70, 70), 160f, Timer / 20f);
 			if (At(20)) {
 				SoundEngine.PlaySound(CasinoSounds.BossSpin, NPC.Center);
+				CasinoFx.Shockwave(NPC.Center, new Color(255, 70, 70), 300f, 5f);
 				foreach (int side in new[] { -1, 1 }) {
 					Vector2 start = new(Target.Center.X + side * 700f, Target.Center.Y - 200f);
 					Shoot(start, new Vector2(-side * 7.5f, 0f), ModContent.ProjectileType<BoxcarDie>(), DiceDamage + 6, 6);
@@ -541,6 +609,16 @@ namespace CasinoWorld.Content.NPCs.Boss
 				SoundEngine.PlaySound(CasinoSounds.RouletteSpin, NPC.Center);
 				Say("Mods.CasinoWorld.Boss.WildCard.AllIn", new Color(255, 80, 80));
 				CasinoFx.Ring(NPC.Center, new Color(255, 70, 70), 28, 8f, 1.5f);
+				CasinoFx.Shockwave(NPC.Center, new Color(255, 70, 70), 420f, 0f, false);
+				SoundEngine.PlaySound(CasinoSounds.Riser, NPC.Center);
+				CasinoFx.Warn(NPC, 40);
+				ScreenFx.DuckMusic(120, 0.4f);
+				if (!Main.dedServ) {
+					react.Flash(0.8f);
+					react.Squash(1.2f, 0.85f);
+				}
+				ScreenFx.Vignette(220, 0.55f);
+				ScreenFx.SpeedLines(NPC.Center, new Color(255, 90, 90), 24);
 				if (!Main.dedServ)
 					global::CasinoWorld.Common.Effects.CasinoFx.Shake(NPC.Center, Vector2.UnitX, 6f, 10f, 30, 1500f, "WildCardAllIn");
 			}
@@ -550,6 +628,7 @@ namespace CasinoWorld.Content.NPCs.Boss
 					Shoot(NPC.Center, Vector2.UnitX.RotatedBy(a + k * MathHelper.Pi) * 5.5f, ModContent.ProjectileType<AllInChip>(), ChipDamage, k);
 				if ((int)(Timer / 5) % 2 == 0)
 					SoundEngine.PlaySound(CasinoSounds.ChipPlace with { Volume = 0.4f }, NPC.Center);
+				Particles.Ember(NPC.Center + Main.rand.NextVector2Circular(40, 40), Main.rand.NextVector2Circular(2f, 2f), new Color(255, 70, 70), 40, 1.5f);
 			}
 			if (Timer > 240)
 				SetState(State.Hover);
@@ -576,6 +655,7 @@ namespace CasinoWorld.Content.NPCs.Boss
 		{
 			if (Main.dedServ)
 				return;
+			react.Hit(hit.Crit ? 0.5f : 0.3f);
 			for (int k = 0; k < 3; k++)
 				Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Confetti + Main.rand.Next(4), hit.HitDirection * 2f, -2f);
 			for (int k = 0; k < 2; k++)
@@ -583,6 +663,12 @@ namespace CasinoWorld.Content.NPCs.Boss
 			if (NPC.life <= 0) {
 				global::CasinoWorld.Common.Effects.CasinoFx.Shake(NPC.Center, Main.rand.NextVector2Unit(), 12f, 6f, 30, 1000f, "WildCard");
 				CasinoFx.Explosion(NPC.Center, 220, new Color(255, 210, 90), new Color(200, 120, 255), 0f);
+				CasinoFx.DeathCinematic(NPC.Center, new Color(200, 120, 255), new Color(255, 210, 90));
+				react.Flash(1f);
+				SoundEngine.PlaySound(CasinoSounds.WildCardCackle with { Pitch = -0.4f }, NPC.Center);
+				SoundEngine.PlaySound(CasinoSounds.CardShatter, NPC.Center);
+				for (int k = 0; k < Particles.N(20); k++)
+					Particles.Card(NPC.Center, Main.rand.NextVector2Circular(11f, 11f) - Vector2.UnitY * 3f, 100);
 				CasinoFx.Ring(NPC.Center, Color.White, 30, 10f, 1.6f);
 				SoundEngine.PlaySound(CasinoSounds.Jackpot, NPC.Center);
 				for (int k = 0; k < 60; k++)
@@ -689,7 +775,13 @@ namespace CasinoWorld.Content.NPCs.Boss
 				transitionFlash--;
 		}
 
+		/// <summary>Visual reactions of the sprite: hit flash, squash and stretch, tremble.</summary>
+		private readonly BossReaction react = new();
+
 		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+			=> react.Draw(NPC, spriteBatch, screenPos, drawColor, DrawBoss);
+
+		private bool DrawBoss(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
 		{
 			if (NPC.alpha >= 255)
 				return false;

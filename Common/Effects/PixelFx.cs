@@ -47,13 +47,16 @@ namespace CasinoWorld.Common.Effects
 			sb.Draw(tex, Snap(at - tex.Size() / 2f), additive ? Additive(color) : color);
 		}
 
-		/// <summary>Turning sunburst (48 art pixels wide). Scale in whole steps only.</summary>
+		/// <summary>
+		/// Turning sunburst. Size 1 = 48 art pixels wide, 2 = 96, 3 and more = 144. Bigger sizes are separate drawings
+		/// at the same 2x2 pixel size, never a scaled-up sprite (which would turn into big blocks).
+		/// </summary>
 		public static void Burst(SpriteBatch sb, Vector2 at, Color color, float time, int scale = 1)
 		{
-			Texture2D tex = Tex("Burst");
+			Texture2D tex = Tex(scale <= 1 ? "Burst" : scale == 2 ? "BurstBig" : "BurstHuge");
 			int h = tex.Height / 8;
 			var frame = new Rectangle(0, (int)(time * 10f) % 8 * h, tex.Width, h);
-			sb.Draw(tex, Snap(at - new Vector2(tex.Width, h) / 2f * scale), frame, Additive(color), 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+			sb.Draw(tex, Snap(at - new Vector2(tex.Width, h) / 2f), frame, Additive(color), 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
 		}
 
 		/// <summary>Four-pointed twinkle; life runs 0..1.</summary>

@@ -88,12 +88,31 @@ namespace CasinoWorld.Content.Projectiles
 			if (Projectile.ai[0] == 1f) {
 				SoundEngine.PlaySound(CasinoSounds.CoinsPayout, Projectile.Center);
 				CasinoFx.Ring(Projectile.Center, new Color(255, 220, 90), 40, 13f, 1.6f);
+				CasinoFx.Hit(Projectile.Center, new Color(255, 220, 90), 2f);
+				CasinoFx.Shockwave(Projectile.Center, new Color(255, 220, 90), Radius * 1.2f, 0f, false);
+				CasinoFx.CoinBurst(Projectile.Center, 30, 10f);
+				if (Projectile.owner == Main.myPlayer) {
+					ScreenFx.Flash(new Color(255, 220, 90), 0.35f, 12);
+					ScreenFx.ZoomKick(0.06f, 30);
+				}
 				for (int k = 0; k < 40; k++)
 					Dust.NewDustPerfect(Projectile.Center, DustID.GoldCoin, Main.rand.NextVector2Circular(10, 10), 0, default, 1.4f);
 				return;
 			}
 			SoundEngine.PlaySound(CasinoSounds.Jackpot with { Volume = 0.8f }, Projectile.Center);
 			SoundEngine.PlaySound(CasinoSounds.CardShuffle, Projectile.Center);
+			SoundEngine.PlaySound(CasinoSounds.AllInRoar, Projectile.Center);
+			CasinoFx.Shockwave(Projectile.Center, new Color(255, 70, 70), Radius * 1.3f, 0f, false);
+			ScreenFx.After(8, () => CasinoFx.Shockwave(Projectile.Center, new Color(255, 220, 90), Radius * 1.8f, 0f, false));
+			for (int k = 0; k < Particles.N(16); k++)
+				Particles.Card(Projectile.Center, Main.rand.NextVector2CircularEdge(10, 10) * Main.rand.NextFloat(0.5f, 1f), 80);
+			if (Projectile.owner == Main.myPlayer) {
+				ScreenFx.HitStop(4);
+				ScreenFx.Flash(Color.White, 0.5f, 14);
+				ScreenFx.ZoomKick(0.1f, 50);
+				ScreenFx.SpeedLines(Projectile.Center, new Color(255, 200, 90), 30);
+				ScreenFx.Vignette(60, 0.6f);
+			}
 			CasinoFx.Ring(Projectile.Center, new Color(255, 70, 70), 32, 12f, 1.6f);
 			CasinoFx.Ring(Projectile.Center, new Color(255, 220, 90), 24, 8f, 1.4f);
 			for (int k = 0; k < 30; k++)

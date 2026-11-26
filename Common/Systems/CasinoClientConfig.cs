@@ -6,6 +6,8 @@ namespace CasinoWorld.Common.Systems
 {
 	public enum PotMeterPlace { Hud, UnderPlayer }
 
+	public enum ParticleAmount { Low, Normal, High }
+
 	/// <summary>Client-side settings: where the Pot meter is drawn.</summary>
 	public class CasinoClientConfig : ModConfig
 	{
@@ -30,8 +32,18 @@ namespace CasinoWorld.Common.Systems
 		[DefaultValue(true)]
 		public bool CameraZoom;
 
+		/// <summary>Short freezes and slow motion on big hits and boss phase changes (single player only).</summary>
+		[DefaultValue(true)]
+		public bool HitStop;
+
+		/// <summary>How many combat particles effects spawn.</summary>
+		[DefaultValue(ParticleAmount.Normal)]
+		[DrawTicks]
+		public ParticleAmount Particles;
+
 		public static bool Shaking => Instance.ScreenEffects && Instance.ScreenShake;
 		public static bool Flashing => Instance.ScreenEffects && Instance.Flashes;
 		public static bool Zooming => Instance.ScreenEffects && Instance.CameraZoom;
+		public static bool HitStopping => Instance.ScreenEffects && Instance.HitStop;
 	}
 }

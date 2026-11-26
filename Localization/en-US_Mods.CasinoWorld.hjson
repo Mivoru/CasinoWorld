@@ -2151,12 +2151,41 @@ Configs: {
 
 		CameraZoom: {
 			Label: Camera zoom
-			Tooltip: The short zoom on a Triple Jackpot.
+			Tooltip: Zoom kicks and the camera pull towards bosses on big moments and a Triple Jackpot.
+		}
+
+		HitStop: {
+			Label: Hit stop and slow motion
+			Tooltip: Short freezes on heavy hits and slow motion when a boss changes phase. Single player only.
+		}
+
+		Particles: {
+			Label: Particle amount
+			Tooltip: How many sparks, smoke puffs, shards and other combat particles are spawned.
 		}
 
 		PotMeter: {
 			Label: Pot meter
 			Tooltip: Where the Gambler's Pot meter is drawn. On the HUD you can drag it with the inventory open.
+		}
+	}
+
+	ParticleAmount: {
+		Tooltip: ""
+
+		Low: {
+			Label: Low
+			Tooltip: ""
+		}
+
+		Normal: {
+			Label: Normal
+			Tooltip: ""
+		}
+
+		High: {
+			Label: High
+			Tooltip: ""
 		}
 	}
 

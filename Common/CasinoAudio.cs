@@ -12,6 +12,26 @@ namespace CasinoWorld.Common
 		private static SoundStyle S(string name, float volume = 1f, float pitchVariance = 0f, int maxInstances = 3)
 			=> new($"CasinoWorld/Assets/Sounds/{name}") { Volume = volume, PitchVariance = pitchVariance, MaxInstances = maxInstances };
 
+		// Epic combat pass: impacts, telegraphs, phase cinematics, All In.
+		public static readonly SoundStyle ImpactHeavy = S("ImpactHeavy", 0.75f, 0.15f, 4);
+		public static readonly SoundStyle ImpactBass = S("ImpactBass", 0.5f, 0.05f, 2);
+		public static readonly SoundStyle Whoosh = S("Whoosh", 0.8f, 0.2f, 4);
+		public static readonly SoundStyle ChargeUp = S("ChargeUp", 0.9f, 0.05f, 2);
+		public static readonly SoundStyle Glint = S("Glint", 0.7f, 0.15f, 3);
+		public static readonly SoundStyle Shockwave = S("Shockwave", 0.8f, 0.1f, 2);
+		public static readonly SoundStyle EnergyBurst = S("EnergyBurst", 0.75f, 0.15f, 3);
+		public static readonly SoundStyle ThunderCrack = S("ThunderCrack", 0.8f, 0.15f, 2);
+		public static readonly SoundStyle CardShatter = S("CardShatter", 1f, 0.1f, 2);
+		public static readonly SoundStyle CoinBlast = S("CoinBlast", 1f, 0.1f, 2);
+		public static readonly SoundStyle SlowMo = S("SlowMo", 0.7f, 0f, 1);
+		public static readonly SoundStyle Riser = S("Riser", 0.7f, 0f, 1);
+		public static readonly SoundStyle PhaseStinger = S("PhaseStinger", 0.85f, 0f, 1);
+		public static readonly SoundStyle PitBossRoar = S("PitBossRoar", 0.9f, 0.05f, 1);
+		public static readonly SoundStyle WildCardCackle = S("WildCardCackle", 0.85f, 0.05f, 1);
+		public static readonly SoundStyle FortunaChoir = S("FortunaChoir", 0.85f, 0f, 1);
+		public static readonly SoundStyle AllInRoar = S("AllInRoar", 0.8f, 0f, 1);
+		public static readonly SoundStyle BeamCharge = S("BeamCharge", 0.9f, 0.05f, 2);
+
 		public static readonly SoundStyle ChipPlace = S("ChipPlace", 0.7f, 0.25f, 6);
 		public static readonly SoundStyle ChipStack = S("ChipStack", 0.8f, 0.15f);
 		public static readonly SoundStyle RouletteSpin = S("RouletteSpin", 0.9f, 0f, 2);

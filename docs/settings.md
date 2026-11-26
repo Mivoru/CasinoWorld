@@ -15,7 +15,9 @@
 | Screen effects | On | All screen effects at once |
 | Screen shake | On | Shaking on explosions and boss attacks |
 | Flashes | On | Flashing light, win light shows, the Triple Jackpot lights |
-| Camera zoom | On | The zoom on a Triple Jackpot |
+| Camera zoom | On | Zoom kicks and the camera leaning towards bosses on big moments, the zoom on a Triple Jackpot |
+| Hit stop and slow motion | On | Short freezes on heavy hits and slow motion on boss phase changes (single player only) |
+| Particle amount | Normal | Low, Normal or High: how many sparks, smoke puffs, shards and coins effects spawn |
 
 ## Controls
 | Key | Default |

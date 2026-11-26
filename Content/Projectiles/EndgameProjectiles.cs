@@ -172,6 +172,7 @@ namespace CasinoWorld.Content.Projectiles
 			if (Projectile.ai[0] == 1f) {
 				CasinoFx.Explosion(Projectile.Center, 60, new Color(255, 210, 80), new Color(255, 250, 200), 1.5f);
 				SoundEngine.PlaySound(CasinoSounds.JackpotProc with { Volume = 0.6f }, Projectile.Center);
+				CasinoFx.Hit(Projectile.Center, new Color(255, 210, 80), 1f, false);
 			}
 			else
 				CasinoFx.ChipImpact(Projectile.Center, new Color(255, 230, 160));
@@ -257,6 +258,9 @@ namespace CasinoWorld.Content.Projectiles
 		private void Burst(Vector2 at, Vector2 away, float share)
 		{
 			CasinoFx.Ring(Projectile.Center, new Color(200, 150, 255), 16, 5f, 1.2f);
+			Particles.Impact(Projectile.Center, new Color(200, 150, 255), 2, 12);
+			for (int k = 0; k < Particles.N(3); k++)
+				Particles.Star(Projectile.Center + Main.rand.NextVector2Circular(24, 24), new Color(220, 200, 255), 20, Main.rand.NextVector2Circular(1.5f, 1.5f));
 			if (Projectile.owner != Main.myPlayer)
 				return;
 			for (int k = 0; k < 3; k++)
@@ -325,6 +329,8 @@ namespace CasinoWorld.Content.Projectiles
 			SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
 			SoundEngine.PlaySound(CasinoSounds.ChipExplode, Projectile.Center);
 			CasinoFx.Explosion(Projectile.Center, 160, new Color(255, 150, 50), new Color(255, 240, 180), 5f);
+			Particles.Ring(Projectile.Center, new Color(255, 200, 120), 220f, 22, 6f);
+			SoundEngine.PlaySound(CasinoSounds.ImpactHeavy with { Volume = 0.45f, Pitch = -0.3f }, Projectile.Center);
 			for (int k = 0; k < 20; k++)
 				Dust.NewDust(Projectile.Center - new Vector2(70), 140, 140, DustID.SolarFlare, 0, 0, 0, default, 1.6f);
 		}
@@ -385,6 +391,7 @@ namespace CasinoWorld.Content.Projectiles
 				case 5:
 					WallHit.Blast(Projectile, 80f, 0.5f);
 					CasinoFx.Explosion(Projectile.Center, 80, SymbolColor, new Color(255, 230, 160), 1f);
+					Particles.Impact(Projectile.Center, SymbolColor, 2, 14);
 					return true;
 				case 6:
 					WallHit.Coins(Projectile, oldVelocity, 3, 0.35f);

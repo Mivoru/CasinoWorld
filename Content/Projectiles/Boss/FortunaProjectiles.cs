@@ -311,6 +311,9 @@ namespace CasinoWorld.Content.Projectiles.Boss
 			Projectile.velocity = Vector2.Zero;
 			if (Age == Warn) {
 				SoundEngine.PlaySound(CasinoSounds.FortunaBeam, Projectile.Center);
+				CasinoFx.Hit(Projectile.Center, new Color(255, 225, 150), 1.2f, false);
+				ScreenFx.ZoomKick(0.04f, 20);
+				CasinoFx.Shake(Projectile.Center, Main.rand.NextVector2Unit(), 5f, 8f, 20, 2400f, "FateBeam");
 				CasinoFx.Shake(Projectile.Center, Vector2.UnitX, 5f, 8f, 20, 2000f, "FateBeam");
 			}
 			if (Age > Warn) {

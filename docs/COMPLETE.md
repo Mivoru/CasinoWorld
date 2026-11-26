@@ -383,11 +383,11 @@ Three, four or five Blood Moons give 10, 12 or 15 free spins. Every three wilds 
 
 | Stage | Lucky Crate | High Roller Crate |
 |---|---|---|
-| Early | 1g 25s | |
-| After Skeletron | 2g | |
-| Hardmode | 6g | 7g 50s |
-| After Plantera | 14g | 16g |
-| After the Moon Lord | 45g | 50g |
+| Early | 2g 50s | |
+| After Skeletron | 3g 50s | |
+| Hardmode | 7g | 8g |
+| After Plantera | 15g | 17g |
+| After the Moon Lord | 48g | 52g |
 
 ---
 
@@ -1192,7 +1192,9 @@ Banners exist for all eight regular enemies.
 | Screen effects | On | All screen effects at once |
 | Screen shake | On | Shaking on explosions and boss attacks |
 | Flashes | On | Flashing light, win light shows, the Triple Jackpot lights |
-| Camera zoom | On | The zoom on a Triple Jackpot |
+| Camera zoom | On | Zoom kicks and the camera leaning towards bosses on big moments, the zoom on a Triple Jackpot |
+| Hit stop and slow motion | On | Short freezes on heavy hits and slow motion on boss phase changes (single player only) |
+| Particle amount | Normal | Low, Normal or High: how many sparks, smoke puffs, shards and coins effects spawn |
 
 <a id="settings--controls"></a>
 

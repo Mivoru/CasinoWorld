@@ -60,7 +60,9 @@ namespace CasinoWorld.Common.Effects
 		private static void Draw(SpriteBatch sb)
 		{
 			if (flashTimer > 0) {
-				Color c = flashColor * (flashTimer / (float)FlashTicks * 0.35f);
+				// Additive and soft: tints the light for a moment without painting over the fight.
+				Color c = flashColor * (flashTimer / (float)FlashTicks * 0.2f);
+				c.A = 0;
 				sb.Draw(TextureAssets.MagicPixel.Value, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), c);
 			}
 			if (titleTimer <= 0 || title == null)
