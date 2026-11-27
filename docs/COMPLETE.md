@@ -579,10 +579,10 @@ All weapons deal Gambler damage and can be upgraded at the [Upgrade Machine](#pa
 | <img src="../Content/Items/Weapons/LoadedDice.png" alt=""> | Loaded Dice | 21 | 24 | 4 | Surface casino jackpots, crates |
 | <img src="../Content/Items/Weapons/CardDeck.png" alt=""> | Deck of Cards | 9 x3 | 20 | 1.5 | Surface casino jackpots, crates, Card Soldier (1/80) |
 | <img src="../Content/Items/Weapons/HighRoller.png" alt=""> | High Roller | 27 | 26 | 3 | Surface casino jackpots, crates |
-| <img src="../Content/Items/Weapons/HellfireDice.png" alt=""> | Hellfire Dice | 24 x2 | 26 | 4 | 15 hellstone bars, 30 tokens (Anvil) |
+| <img src="../Content/Items/Weapons/HellfireDice.png" alt=""> | Hellfire Dice | 30 x2 | 26 | 4 | 15 hellstone bars, 30 tokens (Anvil) |
 | <img src="../Content/Items/Weapons/JackpotLever.png" alt=""> | Jackpot Lever | 26 | 26 | 7 | The Wild Card, crates after Skeletron |
-| <img src="../Content/Items/Weapons/DealersHand.png" alt=""> | Dealer's Hand | 8 | 10 | 1 | The Wild Card, crates after Skeletron |
-| <img src="../Content/Items/Weapons/WheelOfFortune.png" alt=""> | Wheel of Fortune | 18 | 22 | 4 | The Wild Card, crates after Skeletron |
+| <img src="../Content/Items/Weapons/DealersHand.png" alt=""> | Dealer's Hand | 18 | 10 | 1 | The Wild Card, crates after Skeletron |
+| <img src="../Content/Items/Weapons/WheelOfFortune.png" alt=""> | Wheel of Fortune | 36 | 22 | 4 | The Wild Card, crates after Skeletron |
 
 <a id="weapons--hardmode"></a>
 
@@ -604,6 +604,13 @@ All weapons deal Gambler damage and can be upgraded at the [Upgrade Machine](#pa
 | <img src="../Content/Items/Weapons/AceOfSpades.png" alt=""> | Ace of Spades | 60 | 24 | 3 | High Rollers jackpots, crates |
 | <img src="../Content/Items/Weapons/DoublingDice.png" alt=""> | Doubling Dice | 46 | 28 | 4 | High Rollers jackpots, crates |
 | <img src="../Content/Items/Weapons/RouletteRevolver.png" alt=""> | Roulette Revolver | 30 | 16 | 2 | High Rollers jackpots, crates |
+
+<a id="weapons--after-duke-fishron"></a>
+
+### After Duke Fishron
+| | Weapon | Damage | Use time | Knockback | Source |
+|---|---|---|---|---|---|
+| <img src="../Content/Items/Weapons/CardShark.png" alt=""> | Card Shark | 80 | 18 | 3.5 | Duke Fishron (1/3, also from his treasure bag) |
 
 <a id="weapons--after-the-moon-lord"></a>
 
@@ -636,6 +643,7 @@ All weapons deal Gambler damage and can be upgraded at the [Upgrade Machine](#pa
 | Ace of Spades | Homing spectral card, up to 3 hits | Passes through walls |
 | Doubling Dice | Splits into two half-damage dice on its first hit | Splits too, for 70% of the usual halves |
 | Roulette Revolver | Every sixth shot is a golden round with triple damage | The golden round explodes, 40% damage |
+| Card Shark | Big homing card, pierces three enemies (each once); every hit lets two small homing fins loose (25% each) | Bursts into three fins away from the wall (70% of that) |
 | Stardust Deck | Bursts into three homing cards (35% each); ignores 25 defense | Bursts too, for 70% of that |
 | Meteor Dice | Calls a burning die onto the cursor; the impact and the large explosion each hit for full damage | Leaves three embers (1/8 damage) |
 | Infinity Slot | Two reel symbols per shot; rarer symbols hit harder | See below |
@@ -652,6 +660,26 @@ All weapons deal Gambler damage and can be upgraded at the [Upgrade Machine](#pa
 | Bar | x1.5 | Two coins, 25% each |
 | Seven | x1.8 | Explosion, 50% |
 | Diamond | x2.2 | Three coins, 35% each |
+
+<a id="weapons--measured-against-the-bosses"></a>
+
+### Measured against the bosses
+`tools/selftest/SelfTestProg.cs` lets a bot play the whole boss progression as a Gambler, a ranger and a mage, on
+every difficulty, with the gear a prepared player has at that point (loadouts in the test, `For`). Below: the
+Gambler's time to kill divided by the average of the ranger and the mage (median of two runs, dodging bot; below 1
+is faster). Details and the bot's limits: `design/CasinoWorld/balance-test-notes.md` in the workspace.
+
+| Boss | Classic | Expert | Master |
+|---|---|---|---|
+| King Slime to Brain of Cthulhu | 0.5-0.8 | 0.5-1.0 | 0.5-0.9 |
+| Queen Bee | 1.2 | 1.7 | 1.6 |
+| Skeletron, Deerclops | 0.8-1.0 | 0.8-1.1 | 0.8-1.2 |
+| The Wild Card | 0.9 | 0.8 | 1.0 |
+| Wall of Flesh | 1.1 | 1.2 | 1.4 |
+| Early hardmode to Plantera | 0.8-1.3 | 0.9-1.2 | 0.7-1.1 |
+| Golem, Duke Fishron, Empress of Light | 0.8-1.3 | 1.0-1.4 | 0.7-1.2 |
+| Lunatic Cultist, Moon Lord | 0.9 | 1.0-1.2 | 0.7-0.8 |
+| Fortuna | 0.8 | 0.8 | 0.75 |
 
 <a id="weapons--estimated-single-target-dps"></a>
 

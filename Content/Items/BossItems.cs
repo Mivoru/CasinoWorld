@@ -166,7 +166,7 @@ namespace CasinoWorld.Content.Items.Weapons
 		public override void SetDefaults()
 		{
 			base.SetDefaults();
-			Item.damage = 8;
+			Item.damage = 18;
 			Item.knockBack = 1f;
 			Item.useTime = Item.useAnimation = 10;
 			Item.shoot = ModContent.ProjectileType<ThrownCard>();
@@ -193,7 +193,7 @@ namespace CasinoWorld.Content.Items.Weapons
 		public override void SetDefaults()
 		{
 			base.SetDefaults();
-			Item.damage = 18;
+			Item.damage = 36;
 			Item.knockBack = 4f;
 			Item.useTime = Item.useAnimation = 22;
 			Item.shoot = ModContent.ProjectileType<WheelOfFortuneDisc>();

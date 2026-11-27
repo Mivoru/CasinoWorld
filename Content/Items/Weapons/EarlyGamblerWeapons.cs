@@ -47,7 +47,7 @@ namespace CasinoWorld.Content.Items.Weapons
 		public override void SetDefaults()
 		{
 			base.SetDefaults();
-			Item.damage = 24;
+			Item.damage = 30;
 			Item.knockBack = 4f;
 			Item.useTime = Item.useAnimation = 26;
 			Item.shoot = ModContent.ProjectileType<HellfireDie>();

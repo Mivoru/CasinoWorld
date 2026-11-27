@@ -55,6 +55,7 @@ namespace CasinoWorld.Common
 				LoadedDice or SnakeEyes or DoublingDice => CasinoSounds.DiceThrow,
 				MeteorDice => CasinoSounds.MeteorCall,
 				AceOfSpades => CasinoSounds.SpectralThrow,
+				CardShark => CasinoSounds.CardThrow with { Pitch = -0.45f },
 				StardustDeck => CasinoSounds.GalaxyThrow,
 				RouletteRevolver => CasinoSounds.RevolverShot,
 				JackpotCannon => CasinoSounds.CannonShot,
